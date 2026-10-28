@@ -68,16 +68,22 @@ async function main() {
   // 位置IDはアプリで後から登録されることがあるので、投稿する時点の places.json を見る
   const locationId = item.locationId || (item.locationName && read("places.json", {}).locationIds?.[item.locationName]);
   if (locationId) params.location_id = locationId;
+  // 人物タグ（アプリで設定）。x,y は写真の左上0〜右下1
+  if (item.userTags?.length) params.user_tags = JSON.stringify(item.userTags.map(({ username, x, y }) => ({ username, x, y })));
+  // タグ（非公開アカウント・ユーザー名の誤り）や位置IDが原因で失敗した時は、1つずつ外して再挑戦
   let container;
-  try {
-    container = await graph("POST", `/${process.env.IG_USER_ID}/media`, params);
-  } catch (e) {
-    // 位置IDが原因で失敗した時は位置情報なしで再挑戦
-    if (!params.location_id) throw e;
-    console.log("位置情報つきで失敗 → 位置なしで再挑戦: " + e.message);
-    delete params.location_id;
-    container = await graph("POST", `/${process.env.IG_USER_ID}/media`, params);
+  for (const drop of [null, "user_tags", "location_id"]) {
+    if (drop && !params[drop]) continue;
+    if (drop) delete params[drop];
+    try {
+      container = await graph("POST", `/${process.env.IG_USER_ID}/media`, params);
+      break;
+    } catch (e) {
+      if (!params.user_tags && !params.location_id) throw e;
+      console.log(`失敗（${e.message}）→ ${params.user_tags ? "タグ" : "位置情報"}を外して再挑戦`);
+    }
   }
+  if (!container) throw new Error("投稿の準備に失敗しました");
   for (let i = 0; i < 30; i++) {
     const s = await graph("GET", `/${container.id}`, { fields: "status_code" });
     if (s.status_code === "FINISHED") break;
