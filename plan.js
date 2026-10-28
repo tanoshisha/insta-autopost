@@ -6,7 +6,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const { spawnSync, execFileSync } = require("child_process");
+const { spawn, execFileSync } = require("child_process");
 const sharp = require("sharp");
 const exifr = require("exifr");
 const { pullAlbum } = require("./lib/lightroom");
@@ -91,22 +91,31 @@ ${lines}
 - focusY: 縦長写真を4:5に上下トリミングする時に残したい中心の縦位置（0=上端, 0.5=中央, 1=下端）。顔や主題が切れない値に。
 - note: 一言の理由。
 
-order: use=true の写真の投稿順。強い写真を前に。似た写真・同じ撮影日・同じ雰囲気が連続しないよう散らす。
+order: use=true の写真を並べたもの（順番は気にしなくてよい。投稿は撮影日時の古い順になる）。
 
 出力は次のJSONだけ（説明文やコードブロック不要）:
 {"photos":[{"file":"t001.jpg","use":true,"portrait":false,"focusY":0.5,"note":"…"}],"order":["t001.jpg"]}`;
-  const r = spawnSync("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], {
-    cwd: WORK,
-    input: prompt,
-    encoding: "utf8",
-    timeout: 30 * 60e3,
-    maxBuffer: 64 * 1024 * 1024,
+  return new Promise((resolve, reject) => {
+    const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd: WORK });
+    let out = "";
+    let err = "";
+    const timer = setTimeout(() => p.kill(), 30 * 60e3);
+    p.stdout.on("data", (d) => (out += d));
+    p.stderr.on("data", (d) => (err += d));
+    p.on("close", (code) => {
+      clearTimeout(timer);
+      try {
+        if (code !== 0) throw new Error("AI選定に失敗: " + (err || out).slice(0, 400));
+        const text = JSON.parse(out).result || "";
+        const m = text.match(/\{[\s\S]*\}/);
+        if (!m) throw new Error("AIの返答を読めませんでした: " + text.slice(0, 300));
+        resolve(JSON.parse(m[0]));
+      } catch (e) {
+        reject(e);
+      }
+    });
+    p.stdin.end(prompt);
   });
-  if (r.status !== 0) throw new Error("AI選定に失敗: " + (r.stderr || r.stdout || r.error?.message || "").slice(0, 400));
-  const text = JSON.parse(r.stdout).result || "";
-  const m = text.match(/\{[\s\S]*\}/);
-  if (!m) throw new Error("AIの返答を読めませんでした: " + text.slice(0, 300));
-  return JSON.parse(m[0]);
 }
 
 // ---- 投稿用画像（4:5〜1.91:1 に収めて長辺調整・メタデータ除去） ----
@@ -139,6 +148,11 @@ function caption(it, portrait) {
   return `${head}\n\n${tags}`;
 }
 
+function sortQueue(q) {
+  const key = (it) => it.takenAt || (it.date ? it.date + "T12:00:00.000Z" : "9999");
+  q.sort((a, b) => key(a).localeCompare(key(b)));
+}
+
 async function main() {
   fs.mkdirSync(WORK, { recursive: true });
   for (const f of fs.readdirSync(WORK)) fs.rmSync(path.join(WORK, f), { recursive: true, force: true });
@@ -158,6 +172,9 @@ async function main() {
 
   // 撮影日 → フォトウォーク開催回
   const events = loadEvents(cfg.tpwEventsDir);
+  // 撮影時刻順にしてから分けると、連写の似た写真が同じ組に入って重複を見つけやすい
+  const t = (it) => (it.takenAt ? new Date(it.takenAt).getTime() : Infinity);
+  items.sort((a, b) => t(a) - t(b));
   for (const [i, it] of items.entries()) {
     it.date = jstDate(it.takenAt);
     it.event = events.find((e) => e.date === it.date && e.status !== "cancelled") || null;
@@ -169,10 +186,17 @@ async function main() {
   const recent = queue.slice(-3).map((q) => q.note || q.locationName || q.date);
   const ordered = [];
   const skipped = [];
-  for (let i = 0; i < items.length; i += 30) {
-    const batch = items.slice(i, i + 30);
-    console.log(`AIが選定中…（${batch.length}枚）`);
-    const res = aiSelect(batch, recent);
+  const batches = [];
+  for (let i = 0; i < items.length; i += 25) batches.push(items.slice(i, i + 25));
+  console.log(`AIが選定中…（${items.length}枚を${batches.length}回に分けて・3つ同時）`);
+  const results = [];
+  for (let i = 0; i < batches.length; i += 3) {
+    const part = batches.slice(i, i + 3);
+    results.push(...(await Promise.all(part.map((b) => aiSelect(b, recent)))));
+    console.log(`  …${Math.min(i + 3, batches.length)}/${batches.length}`);
+  }
+  for (const [bi, batch] of batches.entries()) {
+    const res = results[bi];
     const info = Object.fromEntries((res.photos || []).map((p) => [p.file, p]));
     const byThumb = Object.fromEntries(batch.map((b) => [b.thumb, b]));
     for (const t of res.order || []) if (byThumb[t] && info[t]?.use !== false) ordered.push({ ...byThumb[t], ai: info[t] || {} });
@@ -197,6 +221,7 @@ async function main() {
       caption: caption(it, portrait),
       portrait,
       date: it.date,
+      takenAt: it.takenAt ? new Date(it.takenAt).toISOString() : null,
       event: it.event ? `vol.${it.event.vol} ${it.event.title}` : null,
       locationName,
       locationId,
@@ -204,6 +229,8 @@ async function main() {
     });
     console.log(`  ✓ ${id}  ${portrait ? "[ポートレート]" : ""} ${it.event ? "[TPW vol." + it.event.vol + "]" : ""} 📍${locationName || "なし"}${locationName && !locationId ? "（位置ID未取得）" : ""}  ${it.ai.note || ""}`);
   }
+  // 投稿は撮影日時の古い順（ユーザー指定）。後から古い写真を足してもその位置に入る
+  sortQueue(queue);
   for (const s of skipped) console.log(`  ✗ 見送り: ${path.basename(s.file)}  ${s.ai.note || ""}`);
 
   // 記録（見送り分も「処理済み」にして次回また出てこないようにする）
