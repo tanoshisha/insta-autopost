@@ -3,7 +3,9 @@
     "北沢": "下北沢",
     "代沢": "下北沢"
   },
-  "locationIds": {},
+  "locationIds": {
+    "鎌倉": "1025861230"
+  },
   "notFound": [],
   "dayLocations": {
     "2026-10-04": "鎌倉"
