@@ -91,6 +91,17 @@ const PORTRAIT = `【ポートレートの基準】雑誌・広告のポート�
 - カラーグレーディングはこの写真家の方向性（シャドウ寒色・ハイライト暖色、控えめ）を、肌が自然に見える強さで。
 - 目指す仕上がり: 明るく透明感があり、人物に自然と目がいく、作品として見応えのある1枚。`;
 
+// スナップ（街・風景・夜景）も専用の基準で
+const SNAP = `【スナップ・風景・夜景の基準】写真集や広告のビジュアルを手がけるトップレタッチャーとして判断する。
+- 光と影でドラマと奥行きを作る。空・光源・白い壁のハイライトは必ず回収し、黒は締めるがつぶさない（数値も見る）。
+- 質感: テクスチャ/明瞭度で建築・路面・木々の質感を立てる（目安+10〜+30）。ただしハロ・ザラつき・HDR感は厳禁。
+- 色を整理する: 主役の色（朱色・ネオン・夕焼けなど）を立て、雑多な色（看板・緑・青）は彩度/輝度を少し落として画面をまとめる。
+  この写真家のカラーグレーディング（シャドウ寒色・ハイライト暖色）を、写真に合う強さで。空の青は濁らせない。
+- 主題に視線が集まる光の流れ（トーンカーブ・周辺減光で誘導）。人物が小さく写る時も肌色は自然に。
+- 夜景は夜らしい暗さと光の美しさを残す（持ち上げすぎない・光源の色を活かす・ネオンの白飛びと色飽和に注意）。
+- 曇天や逆光の眠い素材は、中間調のコントラストとかすみの除去で抜けよく。ただし自然さを保つ。
+- 目指す仕上がり: スマホの小さな画面でも一目で伝わる、見応えのある作品。`;
+
 function lines(files, info) {
   return files.map((f) => `- ${f}  測定値: ${JSON.stringify(info[f].stats)}${info[f].cur ? `\n  今の設定: ${info[f].cur}` : ""}`).join("\n");
 }
@@ -129,12 +140,30 @@ ${KEYS}
 
 出力は次のJSONだけ（説明やコードブロック不要）:
 {"photos":[{"file":"123.jpg","portrait":true,"note":"肌・光・背景をどう仕上げたか一言","settings":{"Exposure2012":0.7}}]}`;
+  if (kind === "snap")
+    return `${GOAL}
+
+${SNAP}
+
+${STYLE}
+
+カレントフォルダの次の写真（スナップ・風景・夜景）を Read ツールで1枚ずつ、プロの目でじっくり見てください（レタッチ前のRAWの見た目。露光量は撮影時のまま）:
+${lines(files, info)}
+
+それぞれに最高の現像設定を決めてください（Exposure2012 は「最終的な露光量」）。
+
+${KEYS}
+
+出力は次のJSONだけ（説明やコードブロック不要）:
+{"photos":[{"file":"123.jpg","portrait":false,"note":"光・質感・色をどう仕上げたか一言","settings":{"Exposure2012":0.4}}]}`;
   return `${GOAL}
-${portrait ? "\n" + PORTRAIT + "\n" : ""}
+
+${portrait ? PORTRAIT : SNAP}
+
 カレントフォルダの次の写真は、あなたが前回決めた設定でレタッチした結果です。Read ツールで1枚ずつ厳しくチェックしてください:
 ${lines(files, info)}
 
-${portrait ? "トップのポートレートレタッチャーの目で、肌の色と質感・顔の明るさ・目元・白飛び・背景の主張・全体の空気感" : "プロの目で、白飛び・黒つぶれ・眠さ・やりすぎ・色かぶり・空の色・主題の目立ち方"}を確認し、
+${portrait ? "トップのポートレートレタッチャーの目で、肌の色と質感・顔の明るさ・目元・白飛び・背景の主張・全体の空気感" : "トップレタッチャーの目で、光と影の奥行き・白飛び・黒つぶれ・眠さ・質感のやりすぎ・色の整理・空の色・主題への視線誘導"}を確認し、
 作品として最高品質にするために直すべき所だけ修正値を出してください。問題がなければ settings は空でよい。
 
 ${KEYS}
@@ -143,8 +172,8 @@ ${KEYS}
 {"photos":[{"file":"123.jpg","note":"何を直したか一言","settings":{"Highlights2012":-80}}]}`;
 }
 
-const MODEL_PORTRAIT = cfg.retouchModel || "opus";
-const MODEL_SNAP = cfg.retouchModelSnap || "sonnet";
+const MODEL_PRO = cfg.retouchModel || "opus"; // 仕上げはポートレートもスナップもいちばん賢いモデル
+const MODEL_SNAP = cfg.retouchModelSnap || "sonnet"; // 最初の振り分けだけ速いモデル
 
 function ask(kind, files, info, model, portrait) {
   return new Promise((resolve, reject) => {
@@ -210,13 +239,16 @@ async function runAll(kind, files, info, model, portrait, size) {
     // ① まず全部を見て、ポートレートかどうかとスナップの設定を決める
     for (const r of await runAll("plan", files, info, MODEL_SNAP, false, BATCH)) result.set(r.file, r);
     // ② ポートレートは専門の基準で、いちばん賢いモデルが決め直す
+    // ② ポートレートもスナップも、それぞれ専門の基準でいちばん賢いモデルが決め直す
     const ps = files.filter((f) => result.get(f)?.portrait);
-    for (const r of await runAll("portrait", ps, info, MODEL_PORTRAIT, true, 3)) result.set(r.file, { ...r, portrait: true });
+    const ss = files.filter((f) => result.has(f) && !result.get(f).portrait);
+    for (const r of await runAll("portrait", ps, info, MODEL_PRO, true, 3)) result.set(r.file, { ...r, portrait: true });
+    for (const r of await runAll("snap", ss, info, MODEL_PRO, false, 3)) result.set(r.file, { ...r, portrait: false });
   } else {
     const ps = files.filter((f) => info[f].portrait);
     const ss = files.filter((f) => !info[f].portrait);
-    for (const r of await runAll("review", ps, info, MODEL_PORTRAIT, true, 3)) result.set(r.file, { ...r, portrait: true });
-    for (const r of await runAll("review", ss, info, MODEL_SNAP, false, BATCH)) result.set(r.file, r);
+    for (const r of await runAll("review", ps, info, MODEL_PRO, true, 3)) result.set(r.file, { ...r, portrait: true });
+    for (const r of await runAll("review", ss, info, MODEL_PRO, false, 3)) result.set(r.file, r);
   }
   const rows = [];
   const notes = [];

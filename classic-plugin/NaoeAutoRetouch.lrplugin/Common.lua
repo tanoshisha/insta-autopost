@@ -17,7 +17,7 @@ M.WORK = M.ROOT .. "\\.work\\classic"
 M.NODE = "C:\\Program Files\\nodejs\\node.exe"
 M.PRESET_PORTRAIT = "NAOE ポートレート"
 M.PRESET_SNAP = "NAOE スナップ"
-M.REVIEWS = 2 -- 仕上げチェックの回数
+M.REVIEWS = 3 -- 仕上げチェックの回数（直す所がなくなったらそこで終わり）
 
 -- AIに「今の設定」として見せる項目
 local CUR_KEYS = {
