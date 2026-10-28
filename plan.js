@@ -11,7 +11,8 @@ const crypto = require("crypto");
 const { spawn, execFileSync } = require("child_process");
 const sharp = require("sharp");
 const exifr = require("exifr");
-const { pullAlbum } = require("./lib/lightroom");
+const { pullAlbum, connect, listAlbum, fetchFresh } = require("./lib/lightroom");
+const { makePostImage, makeThumb } = require("./lib/image");
 const { loadEvents, jstDate, eventPlaceName, reverseGeocode, findLocationId } = require("./lib/places");
 const { makeSync, insertByDate } = require("./lib/sync");
 
@@ -129,29 +130,6 @@ ${lines}
   });
 }
 
-// ---- 投稿用画像（4:5〜1.91:1 に収めて長辺調整・メタデータ除去） ----
-async function makePostImage(src, dest, focusY = 0.5) {
-  const buf = await sharp(src).rotate().toBuffer();
-  const { width: w, height: h } = await sharp(buf).metadata();
-  let crop = null;
-  if (w / h < 0.8) {
-    const ch = Math.round(w / 0.8);
-    const top = Math.min(Math.max(Math.round(focusY * h - ch / 2), 0), h - ch);
-    crop = { left: 0, top, width: w, height: ch };
-  } else if (w / h > 1.91) {
-    const cw = Math.round(h * 1.91);
-    crop = { left: Math.round((w - cw) / 2), top: 0, width: cw, height: h };
-  }
-  let img = sharp(buf);
-  if (crop) img = img.extract(crop);
-  await img
-    .resize({ width: cfg.image.width, withoutEnlargement: true, kernel: "lanczos3" })
-    .sharpen({ sigma: 0.5 }) // 縮小で甘くなる分だけ軽く（インスタの再圧縮でぼやけにくい）
-    .toColorspace("srgb")
-    .jpeg({ quality: cfg.image.quality, chromaSubsampling: "4:4:4", mozjpeg: true })
-    .toFile(dest);
-}
-
 function caption(it, portrait) {
   const tags = portrait ? cfg.hashtags.portrait : cfg.hashtags.default;
   if (!it.event) return tags;
@@ -186,6 +164,47 @@ function fillPlaces(list, places) {
   }
 }
 
+// ---- Lightroomで編集し直した写真を、予約・見送りの画像にも反映 ----
+async function syncEdits() {
+  const items = [...remoteJson("queue.json", []), ...remoteJson("pool.json", [])].filter((x) => x.lrId);
+  if (!items.length) return;
+  const lr = await connect(cfg.lightroom.configPath);
+  const assets = await listAlbum(lr, cfg.lightroom.albumName);
+  const edited = new Map((assets || []).map((a) => [a.id, a.payload?.develop?.userUpdated || null]));
+  const stamp = {};
+  const files = [];
+  const changed = items.filter((x) => {
+    const cur = edited.get(x.lrId);
+    if (!cur) return false;
+    if (!x.lrEdited) return (stamp[x.id] = cur), false; // 初回は今の状態を基準として記録だけ
+    return Date.parse(cur) > Date.parse(x.lrEdited);
+  });
+  if (changed.length) console.log(`Lightroomで編集し直した写真 ${changed.length}枚を反映…`);
+  for (const x of changed) {
+    const cur = edited.get(x.lrId);
+    const buf = await fetchFresh(lr, x.lrId, cur);
+    if (!buf) {
+      console.log(`  ⚠ ${x.id} 新しい画像がまだ用意できていません（次回また試します）`);
+      continue;
+    }
+    try {
+      git(["checkout", "origin/main", "--", x.image]); // 今の画像（構図を合わせるため）
+    } catch {}
+    const imgPath = path.join(ROOT, x.image);
+    await makePostImage(buf, imgPath, cfg.image, { keepFrom: imgPath });
+    const thumb = x.thumb || `queue/thumbs/${x.id}.jpg`;
+    await makeThumb(imgPath, path.join(ROOT, thumb));
+    files.push(x.image, thumb);
+    stamp[x.id] = cur;
+    console.log(`  ✓ ${x.id}`);
+  }
+  if (!Object.keys(stamp).length) return;
+  makeSync(ROOT)(`Lightroomの再編集を反映（${files.length / 2}枚）`, files, (remote) => {
+    const upd = (x) => (stamp[x.id] ? { ...x, lrEdited: stamp[x.id] } : x);
+    return { "queue.json": remote("queue.json", []).map(upd), "pool.json": remote("pool.json", []).map(upd) };
+  });
+}
+
 async function main() {
   fs.mkdirSync(WORK, { recursive: true });
   for (const f of fs.readdirSync(WORK)) fs.rmSync(path.join(WORK, f), { recursive: true, force: true });
@@ -206,6 +225,14 @@ async function main() {
   const places = { aliases: {}, locationIds: {}, notFound: [], dayLocations: {}, ...remoteJson("places.json", readJson("places.json", {})) };
   fs.writeFileSync(path.join(ROOT, "places.json"), JSON.stringify(places, null, 2) + "\n"); // findLocationId が読むので最新にしておく
 
+  if (!DRY) {
+    try {
+      await syncEdits();
+      git(["fetch", "-q", "origin", "main"]);
+    } catch (e) {
+      console.log("⚠ 再編集の反映でエラー: " + e.message);
+    }
+  }
   const items = await collect(state);
   if (!items.length) {
     console.log("新しい候補はありません。");
@@ -261,12 +288,13 @@ async function main() {
     const locationName = await placeFor(it, places);
     const locationId = locationName ? await findLocationId(locationName, secrets.igToken) : null;
     const imgPath = path.join(QDIR, `${it.id}.jpg`);
-    await makePostImage(it.file, imgPath, it.ai.focusY ?? 0.5);
-    await sharp(imgPath).resize({ width: 480 }).jpeg({ quality: 78 }).toFile(path.join(QDIR, "thumbs", `${it.id}.jpg`));
+    await makePostImage(it.file, imgPath, cfg.image, { focusY: it.ai.focusY ?? 0.5 });
+    await makeThumb(imgPath, path.join(QDIR, "thumbs", `${it.id}.jpg`));
     newFiles.push(`queue/${it.id}.jpg`, `queue/thumbs/${it.id}.jpg`);
     fresh.push({
       id: it.id,
       lrId: it.lrId || null,
+      lrEdited: it.lrEdited || null,
       image: `queue/${it.id}.jpg`,
       thumb: `queue/thumbs/${it.id}.jpg`,
       caption: caption(it, portrait),
