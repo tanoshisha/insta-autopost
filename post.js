@@ -65,7 +65,9 @@ async function main() {
   console.log(`投稿: ${item.id}\n${imageUrl}`);
 
   const params = { image_url: imageUrl, caption: item.caption };
-  if (item.locationId) params.location_id = item.locationId;
+  // 位置IDはアプリで後から登録されることがあるので、投稿する時点の places.json を見る
+  const locationId = item.locationId || (item.locationName && read("places.json", {}).locationIds?.[item.locationName]);
+  if (locationId) params.location_id = locationId;
   let container;
   try {
     container = await graph("POST", `/${process.env.IG_USER_ID}/media`, params);
