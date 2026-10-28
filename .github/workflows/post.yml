@@ -1,0 +1,38 @@
+name: インスタ自動投稿
+
+on:
+  schedule:
+    # 日本時間 12:30（1枠目） / 20:00（2枠目・在庫が多い日だけ）。GitHubの都合で数分〜数十分遅れることがある
+    - cron: "30 3 * * *"
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: "枠（1 or 2）"
+        default: "1"
+
+permissions:
+  contents: write
+
+concurrency: post
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 投稿
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          SLOT: ${{ github.event.schedule == '0 11 * * *' && '2' || inputs.slot || '1' }}
+        run: node post.js
+      - name: 記録を保存
+        run: |
+          git config user.name "insta-bot"
+          git config user.email "insta-bot@users.noreply.github.com"
+          git add -A queue queue.json posted.json
+          git diff --cached --quiet || (git commit -m "posted" && git push)

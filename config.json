@@ -1,0 +1,25 @@
+{
+  "hashtags": {
+    "default": "#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活",
+    "portrait": "#写真好きな人と繋がりたい #東京カメラ部 #ファインダー越しの私の世界 #ポートレート #ストリートスナップ"
+  },
+  "tpwHeader": "東京フォトウォークサークル📷\n第{vol}回 {title}",
+  "tpwEventsDir": "C:/Users/tanos/sites/tpw-site/data/events",
+
+  "lightroom": {
+    "configPath": "C:/Users/tanos/sites/photo-publisher/lr-cloud.config.json",
+    "albumName": "インスタ投稿"
+  },
+
+  "schedule": {
+    "slotsJST": ["12:30", "20:00"],
+    "secondSlotMinQueue": 10
+  },
+
+  "image": {
+    "width": 1440,
+    "quality": 90
+  },
+
+  "aiModel": "sonnet"
+}

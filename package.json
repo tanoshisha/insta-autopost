@@ -1,0 +1,22 @@
+{
+  "name": "insta-autopost",
+  "version": "1.0.0",
+  "description": "Lightroomの候補写真をAIが選んで毎日インスタに自動投稿",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "plan": "node plan.js",
+    "plan:dry": "node plan.js --dry",
+    "list": "node list.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "exifr": "^7.1.3",
+    "sharp": "^0.35.5"
+  },
+  "private": true
+}
