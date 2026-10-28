@@ -16,8 +16,8 @@ const ROOT = __dirname;
 const DRY = process.argv.includes("--dry");
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf8"));
 const INBOX = path.join(ROOT, "inbox");
-const QDIR = path.join(ROOT, "queue");
 const WORK = path.join(ROOT, ".work");
+const QDIR = DRY ? path.join(WORK, "preview") : path.join(ROOT, "queue");
 const readJson = (f, d) => {
   try {
     return JSON.parse(fs.readFileSync(path.join(ROOT, f), "utf8"));
@@ -141,8 +141,8 @@ function caption(it, portrait) {
 
 async function main() {
   fs.mkdirSync(WORK, { recursive: true });
+  for (const f of fs.readdirSync(WORK)) fs.rmSync(path.join(WORK, f), { recursive: true, force: true });
   fs.mkdirSync(QDIR, { recursive: true });
-  for (const f of fs.readdirSync(WORK)) fs.rmSync(path.join(WORK, f), { force: true });
   // クラウド側で投稿済みになった分を先に取り込む
   if (!DRY) {
     try {
@@ -212,14 +212,16 @@ async function main() {
     if (it.lrId) state.lrDone.push(it.lrId);
   }
   if (DRY) {
-    console.log(`\n[お試し] ${ordered.length}枚をキューに追加（GitHubには送っていません）`);
+    for (const q of queue.slice(-ordered.length || queue.length)) console.log(`\n--- ${q.id} ---\n${q.caption}`);
+    return console.log(`\n[お試し] ${ordered.length}枚を選定（何も保存していません。画像は .work/preview/）`);
   }
   writeJson("queue.json", queue);
   writeJson("state.json", state);
-  if (!DRY) {
+  {
     for (const it of items) if (it.source === "inbox") fs.rmSync(it.file, { force: true });
     try {
-      execFileSync("git", ["add", "queue", "queue.json", "state.json", "places.json"], { cwd: ROOT, stdio: "ignore" });      execFileSync("git", ["commit", "-m", `queue: +${ordered.length}`], { cwd: ROOT, stdio: "ignore" });
+      execFileSync("git", ["add", "queue", "queue.json", "state.json", "places.json"], { cwd: ROOT, stdio: "ignore" });
+      execFileSync("git", ["commit", "-m", `queue: +${ordered.length}`], { cwd: ROOT, stdio: "ignore" });
       execFileSync("git", ["push"], { cwd: ROOT, stdio: "inherit" });
       console.log(`\n✅ ${ordered.length}枚を予約しました（キュー合計 ${queue.length}枚）`);
     } catch (e) {
