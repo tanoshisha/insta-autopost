@@ -4,3 +4,4 @@ inbox/*
 !inbox/.gitkeep
 secrets.local.json
 要対応_*.txt
+plan.log
