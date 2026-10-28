@@ -2,14 +2,14 @@ name: インスタ自動投稿
 
 on:
   schedule:
-    # 日本時間 12:30（1枠目） / 20:00（2枠目・在庫が多い日だけ）。GitHubの都合で数分〜数十分遅れることがある
-    - cron: "30 3 * * *"
-    - cron: "0 11 * * *"
+    # 30分ごとに起動し、schedule.json の投稿時刻を過ぎていれば投稿（GitHubの都合で数分〜数十分遅れることがある）
+    - cron: "7,37 * * * *"
   workflow_dispatch:
     inputs:
-      slot:
-        description: "枠（1 or 2）"
-        default: "1"
+      force:
+        description: "今すぐ1枚投稿する（予定時刻に関係なく）"
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -32,5 +32,5 @@ jobs:
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
-          SLOT: ${{ github.event.schedule == '0 11 * * *' && '2' || inputs.slot || '1' }}
+          FORCE: ${{ inputs.force && '1' || '' }}
         run: node post.js

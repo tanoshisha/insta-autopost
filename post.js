@@ -1,9 +1,11 @@
 // post.js — 予約の先頭1枚をインスタに投稿する（GitHub Actions が毎日実行）。
 //   必要な環境変数: IG_USER_ID, IG_TOKEN, GITHUB_REPOSITORY（Actionsが自動で入れる）
-//   SLOT=2 のときは、予約が secondSlotMinQueue 枚以上ある日だけ投稿（在庫が多い時は1日2枚）
+//   30分ごとに起動され、schedule.json の投稿時刻を過ぎていて未投稿の枠があれば1枚投稿する
 const fs = require("fs");
 const path = require("path");
 const { makeSync } = require("./lib/sync");
+const { timesFor, toMin, nowJst } = require("./lib/schedule");
+const LATE_LIMIT = 150; // GitHubの起動遅れを見込んで、予定時刻から2時間半以内なら投稿する
 
 const ROOT = __dirname;
 const GRAPH = "https://graph.facebook.com/v26.0";
@@ -42,14 +44,15 @@ function record(item, rec) {
 async function main() {
   const queue = read("queue.json", []);
   const posted = read("posted.json", []);
-  const slot = process.env.SLOT || "1";
-  const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+  const { day: today, min: now } = nowJst();
+  const times = timesFor(today, read("schedule.json", null));
+  const slot = process.env.FORCE
+    ? "manual-" + new Date().toISOString().slice(11, 16)
+    : times.find((t) => toMin(t) <= now && now - toMin(t) <= LATE_LIMIT && !posted.some((p) => p.day === today && p.slot === t));
 
   if (read("paused.json", null)?.paused) return console.log("一時停止中（paused.json）");
+  if (!slot) return console.log(`今は投稿時刻ではありません（今日の予定: ${times.join(" / ") || "お休み"}）`);
   if (!queue.length) return console.log("予約が空です");
-  if (slot === "2" && queue.length < cfg.schedule.secondSlotMinQueue)
-    return console.log(`予約 ${queue.length}枚 < ${cfg.schedule.secondSlotMinQueue}枚 なので2枠目はお休み`);
-  if (posted.some((p) => p.day === today && p.slot === slot)) return console.log("この枠は投稿済み");
 
   const item = queue[0];
   // 前回、投稿後の記録だけ失敗していた場合は記録だけ直す（二重投稿しない）
