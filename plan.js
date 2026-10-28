@@ -13,6 +13,7 @@ const sharp = require("sharp");
 const exifr = require("exifr");
 const { pullAlbum, connect, listAlbum, fetchFresh } = require("./lib/lightroom");
 const { makePostImage, makeThumb } = require("./lib/image");
+const { planFlyers } = require("./lib/flyer");
 const { loadEvents, jstDate, eventPlaceName, reverseGeocode, findLocationId } = require("./lib/places");
 const { makeSync, insertByDate } = require("./lib/sync");
 
@@ -205,6 +206,21 @@ async function syncEdits() {
   });
 }
 
+// ---- フォトウォークのフライヤー（開催2週間前の21:00・複数枚）を予約 ----
+async function runFlyers() {
+  const tpwDir = path.resolve(cfg.tpwEventsDir, "..", "..");
+  const specials = remoteJson("specials.json", []);
+  const postedIds = new Set(remoteJson("posted.json", []).map((p) => p.id));
+  const { add, files } = await planFlyers({ root: ROOT, tpwDir, specials, postedIds, secrets, eventPlaceName });
+  if (!add.length) return;
+  makeSync(ROOT)(`フライヤー予約 +${add.length}`, files, (remote) => {
+    const cur = remote("specials.json", []);
+    for (const a of add) if (!cur.some((x) => x.id === a.id)) cur.push(a);
+    cur.sort((a, b) => a.postAt.localeCompare(b.postAt));
+    return { "specials.json": cur };
+  });
+}
+
 async function main() {
   fs.mkdirSync(WORK, { recursive: true });
   for (const f of fs.readdirSync(WORK)) fs.rmSync(path.join(WORK, f), { recursive: true, force: true });
@@ -231,6 +247,12 @@ async function main() {
       git(["fetch", "-q", "origin", "main"]);
     } catch (e) {
       console.log("⚠ 再編集の反映でエラー: " + e.message);
+    }
+    try {
+      await runFlyers();
+      git(["fetch", "-q", "origin", "main"]);
+    } catch (e) {
+      console.log("⚠ フライヤー予約でエラー: " + e.message);
     }
   }
   const items = await collect(state);

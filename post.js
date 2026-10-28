@@ -29,28 +29,116 @@ async function graph(method, p, params) {
   return j;
 }
 
-// 投稿した1枚を予約から外して記録（最新の予約に対して行う）
-function record(item, rec) {
+const files = (item) => [...new Set([...(item.images || []), item.image, item.thumb].filter(Boolean))];
+
+// 投稿したものを予約から外して記録（最新の予約に対して行う）。list = "queue.json" | "specials.json"
+function record(item, rec, list = "queue.json") {
   syncCommit(`posted ${item.id}`, [], (remote) => {
-    const q = remote("queue.json", []).filter((x) => x.id !== item.id);
+    const q = remote(list, []).filter((x) => x.id !== item.id);
     const posted = remote("posted.json", []);
     if (rec && !posted.some((p) => p.id === item.id)) posted.push(rec);
-    const out = { "queue.json": q, "posted.json": posted, [item.image]: null };
-    if (item.thumb) out[item.thumb] = null;
+    const out = { [list]: q, "posted.json": posted };
+    for (const f of files(item)) out[f] = null;
     return out;
   });
+}
+
+// 入れ物を作る。失敗したら、外してよいもの（タグ→位置情報）を1つずつ外して再挑戦
+async function create(params, droppable) {
+  for (const drop of [null, ...droppable]) {
+    if (drop && !params[drop]) continue;
+    if (drop) delete params[drop];
+    try {
+      return await graph("POST", `/${process.env.IG_USER_ID}/media`, params);
+    } catch (e) {
+      if (!droppable.some((k) => params[k])) throw e;
+      console.log(`失敗（${e.message}）→ 外して再挑戦`);
+    }
+  }
+  throw new Error("投稿の準備に失敗しました");
+}
+async function waitReady(id) {
+  for (let i = 0; i < 40; i++) {
+    const s = await graph("GET", `/${id}`, { fields: "status_code" });
+    if (s.status_code === "FINISHED") return;
+    if (s.status_code === "ERROR") throw new Error("インスタ側で画像の処理に失敗");
+    await sleep(4000);
+  }
+  throw new Error("インスタ側の画像処理が終わりませんでした");
+}
+
+// 1枚でも複数枚（カルーセル）でも投稿する
+async function publish(item) {
+  const url = (p) => `https://raw.githubusercontent.com/${process.env.GITHUB_REPOSITORY}/main/${p}`;
+  const images = item.images?.length ? item.images : [item.image];
+  // 位置IDはアプリで後から登録されることがあるので、投稿する時点の places.json を見る
+  const locationId = item.locationId || (item.locationName && read("places.json", {}).locationIds?.[item.locationName]);
+  // 人物タグ（アプリで設定）。x,y は写真の左上0〜右下1。複数枚の時は1枚目に付ける
+  const tags = item.userTags?.length ? JSON.stringify(item.userTags.map(({ username, x, y }) => ({ username, x, y }))) : null;
+  console.log(`投稿: ${item.id}（${images.length}枚）`);
+  let container;
+  if (images.length === 1) {
+    const params = { image_url: url(images[0]), caption: item.caption };
+    if (locationId) params.location_id = locationId;
+    if (tags) params.user_tags = tags;
+    container = await create(params, ["user_tags", "location_id"]);
+  } else {
+    const children = [];
+    for (const [i, p] of images.slice(0, 20).entries()) {
+      const params = { image_url: url(p), is_carousel_item: "true" };
+      if (i === 0 && tags) params.user_tags = tags;
+      const c = await create(params, ["user_tags"]);
+      await waitReady(c.id);
+      children.push(c.id);
+    }
+    const params = { media_type: "CAROUSEL", children: children.join(","), caption: item.caption };
+    if (locationId) params.location_id = locationId;
+    container = await create(params, ["location_id"]);
+  }
+  await waitReady(container.id);
+  const pub = await graph("POST", `/${process.env.IG_USER_ID}/media_publish`, { creation_id: container.id });
+  const info = await graph("GET", `/${pub.id}`, { fields: "permalink,media_url,thumbnail_url" }).catch(() => ({}));
+  console.log(`✅ 投稿しました ${info.permalink || pub.id}`);
+  return { pub, info };
+}
+
+// フライヤーなど時刻指定の投稿（普段の投稿ペースとは別枠）
+async function postSpecial(today, posted) {
+  const nowIso = new Date().toISOString();
+  const due = read("specials.json", []).find(
+    (s) => !s.skipped && Date.parse(s.postAt) <= Date.now() && (!s.eventDate || s.eventDate > today) && !posted.some((p) => p.id === s.id)
+  );
+  if (!due) return;
+  // 手で同じ回の告知を出していたら二重に投稿しない
+  if (due.kind === "flyer" && due.title) {
+    const recent = await graph("GET", `/${process.env.IG_USER_ID}/media`, { fields: "caption", limit: "25" }).catch(() => ({ data: [] }));
+    if ((recent.data || []).some((m) => (m.caption || "").split("\n")[0].includes(due.title))) {
+      console.log(`「${due.title}」はインスタに告知済みなので予約を外します`);
+      return record(due, null, "specials.json");
+    }
+  }
+  const { pub, info } = await publish(due);
+  const { images, thumb, ...rest } = due;
+  record(due, { ...rest, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: nowIso, day: today, slot: "special" }, "specials.json");
 }
 
 async function main() {
   const queue = read("queue.json", []);
   const posted = read("posted.json", []);
   const { day: today, min: now } = nowJst();
+  if (read("paused.json", null)?.paused) return console.log("一時停止中（paused.json）");
+
+  try {
+    await postSpecial(today, posted);
+  } catch (e) {
+    console.error("フライヤー投稿のエラー: " + e.message);
+    process.exitCode = 1;
+  }
+
   const times = timesFor(today, read("schedule.json", null));
   const slot = process.env.FORCE
     ? "manual-" + new Date().toISOString().slice(11, 16)
     : times.find((t) => toMin(t) <= now && now - toMin(t) <= LATE_LIMIT && !posted.some((p) => p.day === today && p.slot === t));
-
-  if (read("paused.json", null)?.paused) return console.log("一時停止中（paused.json）");
   if (!slot) return console.log(`今は投稿時刻ではありません（今日の予定: ${times.join(" / ") || "お休み"}）`);
   if (!queue.length) return console.log("予約が空です");
 
@@ -60,42 +148,9 @@ async function main() {
     console.log("投稿済みの写真が予約に残っていたので外します: " + item.id);
     return record(item, null);
   }
-
-  const imageUrl = `https://raw.githubusercontent.com/${process.env.GITHUB_REPOSITORY}/main/${item.image}`;
-  console.log(`投稿: ${item.id}\n${imageUrl}`);
-
-  const params = { image_url: imageUrl, caption: item.caption };
-  // 位置IDはアプリで後から登録されることがあるので、投稿する時点の places.json を見る
-  const locationId = item.locationId || (item.locationName && read("places.json", {}).locationIds?.[item.locationName]);
-  if (locationId) params.location_id = locationId;
-  // 人物タグ（アプリで設定）。x,y は写真の左上0〜右下1
-  if (item.userTags?.length) params.user_tags = JSON.stringify(item.userTags.map(({ username, x, y }) => ({ username, x, y })));
-  // タグ（非公開アカウント・ユーザー名の誤り）や位置IDが原因で失敗した時は、1つずつ外して再挑戦
-  let container;
-  for (const drop of [null, "user_tags", "location_id"]) {
-    if (drop && !params[drop]) continue;
-    if (drop) delete params[drop];
-    try {
-      container = await graph("POST", `/${process.env.IG_USER_ID}/media`, params);
-      break;
-    } catch (e) {
-      if (!params.user_tags && !params.location_id) throw e;
-      console.log(`失敗（${e.message}）→ ${params.user_tags ? "タグ" : "位置情報"}を外して再挑戦`);
-    }
-  }
-  if (!container) throw new Error("投稿の準備に失敗しました");
-  for (let i = 0; i < 30; i++) {
-    const s = await graph("GET", `/${container.id}`, { fields: "status_code" });
-    if (s.status_code === "FINISHED") break;
-    if (s.status_code === "ERROR") throw new Error("インスタ側で画像の処理に失敗");
-    await sleep(5000);
-  }
-  const pub = await graph("POST", `/${process.env.IG_USER_ID}/media_publish`, { creation_id: container.id });
-  const info = await graph("GET", `/${pub.id}`, { fields: "permalink,media_url" }).catch(() => ({}));
-
-  const { image, thumb, ...rest } = item;
-  record(item, { ...rest, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot });
-  console.log(`✅ 投稿しました ${info.permalink || pub.id}`);
+  const { pub, info } = await publish(item);
+  const { image, images, thumb, ...rest } = item;
+  record(item, { ...rest, count: (images || [image]).length, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot });
 }
 
 main().catch((e) => {
