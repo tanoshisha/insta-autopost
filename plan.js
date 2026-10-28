@@ -1,8 +1,10 @@
-// plan.js — 候補写真を集めて、AIが選定・並べ替え → 投稿キュー（queue.json + queue/*.jpg）に追加する。PCで実行。
+// plan.js — 候補写真を集めて、AIが厳選 → 投稿予約（queue.json）と「見送り」（pool.json）に振り分ける。PCで実行。
 //   候補の入れ方: ① Lightroom（クラウド）のアルバム「インスタ投稿」に入れる
 //                 ② Lightroom Classic から inbox/ フォルダへ書き出す（どちらでもOK・併用OK）
-//   node plan.js        … 実行して GitHub に反映（→ クラウドが毎日投稿）
-//   node plan.js --dry  … お試し（GitHubへ送らない・inbox を消さない）
+//   node plan.js            … 新しい候補だけ選定して GitHub に反映（→ クラウドが毎日投稿）
+//   node plan.js --reselect … アルバムの全写真（予約中・見送り含む）をもう一度選び直す
+//   node plan.js --dry      … お試し（GitHubへ送らない・inbox を消さない）
+// 見送りになった写真も画像ごと保存するので、iPhoneアプリの「見送り」タブから復活できる。
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
@@ -15,10 +17,12 @@ const { makeSync, insertByDate } = require("./lib/sync");
 
 const ROOT = __dirname;
 const DRY = process.argv.includes("--dry");
+const RESELECT = process.argv.includes("--reselect");
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf8"));
 const INBOX = path.join(ROOT, "inbox");
 const WORK = path.join(ROOT, ".work");
 const QDIR = DRY ? path.join(WORK, "preview") : path.join(ROOT, "queue");
+const BATCH = 30;
 const readJson = (f, d) => {
   try {
     return JSON.parse(fs.readFileSync(path.join(ROOT, f), "utf8"));
@@ -26,14 +30,21 @@ const readJson = (f, d) => {
     return d;
   }
 };
-const writeJson = (f, v) => fs.writeFileSync(path.join(ROOT, f), JSON.stringify(v, null, 2) + "\n");
 const secrets = readJson("secrets.local.json", {});
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const IMG = /\.(jpe?g|png|webp|tiff?|heic)$/i;
+const git = (args) => execFileSync("git", args, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+function remoteJson(p, d) {
+  try {
+    return JSON.parse(git(["show", `origin/main:${p}`]));
+  } catch {
+    return d;
+  }
+}
 
 async function collect(state) {
   const items = [];
-  // ① Lightroom クラウドのアルバム
+  // ① Lightroom クラウドのアルバム（選び直しの時は全部）
   if (cfg.lightroom?.albumName && fs.existsSync(cfg.lightroom.configPath)) {
     console.log(`Lightroom「${cfg.lightroom.albumName}」を確認…`);
     try {
@@ -41,7 +52,7 @@ async function collect(state) {
         configPath: cfg.lightroom.configPath,
         albumName: cfg.lightroom.albumName,
         outDir: WORK,
-        doneIds: new Set(state.lrDone),
+        doneIds: RESELECT ? new Set() : new Set(state.lrDone),
       });
       for (const g of got) items.push({ ...g, source: "lightroom" });
     } catch (e) {
@@ -54,7 +65,7 @@ async function collect(state) {
     items.push({ file: path.join(INBOX, f), source: "inbox" });
   }
   // EXIF（撮影日・GPS）と重複チェック
-  const seen = new Set(state.hashes);
+  const seen = new Set(RESELECT ? [] : state.hashes);
   const out = [];
   for (const it of items) {
     const buf = fs.readFileSync(it.file);
@@ -77,25 +88,24 @@ async function collect(state) {
 }
 
 // ---- AI選定（このPCの claude コマンドを使う） ----
-function aiSelect(batch, recent) {
-  const lines = batch.map((it) => `- ${it.thumb}（撮影日 ${it.date || "不明"}${it.event ? `・${it.event.title}` : ""}）`).join("\n");
+function aiSelect(batch) {
+  const lines = batch.map((it) => `- ${it.thumb}（撮影 ${it.takenLabel}${it.event ? `・${it.event.title}` : ""}）`).join("\n");
   const prompt = `あなたは写真家のInstagramアカウントの編集者です。カレントフォルダにある次の候補写真を Read ツールで全部見てください。
-写真家本人がある程度絞った候補なので、基本は「使う」方向で判断します。
+候補は多めに入っているので、インスタに載せる価値のある写真だけを「厳選」してください。
 
 ${lines}
 
-直前に投稿予定の写真: ${recent.length ? recent.join(" / ") : "なし"}
-
 各写真について判断:
-- use: ほぼ同じ構図・連写の重複は一番良い1枚だけ true、他は false。明らかなピンボケ・失敗写真も false。それ以外は true。
+- use: 載せるなら true。基準は厳しめに:
+  ・同じ場所・同じ被写体・似た構図が続く時は一番良い1枚だけ（はっきり別の魅力がある時だけ2枚まで）
+  ・ピンボケ・ブレ・露出の失敗・何を撮ったか伝わりにくい記録写真は false
+  ・目安として候補の3〜4割くらいが残るイメージ（良い写真が多ければもっと残してよい）
 - portrait: 人物が主役のポートレートなら true（街並みの中の小さな人影・後ろ姿のスナップは false）。
 - focusY: 縦長写真を4:5に上下トリミングする時に残したい中心の縦位置（0=上端, 0.5=中央, 1=下端）。顔や主題が切れない値に。
-- note: 一言の理由。
-
-order: use=true の写真を並べたもの（順番は気にしなくてよい。投稿は撮影日時の古い順になる）。
+- note: 一言（use=true なら写真の内容、false なら見送った理由。例「t003と似た構図」「ブレ」）。
 
 出力は次のJSONだけ（説明文やコードブロック不要）:
-{"photos":[{"file":"t001.jpg","use":true,"portrait":false,"focusY":0.5,"note":"…"}],"order":["t001.jpg"]}`;
+{"photos":[{"file":"t001.jpg","use":true,"portrait":false,"focusY":0.5,"note":"…"}]}`;
   return new Promise((resolve, reject) => {
     const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd: WORK });
     let out = "";
@@ -121,8 +131,7 @@ order: use=true の写真を並べたもの（順番は気にしなくてよい�
 
 // ---- 投稿用画像（4:5〜1.91:1 に収めて長辺調整・メタデータ除去） ----
 async function makePostImage(src, dest, focusY = 0.5) {
-  const base = sharp(src).rotate();
-  const buf = await base.toBuffer();
+  const buf = await sharp(src).rotate().toBuffer();
   const { width: w, height: h } = await sharp(buf).metadata();
   let crop = null;
   if (w / h < 0.8) {
@@ -156,6 +165,26 @@ function eventsForApp(events) {
     .map((e) => ({ date: e.date, vol: e.vol, title: e.title, location: eventPlaceName(e) }));
 }
 
+// 位置情報：フォトウォークの回 → 日付ごとの場所（アプリで設定）→ 写真のGPS
+async function placeFor(it, places) {
+  if (it.event) return eventPlaceName(it.event);
+  if (it.date && places.dayLocations?.[it.date]) return places.dayLocations[it.date];
+  if (it.gps) {
+    const n = await reverseGeocode(it.gps);
+    await sleep(1100);
+    return n;
+  }
+  return null;
+}
+
+// 場所の名前が分かっていて位置IDが未設定のものを埋める（アプリで日付ごとの場所や位置IDを登録した時用）
+function fillPlaces(list, places) {
+  for (const x of list) {
+    if (!x.locationName && !x.event && x.date && places.dayLocations?.[x.date]) x.locationName = places.dayLocations[x.date];
+    if (x.locationName && !x.locationId && places.locationIds?.[x.locationName]) x.locationId = places.locationIds[x.locationName];
+  }
+}
+
 async function main() {
   fs.mkdirSync(WORK, { recursive: true });
   for (const f of fs.readdirSync(WORK)) fs.rmSync(path.join(WORK, f), { recursive: true, force: true });
@@ -164,70 +193,77 @@ async function main() {
   const syncCommit = makeSync(ROOT);
   const events = loadEvents(cfg.tpwEventsDir);
 
-  const state = readJson("state.json", { lrDone: [], hashes: [] });
-  const queue = readJson("queue.json", []);
+  git(["fetch", "-q", "origin", "main"]);
+  const state = remoteJson("state.json", readJson("state.json", { lrDone: [], hashes: [] }));
+  const known = new Map();
+  for (const x of remoteJson("queue.json", [])) known.set(x.id, "queue");
+  for (const x of remoteJson("pool.json", [])) known.set(x.id, "pool");
+  const postedIds = new Set(remoteJson("posted.json", []).map((p) => p.id));
+  const places = { aliases: {}, locationIds: {}, notFound: [], dayLocations: {}, ...remoteJson("places.json", readJson("places.json", {})) };
+  fs.writeFileSync(path.join(ROOT, "places.json"), JSON.stringify(places, null, 2) + "\n"); // findLocationId が読むので最新にしておく
+
   const items = await collect(state);
   if (!items.length) {
     console.log("新しい候補はありません。");
-    // 開催回の一覧だけは最新にしておく
-    if (!DRY) syncCommit("events更新", [], () => ({ "events.json": eventsForApp(events) }));
+    if (!DRY)
+      syncCommit("events更新", [], (remote) => {
+        const q = remote("queue.json", []);
+        const pool = remote("pool.json", []);
+        const pl = { ...places, ...remote("places.json", {}) };
+        fillPlaces(q, pl);
+        fillPlaces(pool, pl);
+        return { "events.json": eventsForApp(events), "queue.json": q, "pool.json": pool };
+      });
     return;
   }
-  console.log(`候補 ${items.length}枚`);
 
-  // 撮影日 → フォトウォーク開催回
   // 撮影時刻順にしてから分けると、連写の似た写真が同じ組に入って重複を見つけやすい
   const t = (it) => (it.takenAt ? new Date(it.takenAt).getTime() : Infinity);
   items.sort((a, b) => t(a) - t(b));
   for (const [i, it] of items.entries()) {
     it.date = jstDate(it.takenAt);
+    it.id = `${it.date || "nodate"}_${it.hash}`;
     it.event = events.find((e) => e.date === it.date && e.status !== "cancelled") || null;
     it.thumb = `t${String(i + 1).padStart(3, "0")}.jpg`;
-    await sharp(it.file).rotate().resize({ width: 900, height: 900, fit: "inside" }).jpeg({ quality: 75 }).toFile(path.join(WORK, it.thumb));
+    const d = it.takenAt ? new Date(it.takenAt) : null;
+    it.takenLabel = d ? `${it.date} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}` : "不明";
+    await sharp(it.file).rotate().resize({ width: 720, height: 720, fit: "inside" }).jpeg({ quality: 72 }).toFile(path.join(WORK, it.thumb));
   }
+  const targets = items.filter((it) => !postedIds.has(it.id));
+  console.log(`候補 ${targets.length}枚${RESELECT ? "（全部を選び直し）" : ""}`);
 
-  // AI選定（30枚ずつ）
-  const recent = queue.slice(-3).map((q) => q.note || q.locationName || q.date);
-  const ordered = [];
-  const skipped = [];
+  // AI選定（30枚ずつ・3つ同時）
   const batches = [];
-  for (let i = 0; i < items.length; i += 25) batches.push(items.slice(i, i + 25));
-  console.log(`AIが選定中…（${items.length}枚を${batches.length}回に分けて・3つ同時）`);
+  for (let i = 0; i < targets.length; i += BATCH) batches.push(targets.slice(i, i + BATCH));
+  console.log(`AIが厳選中…（${batches.length}回に分けて）`);
   const results = [];
   for (let i = 0; i < batches.length; i += 3) {
-    const part = batches.slice(i, i + 3);
-    results.push(...(await Promise.all(part.map((b) => aiSelect(b, recent)))));
+    results.push(...(await Promise.all(batches.slice(i, i + 3).map((b) => aiSelect(b)))));
     console.log(`  …${Math.min(i + 3, batches.length)}/${batches.length}`);
   }
   for (const [bi, batch] of batches.entries()) {
-    const res = results[bi];
-    const info = Object.fromEntries((res.photos || []).map((p) => [p.file, p]));
-    const byThumb = Object.fromEntries(batch.map((b) => [b.thumb, b]));
-    for (const t of res.order || []) if (byThumb[t] && info[t]?.use !== false) ordered.push({ ...byThumb[t], ai: info[t] || {} });
-    for (const b of batch) if (!ordered.includes(b) && !ordered.find((o) => o.thumb === b.thumb)) skipped.push({ ...b, ai: info[b.thumb] || {} });
+    const info = Object.fromEntries((results[bi].photos || []).map((p) => [p.file, p]));
+    for (const it of batch) it.ai = info[it.thumb] || { use: true, note: "（AIの判定なし）" };
   }
 
-  // 位置情報・キャプション・投稿画像
-  const added = [];
+  // 新しい写真だけ画像を作る（予約中・見送り中の写真は前に作った画像をそのまま使う）
+  const fresh = [];
   const newFiles = [];
-  for (const it of ordered) {
+  for (const it of targets) {
+    const use = it.ai.use !== false;
+    console.log(`  ${use ? "✓" : "✗"} ${it.id} ${it.ai.portrait ? "[ポートレート]" : ""} ${it.ai.note || ""}`);
+    if (known.has(it.id)) continue;
     const portrait = !!it.ai.portrait;
-    let locationName = null;
-    if (it.event) locationName = eventPlaceName(it.event);
-    else if (it.gps) {
-      locationName = await reverseGeocode(it.gps);
-      await sleep(1100);
-    }
+    const locationName = await placeFor(it, places);
     const locationId = locationName ? await findLocationId(locationName, secrets.igToken) : null;
-    const id = `${it.date || "nodate"}_${it.hash}`;
-    const imgPath = path.join(QDIR, `${id}.jpg`);
+    const imgPath = path.join(QDIR, `${it.id}.jpg`);
     await makePostImage(it.file, imgPath, it.ai.focusY ?? 0.5);
-    await sharp(imgPath).resize({ width: 480 }).jpeg({ quality: 78 }).toFile(path.join(QDIR, "thumbs", `${id}.jpg`));
-    newFiles.push(`queue/${id}.jpg`, `queue/thumbs/${id}.jpg`);
-    added.push({
-      id,
-      image: `queue/${id}.jpg`,
-      thumb: `queue/thumbs/${id}.jpg`,
+    await sharp(imgPath).resize({ width: 480 }).jpeg({ quality: 78 }).toFile(path.join(QDIR, "thumbs", `${it.id}.jpg`));
+    newFiles.push(`queue/${it.id}.jpg`, `queue/thumbs/${it.id}.jpg`);
+    fresh.push({
+      id: it.id,
+      image: `queue/${it.id}.jpg`,
+      thumb: `queue/thumbs/${it.id}.jpg`,
       caption: caption(it, portrait),
       portrait,
       date: it.date,
@@ -237,33 +273,51 @@ async function main() {
       locationId,
       note: it.ai.note || "",
     });
-    console.log(`  ✓ ${id}  ${portrait ? "[ポートレート]" : ""} ${it.event ? "[TPW vol." + it.event.vol + "]" : ""} 📍${locationName || "なし"}${locationName && !locationId ? "（位置ID未取得）" : ""}  ${it.ai.note || ""}`);
   }
-  // 投稿は撮影日時の古い順（ユーザー指定）。後から古い写真を足してもその日付の位置に入る（手での並べ替えは崩さない）
-  for (const a of added) insertByDate(queue, a);
-  for (const s of skipped) console.log(`  ✗ 見送り: ${path.basename(s.file)}  ${s.ai.note || ""}`);
+  const decision = new Map(targets.map((it) => [it.id, it.ai]));
+  const keepN = targets.filter((it) => it.ai.use !== false).length;
 
-  // 記録（見送り分も「処理済み」にして次回また出てこないようにする）
   for (const it of items) {
-    state.hashes.push(it.hash);
-    if (it.lrId) state.lrDone.push(it.lrId);
+    if (!state.hashes.includes(it.hash)) state.hashes.push(it.hash);
+    if (it.lrId && !state.lrDone.includes(it.lrId)) state.lrDone.push(it.lrId);
   }
-  if (DRY) {
-    for (const q of added) console.log(`\n--- ${q.id} ---\n${q.caption}`);
-    return console.log(`\n[お試し] ${ordered.length}枚を選定（何も保存していません。画像は .work/preview/）`);
-  }
+  if (DRY) return console.log(`\n[お試し] ${targets.length}枚中 ${keepN}枚を採用（何も保存していません）`);
   for (const it of items) if (it.source === "inbox") fs.rmSync(it.file, { force: true });
-  const places = readJson("places.json", {});
+
   try {
-    // 選定中にiPhoneや投稿で予約が変わっていても、その最新の予約に差し込む
     let total = 0;
-    syncCommit(`queue: +${added.length}`, newFiles, (remote) => {
-      const q = remote("queue.json", []);
-      for (const a of added) if (!q.some((x) => x.id === a.id)) insertByDate(q, a);
+    let poolN = 0;
+    // 選定中にiPhoneや投稿で予約が変わっていても、その最新の予約に対して振り分ける
+    syncCommit(`${RESELECT ? "選び直し" : "queue"}: 採用${keepN} / 見送り${targets.length - keepN}`, newFiles, (remote) => {
+      let q = remote("queue.json", []);
+      let pool = remote("pool.json", []);
+      const pl = { ...places, ...remote("places.json", {}) };
+      const all = new Map([...pool, ...q, ...fresh].map((x) => [x.id, x]));
+      for (const [id, ai] of decision) {
+        const x = all.get(id);
+        if (!x) continue;
+        const inQ = q.some((y) => y.id === id);
+        const inP = pool.some((y) => y.id === id);
+        if (ai.use !== false) {
+          if (inQ) continue;
+          // 選び直しでも、アプリで自分で見送った写真は戻さない
+          if (inP && (!RESELECT || x.rejectedBy === "app")) continue;
+          pool = pool.filter((y) => y.id !== id);
+          const { reason, rejectedBy, ...item } = x;
+          insertByDate(q, item);
+        } else {
+          if (inP) continue;
+          q = q.filter((y) => y.id !== id);
+          insertByDate(pool, { ...x, reason: ai.note || "AIが見送り", rejectedBy: "ai" });
+        }
+      }
+      fillPlaces(q, pl);
+      fillPlaces(pool, pl);
       total = q.length;
-      return { "queue.json": q, "state.json": state, "places.json": places, "events.json": eventsForApp(events) };
+      poolN = pool.length;
+      return { "queue.json": q, "pool.json": pool, "state.json": state, "events.json": eventsForApp(events) };
     });
-    console.log(`\n✅ ${added.length}枚を予約しました（予約合計 ${total}枚）`);
+    console.log(`\n✅ 採用 ${keepN}枚 / 見送り ${targets.length - keepN}枚（予約合計 ${total}枚・見送り合計 ${poolN}枚）`);
   } catch (e) {
     console.log("⚠ GitHubへの送信に失敗: " + e.message);
   }
