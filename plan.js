@@ -11,6 +11,7 @@ const sharp = require("sharp");
 const exifr = require("exifr");
 const { pullAlbum } = require("./lib/lightroom");
 const { loadEvents, jstDate, eventPlaceName, reverseGeocode, findLocationId } = require("./lib/places");
+const { makeSync, insertByDate } = require("./lib/sync");
 
 const ROOT = __dirname;
 const DRY = process.argv.includes("--dry");
@@ -148,30 +149,33 @@ function caption(it, portrait) {
   return `${head}\n\n${tags}`;
 }
 
-function sortQueue(q) {
-  const key = (it) => it.takenAt || (it.date ? it.date + "T12:00:00.000Z" : "9999");
-  q.sort((a, b) => key(a).localeCompare(key(b)));
+// iPhoneアプリでもフォトウォークの回を判定できるよう、開催回の一覧を書き出す（公開情報のみ）
+function eventsForApp(events) {
+  return events
+    .filter((e) => e.status !== "cancelled")
+    .map((e) => ({ date: e.date, vol: e.vol, title: e.title, location: eventPlaceName(e) }));
 }
 
 async function main() {
   fs.mkdirSync(WORK, { recursive: true });
   for (const f of fs.readdirSync(WORK)) fs.rmSync(path.join(WORK, f), { recursive: true, force: true });
   fs.mkdirSync(QDIR, { recursive: true });
-  // クラウド側で投稿済みになった分を先に取り込む
-  if (!DRY) {
-    try {
-      execFileSync("git", ["pull", "--rebase", "-q"], { cwd: ROOT, stdio: "ignore" });
-    } catch {}
-  }
+  fs.mkdirSync(path.join(QDIR, "thumbs"), { recursive: true });
+  const syncCommit = makeSync(ROOT);
+  const events = loadEvents(cfg.tpwEventsDir);
 
   const state = readJson("state.json", { lrDone: [], hashes: [] });
   const queue = readJson("queue.json", []);
   const items = await collect(state);
-  if (!items.length) return console.log("新しい候補はありません。");
+  if (!items.length) {
+    console.log("新しい候補はありません。");
+    // 開催回の一覧だけは最新にしておく
+    if (!DRY) syncCommit("events更新", [], () => ({ "events.json": eventsForApp(events) }));
+    return;
+  }
   console.log(`候補 ${items.length}枚`);
 
   // 撮影日 → フォトウォーク開催回
-  const events = loadEvents(cfg.tpwEventsDir);
   // 撮影時刻順にしてから分けると、連写の似た写真が同じ組に入って重複を見つけやすい
   const t = (it) => (it.takenAt ? new Date(it.takenAt).getTime() : Infinity);
   items.sort((a, b) => t(a) - t(b));
@@ -204,6 +208,8 @@ async function main() {
   }
 
   // 位置情報・キャプション・投稿画像
+  const added = [];
+  const newFiles = [];
   for (const it of ordered) {
     const portrait = !!it.ai.portrait;
     let locationName = null;
@@ -214,10 +220,14 @@ async function main() {
     }
     const locationId = locationName ? await findLocationId(locationName, secrets.igToken) : null;
     const id = `${it.date || "nodate"}_${it.hash}`;
-    await makePostImage(it.file, path.join(QDIR, `${id}.jpg`), it.ai.focusY ?? 0.5);
-    queue.push({
+    const imgPath = path.join(QDIR, `${id}.jpg`);
+    await makePostImage(it.file, imgPath, it.ai.focusY ?? 0.5);
+    await sharp(imgPath).resize({ width: 480 }).jpeg({ quality: 78 }).toFile(path.join(QDIR, "thumbs", `${id}.jpg`));
+    newFiles.push(`queue/${id}.jpg`, `queue/thumbs/${id}.jpg`);
+    added.push({
       id,
       image: `queue/${id}.jpg`,
+      thumb: `queue/thumbs/${id}.jpg`,
       caption: caption(it, portrait),
       portrait,
       date: it.date,
@@ -229,8 +239,8 @@ async function main() {
     });
     console.log(`  ✓ ${id}  ${portrait ? "[ポートレート]" : ""} ${it.event ? "[TPW vol." + it.event.vol + "]" : ""} 📍${locationName || "なし"}${locationName && !locationId ? "（位置ID未取得）" : ""}  ${it.ai.note || ""}`);
   }
-  // 投稿は撮影日時の古い順（ユーザー指定）。後から古い写真を足してもその位置に入る
-  sortQueue(queue);
+  // 投稿は撮影日時の古い順（ユーザー指定）。後から古い写真を足してもその日付の位置に入る（手での並べ替えは崩さない）
+  for (const a of added) insertByDate(queue, a);
   for (const s of skipped) console.log(`  ✗ 見送り: ${path.basename(s.file)}  ${s.ai.note || ""}`);
 
   // 記録（見送り分も「処理済み」にして次回また出てこないようにする）
@@ -239,21 +249,23 @@ async function main() {
     if (it.lrId) state.lrDone.push(it.lrId);
   }
   if (DRY) {
-    for (const q of queue.slice(-ordered.length || queue.length)) console.log(`\n--- ${q.id} ---\n${q.caption}`);
+    for (const q of added) console.log(`\n--- ${q.id} ---\n${q.caption}`);
     return console.log(`\n[お試し] ${ordered.length}枚を選定（何も保存していません。画像は .work/preview/）`);
   }
-  writeJson("queue.json", queue);
-  writeJson("state.json", state);
-  {
-    for (const it of items) if (it.source === "inbox") fs.rmSync(it.file, { force: true });
-    try {
-      execFileSync("git", ["add", "queue", "queue.json", "state.json", "places.json"], { cwd: ROOT, stdio: "ignore" });
-      execFileSync("git", ["commit", "-m", `queue: +${ordered.length}`], { cwd: ROOT, stdio: "ignore" });
-      execFileSync("git", ["push"], { cwd: ROOT, stdio: "inherit" });
-      console.log(`\n✅ ${ordered.length}枚を予約しました（キュー合計 ${queue.length}枚）`);
-    } catch (e) {
-      console.log("⚠ GitHubへの送信に失敗: " + e.message);
-    }
+  for (const it of items) if (it.source === "inbox") fs.rmSync(it.file, { force: true });
+  const places = readJson("places.json", {});
+  try {
+    // 選定中にiPhoneや投稿で予約が変わっていても、その最新の予約に差し込む
+    let total = 0;
+    syncCommit(`queue: +${added.length}`, newFiles, (remote) => {
+      const q = remote("queue.json", []);
+      for (const a of added) if (!q.some((x) => x.id === a.id)) insertByDate(q, a);
+      total = q.length;
+      return { "queue.json": q, "state.json": state, "places.json": places, "events.json": eventsForApp(events) };
+    });
+    console.log(`\n✅ ${added.length}枚を予約しました（予約合計 ${total}枚）`);
+  } catch (e) {
+    console.log("⚠ GitHubへの送信に失敗: " + e.message);
   }
 }
 
