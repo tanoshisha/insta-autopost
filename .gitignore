@@ -7,3 +7,4 @@ secrets.local.json
 plan.log
 upgrade.log
 auto-plan.log
+classic-processed.tsv

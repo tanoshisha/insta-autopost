@@ -170,8 +170,19 @@ async function syncEdits() {
   const items = [...remoteJson("queue.json", []), ...remoteJson("pool.json", [])].filter((x) => x.lrId);
   if (!items.length) return;
   const lr = await connect(cfg.lightroom.configPath);
-  const assets = await listAlbum(lr, cfg.lightroom.albumName);
-  const edited = new Map((assets || []).map((a) => [a.id, a.payload?.develop?.userUpdated || null]));
+  // アルバムから外した（処理済みへ移した）写真も追えるよう、写真ごとに最新の編集日時を聞く
+  const edited = new Map();
+  const ids = [...new Set(items.map((x) => x.lrId))];
+  for (let i = 0; i < ids.length; i += 8) {
+    await Promise.all(
+      ids.slice(i, i + 8).map(async (id) => {
+        try {
+          const a = await lr.get(`/v2/catalogs/${lr.catalogId}/assets/${id}`);
+          edited.set(id, a.payload?.develop?.userUpdated || null);
+        } catch {}
+      })
+    );
+  }
   const stamp = {};
   const files = [];
   const changed = items.filter((x) => {
@@ -219,6 +230,20 @@ async function runFlyers() {
     cur.sort((a, b) => a.postAt.localeCompare(b.postAt));
     return { "specials.json": cur };
   });
+}
+
+// ---- 処理済みの写真の一覧（Classicのプラグインが「インスタ投稿（処理済み）」へ移すのに使う） ----
+//   ファイル名 <タブ> 撮影日時（分まで・現地時刻）
+async function writeProcessed() {
+  const state = remoteJson("state.json", { lrDone: [] });
+  const done = new Set(state.lrDone);
+  const lr = await connect(cfg.lightroom.configPath);
+  const assets = (await listAlbum(lr, cfg.lightroom.albumName)) || [];
+  const rows = assets
+    .filter((a) => done.has(a.id) && a.payload?.importSource?.fileName && a.payload?.captureDate)
+    .map((a) => `${a.payload.importSource.fileName}\t${a.payload.captureDate.slice(0, 16)}`);
+  fs.writeFileSync(path.join(ROOT, "classic-processed.tsv"), rows.join("\n") + "\n");
+  console.log(`処理済みでまだ「${cfg.lightroom.albumName}」にある写真: ${rows.length}枚（Classicで移動）`);
 }
 
 async function main() {
@@ -378,7 +403,13 @@ async function main() {
   }
 }
 
-main().catch((e) => {
+main()
+  .then(async () => {
+    if (DRY) return;
+    git(["fetch", "-q", "origin", "main"]);
+    await writeProcessed().catch((e) => console.log("⚠ 処理済み一覧の作成でエラー: " + e.message));
+  })
+  .catch((e) => {
   console.error("エラー: " + e.message);
   process.exit(1);
 });

@@ -1,13 +1,16 @@
--- Classic を開いている間、10分ごとに（auto.on がある時だけ）「インスタ投稿」の未レタッチ写真を見て、あれば自動でレタッチする
+-- Classic を開いている間、10分ごとに:
+--   ・処理済みの写真を「インスタ投稿（処理済み）」へ移す（常に）
+--   ・「インスタ投稿」の未レタッチ写真をAIレタッチ（.work\classic\auto.on がある時だけ）
 local LrTasks = import "LrTasks"
 local LrFileUtils = import "LrFileUtils"
 local Common = require "Common"
 
 LrTasks.startAsyncTask(function()
-  LrTasks.sleep(60) -- 起動直後は待つ
+  LrTasks.sleep(90) -- 起動直後は待つ
   local fails = 0
   while true do
-    -- 自動実行は .work\classic\auto.on があるときだけ（最初は手動で確かめてから有効にする）
+    local okMove, err = LrTasks.pcall(Common.moveProcessed)
+    if not okMove then Common.log("移動エラー: " .. tostring(err)) end
     local ok, n = true, 0
     if LrFileUtils.exists(Common.WORK .. "\\auto.on") then ok, n = LrTasks.pcall(Common.run, nil, nil) end
     if not ok then

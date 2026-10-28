@@ -174,6 +174,38 @@ local function applyKV(photo, kv)
   if next(t) then photo:applyDevelopSettings(t) end
 end
 
+-- 処理済み（予約・見送り・投稿済みになった）写真を「インスタ投稿（処理済み）」へ移して、「インスタ投稿」を軽くする。
+-- 一覧は PC の plan.js が毎朝 classic-processed.tsv に書く（ファイル名 \t 撮影日時の分まで）。
+-- 同期中の写真はコレクションから外しても同期は続くので、Classicで編集し直せば予約の画像にも反映される。
+M.DONE_COLLECTION = "インスタ投稿（処理済み）"
+function M.moveProcessed()
+  local f = io.open(M.ROOT .. "\\classic-processed.tsv", "r")
+  if not f then return 0 end
+  local keys = {}
+  for line in f:lines() do
+    local name, date = line:match("^([^\t]+)\t(%S+)")
+    if name then keys[name .. "|" .. date] = true end
+  end
+  f:close()
+  local catalog = LrApplication.activeCatalog()
+  local col = M.findCollection(catalog)
+  if not col then return 0 end
+  local list = {}
+  for _, p in ipairs(col:getPhotos()) do
+    local t = p:getRawMetadata("dateTimeOriginal")
+    local key = tostring(p:getFormattedMetadata("fileName")) .. "|" .. (t and LrDate.timeToUserFormat(t, "%Y-%m-%dT%H:%M") or "")
+    if keys[key] then list[#list + 1] = p end
+  end
+  if #list == 0 then return 0 end
+  catalog:withWriteAccessDo("処理済みを移動", function()
+    local dest = catalog:createCollection(M.DONE_COLLECTION, nil, true)
+    dest:addPhotos(list)
+    col:removePhotos(list)
+  end, { timeout = 120 })
+  log("処理済み " .. #list .. "枚を「" .. M.DONE_COLLECTION .. "」へ移動")
+  return #list
+end
+
 -- 本体。targets を省くと「インスタ投稿」の未レタッチ写真。progress は LrProgressScope（無くてもよい）
 function M.run(targets, progress)
   local catalog = LrApplication.activeCatalog()
