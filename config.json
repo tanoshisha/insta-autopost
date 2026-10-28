@@ -11,7 +11,7 @@
   },
   "image": {
     "width": 1440,
-    "quality": 90
+    "quality": 95
   },
   "aiModel": "sonnet"
 }

@@ -145,9 +145,10 @@ async function makePostImage(src, dest, focusY = 0.5) {
   let img = sharp(buf);
   if (crop) img = img.extract(crop);
   await img
-    .resize({ width: cfg.image.width, withoutEnlargement: true })
+    .resize({ width: cfg.image.width, withoutEnlargement: true, kernel: "lanczos3" })
+    .sharpen({ sigma: 0.5 }) // 縮小で甘くなる分だけ軽く（インスタの再圧縮でぼやけにくい）
     .toColorspace("srgb")
-    .jpeg({ quality: cfg.image.quality, mozjpeg: true })
+    .jpeg({ quality: cfg.image.quality, chromaSubsampling: "4:4:4", mozjpeg: true })
     .toFile(dest);
 }
 
@@ -196,9 +197,12 @@ async function main() {
   git(["fetch", "-q", "origin", "main"]);
   const state = remoteJson("state.json", readJson("state.json", { lrDone: [], hashes: [] }));
   const known = new Map();
+  const byLr = new Map(); // Lightroomの写真ID → 予約のID（画像サイズを変えてもIDが変わらないように）
   for (const x of remoteJson("queue.json", [])) known.set(x.id, "queue");
   for (const x of remoteJson("pool.json", [])) known.set(x.id, "pool");
-  const postedIds = new Set(remoteJson("posted.json", []).map((p) => p.id));
+  const postedList = remoteJson("posted.json", []);
+  const postedIds = new Set(postedList.map((p) => p.id));
+  for (const x of [...remoteJson("queue.json", []), ...remoteJson("pool.json", []), ...postedList]) if (x.lrId) byLr.set(x.lrId, x.id);
   const places = { aliases: {}, locationIds: {}, notFound: [], dayLocations: {}, ...remoteJson("places.json", readJson("places.json", {})) };
   fs.writeFileSync(path.join(ROOT, "places.json"), JSON.stringify(places, null, 2) + "\n"); // findLocationId が読むので最新にしておく
 
@@ -222,7 +226,7 @@ async function main() {
   items.sort((a, b) => t(a) - t(b));
   for (const [i, it] of items.entries()) {
     it.date = jstDate(it.takenAt);
-    it.id = `${it.date || "nodate"}_${it.hash}`;
+    it.id = (it.lrId && byLr.get(it.lrId)) || `${it.date || "nodate"}_${it.hash}`;
     it.event = events.find((e) => e.date === it.date && e.status !== "cancelled") || null;
     it.thumb = `t${String(i + 1).padStart(3, "0")}.jpg`;
     const d = it.takenAt ? new Date(it.takenAt) : null;
@@ -262,6 +266,7 @@ async function main() {
     newFiles.push(`queue/${it.id}.jpg`, `queue/thumbs/${it.id}.jpg`);
     fresh.push({
       id: it.id,
+      lrId: it.lrId || null,
       image: `queue/${it.id}.jpg`,
       thumb: `queue/thumbs/${it.id}.jpg`,
       caption: caption(it, portrait),
