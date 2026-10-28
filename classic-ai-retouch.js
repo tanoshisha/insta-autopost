@@ -11,7 +11,7 @@ sharp.cache(false);
 
 const [mode, dir] = process.argv.slice(2);
 const cfg = JSON.parse(fs.readFileSync(path.join(__dirname, "config.json"), "utf8"));
-const MODEL = cfg.retouchModel || "opus";
+
 const CLAUDE = path.join(process.env.USERPROFILE || "", ".local", "bin", "claude.exe");
 const BATCH = 6; // 1回に見る枚数（1枚ずつじっくり見られるよう少なめ）
 
@@ -80,15 +80,30 @@ ParametricShadows/Darks/Lights/Highlights（トーンカーブ）,
 HueAdjustment{Red,Orange,Yellow,Green,Aqua,Blue,Purple,Magenta}, SaturationAdjustment{同}, LuminanceAdjustment{同},
 SplitToningShadowHue, SplitToningShadowSaturation, SplitToningHighlightHue, SplitToningHighlightSaturation, SplitToningBalance`;
 
-function prompt(files, info) {
-  const lines = files.map((f) => `- ${f}  測定値: ${JSON.stringify(info[f].stats)}${info[f].cur ? `\n  今の設定: ${info[f].cur}` : ""}`).join("\n");
-  if (mode === "plan")
+// ポートレートは専用の基準で、いちばん賢いモデルが担当する
+const PORTRAIT = `【ポートレートの基準】雑誌・広告のポートレートを手がけるトップレタッチャーとして判断する。
+- 肌が最優先: 透明感があり、健康的で、色かぶりのない肌。ホワイトバランスは肌基準で決める（黄・マゼンタ・グリーンかぶりを消す）。
+  HSLのオレンジで肌を整える（色相はわずかに黄寄り、彩度は-5〜-15程度、輝度は+5〜+20程度）。赤みが強ければレッドの彩度を少し下げる。
+- 顔に光が集まって見えること。顔が画面でいちばん明るい（か、それに近い）状態に。ハイライトを下げすぎて顔がくすむのはNG、目元が暗く沈むのもNG。
+- 白い服・空・ボケの光は白飛びさせない（数値も見る）。黒は締めすぎず空気感を残すが、眠くはしない（トーンカーブで中間調のメリハリ）。
+- 背景は主役より目立たせない: 背景の緑や青は彩度/輝度を少し落として上品に（グリーンは少し黄寄り・彩度控えめ）、必要なら周辺を少し落とす。
+- 全体のテクスチャ/明瞭度はプラスにしない（0〜-10）。肌のなめらかさは顔の肌マスク（テクスチャ-20・明瞭度-10）が別で入る。
+- カラーグレーディングはこの写真家の方向性（シャドウ寒色・ハイライト暖色、控えめ）を、肌が自然に見える強さで。
+- 目指す仕上がり: 明るく透明感があり、人物に自然と目がいく、作品として見応えのある1枚。`;
+
+function lines(files, info) {
+  return files.map((f) => `- ${f}  測定値: ${JSON.stringify(info[f].stats)}${info[f].cur ? `\n  今の設定: ${info[f].cur}` : ""}`).join("\n");
+}
+
+// kind: "plan"（全部をまず判定）| "portrait"（ポートレートを専門に決め直す）| "review"（仕上がりチェック）
+function prompt(kind, files, info, portrait) {
+  if (kind === "plan")
     return `${GOAL}
 
 ${STYLE}
 
 カレントフォルダの次の写真を Read ツールで1枚ずつじっくり見てください（まだレタッチ前のRAWの見た目。露光量は撮影時のまま）:
-${lines}
+${lines(files, info)}
 
 各写真について:
 1. portrait（人物が主役なら true。街並みの小さな人影・後ろ姿のスナップは false）
@@ -98,13 +113,29 @@ ${KEYS}
 
 出力は次のJSONだけ（説明やコードブロック不要）:
 {"photos":[{"file":"123.jpg","portrait":false,"note":"何をどう狙ったか一言","settings":{"Exposure2012":0.6,"Contrast2012":20}}]}`;
+  if (kind === "portrait")
+    return `${GOAL}
+
+${PORTRAIT}
+
+${STYLE}
+
+カレントフォルダの次のポートレートを Read ツールで1枚ずつ、プロの目でじっくり見てください（レタッチ前のRAWの見た目。露光量は撮影時のまま）:
+${lines(files, info)}
+
+それぞれに最高の現像設定を決めてください（Exposure2012 は「最終的な露光量」）。
+
+${KEYS}
+
+出力は次のJSONだけ（説明やコードブロック不要）:
+{"photos":[{"file":"123.jpg","portrait":true,"note":"肌・光・背景をどう仕上げたか一言","settings":{"Exposure2012":0.7}}]}`;
   return `${GOAL}
-
+${portrait ? "\n" + PORTRAIT + "\n" : ""}
 カレントフォルダの次の写真は、あなたが前回決めた設定でレタッチした結果です。Read ツールで1枚ずつ厳しくチェックしてください:
-${lines}
+${lines(files, info)}
 
-プロの目で、作品として最高品質になっているか確認し、直すべき所だけ修正値を出してください
-（白飛び・黒つぶれ・眠さ・やりすぎ・色かぶり・肌色・空の色・主題の目立ち方）。問題がなければ settings は空でよい。
+${portrait ? "トップのポートレートレタッチャーの目で、肌の色と質感・顔の明るさ・目元・白飛び・背景の主張・全体の空気感" : "プロの目で、白飛び・黒つぶれ・眠さ・やりすぎ・色かぶり・空の色・主題の目立ち方"}を確認し、
+作品として最高品質にするために直すべき所だけ修正値を出してください。問題がなければ settings は空でよい。
 
 ${KEYS}
 
@@ -112,9 +143,12 @@ ${KEYS}
 {"photos":[{"file":"123.jpg","note":"何を直したか一言","settings":{"Highlights2012":-80}}]}`;
 }
 
-function ask(files, info) {
+const MODEL_PORTRAIT = cfg.retouchModel || "opus";
+const MODEL_SNAP = cfg.retouchModelSnap || "sonnet";
+
+function ask(kind, files, info, model, portrait) {
   return new Promise((resolve, reject) => {
-    const p = spawn(fs.existsSync(CLAUDE) ? CLAUDE : "claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", MODEL], { cwd: dir });
+    const p = spawn(fs.existsSync(CLAUDE) ? CLAUDE : "claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", model], { cwd: dir });
     let out = "";
     let err = "";
     const timer = setTimeout(() => p.kill(), 25 * 60e3);
@@ -131,7 +165,7 @@ function ask(files, info) {
         reject(e);
       }
     });
-    p.stdin.end(prompt(files, info));
+    p.stdin.end(prompt(kind, files, info, portrait));
   });
 }
 
@@ -147,25 +181,50 @@ function clean(settings) {
   return out.join(";");
 }
 
+// 3つずつ同時に
+async function runAll(kind, files, info, model, portrait, size) {
+  const batches = [];
+  for (let i = 0; i < files.length; i += size) batches.push(files.slice(i, i + size));
+  const all = [];
+  for (let i = 0; i < batches.length; i += 3) {
+    const res = await Promise.all(batches.slice(i, i + 3).map((b) => ask(kind, b, info, model, portrait).catch(() => [])));
+    for (const r of res) all.push(...r);
+  }
+  return all;
+}
+
 (async () => {
   const files = fs.readdirSync(dir).filter((f) => /\.jpg$/i.test(f));
   const info = {};
   for (const f of files) {
-    const cur = path.join(dir, f.replace(/\.jpg$/i, ".cur"));
-    info[f] = { stats: await stats(path.join(dir, f)), cur: fs.existsSync(cur) ? fs.readFileSync(cur, "utf8").trim().replace(/\r?\n/g, ", ") : null };
+    const curFile = path.join(dir, f.replace(/\.jpg$/i, ".cur"));
+    const cur = fs.existsSync(curFile) ? fs.readFileSync(curFile, "utf8").trim() : null;
+    info[f] = {
+      stats: await stats(path.join(dir, f)),
+      cur: cur ? cur.split(/\r?\n/).filter((l) => !l.startsWith("Kind=")).join(", ") : null,
+      portrait: cur ? /^Kind=P/m.test(cur) : false,
+    };
   }
-  const batches = [];
-  for (let i = 0; i < files.length; i += BATCH) batches.push(files.slice(i, i + BATCH));
+  const result = new Map(); // file → { portrait, note, settings }
+  if (mode === "plan") {
+    // ① まず全部を見て、ポートレートかどうかとスナップの設定を決める
+    for (const r of await runAll("plan", files, info, MODEL_SNAP, false, BATCH)) result.set(r.file, r);
+    // ② ポートレートは専門の基準で、いちばん賢いモデルが決め直す
+    const ps = files.filter((f) => result.get(f)?.portrait);
+    for (const r of await runAll("portrait", ps, info, MODEL_PORTRAIT, true, 3)) result.set(r.file, { ...r, portrait: true });
+  } else {
+    const ps = files.filter((f) => info[f].portrait);
+    const ss = files.filter((f) => !info[f].portrait);
+    for (const r of await runAll("review", ps, info, MODEL_PORTRAIT, true, 3)) result.set(r.file, { ...r, portrait: true });
+    for (const r of await runAll("review", ss, info, MODEL_SNAP, false, BATCH)) result.set(r.file, r);
+  }
   const rows = [];
   const notes = [];
-  for (let i = 0; i < batches.length; i += 3) {
-    const res = await Promise.all(batches.slice(i, i + 3).map((b) => ask(b, info)));
-    for (const list of res)
-      for (const r of list) {
-        const id = String(r.file).replace(/\.jpg$/i, "");
-        rows.push(`${id}\t${r.portrait ? "P" : "S"}\t${clean(r.settings)}`);
-        notes.push(`${mode} ${id} ${r.portrait ? "[P]" : ""} ${r.note || ""} | ${clean(r.settings)}`);
-      }
+  for (const [file, r] of result) {
+    const id = String(file).replace(/\.jpg$/i, "");
+    const p = r.portrait || info[file]?.portrait;
+    rows.push(`${id}\t${p ? "P" : "S"}\t${clean(r.settings)}`);
+    notes.push(`${mode} ${id} ${p ? "[P]" : ""} ${r.note || ""} | ${clean(r.settings)}`);
   }
   fs.writeFileSync(path.join(dir, "result.tsv"), rows.join("\n") + "\n");
   fs.appendFileSync(path.join(dir, "..", "retouch.log"), `${new Date().toISOString()} ${mode} ${files.length}枚\n${notes.join("\n")}\n`);

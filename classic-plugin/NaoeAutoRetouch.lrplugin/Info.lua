@@ -7,6 +7,8 @@ return {
   LrPluginName = "NAOE 自動レタッチ",
   LrInitPlugin = "Init.lua",
   LrLibraryMenuItems = {
+    { title = "自動レタッチのオン／オフ", file = "ToggleAuto.lua" },
+    { title = "取り込んだRAWを今すぐAIレタッチ", file = "RunImported.lua" },
     { title = "インスタ投稿を自動レタッチ", file = "RunRetouch.lua" },
     { title = "選択した写真をAIレタッチ（やり直し）", file = "RetouchSelected.lua" },
     { title = "処理済みの写真を移動して軽くする", file = "MoveProcessed.lua" },

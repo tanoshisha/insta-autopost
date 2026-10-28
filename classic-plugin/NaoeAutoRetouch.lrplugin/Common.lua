@@ -85,9 +85,22 @@ local function clearDir(dir)
   for f in LrFileUtils.files(dir) do LrFileUtils.delete(f) end
 end
 
--- 今の現像設定で書き出す（長辺1200px）。ファイル名＝写真のID
-local function render(photos, dir, withCur)
-  clearDir(dir)
+-- 今の設定をAI用に書き出す .cur（Kind=P/S と主な値）
+local function writeCur(dir, photo, kind)
+  local s = photo:getDevelopSettings()
+  local f = io.open(LrPathUtils.child(dir, tostring(photo.localIdentifier) .. ".cur"), "w")
+  if not f then return end
+  f:write("Kind=", kind or "S", "\n")
+  for _, k in ipairs(CUR_KEYS) do
+    if s[k] ~= nil then f:write(k, "=", tostring(s[k]), "\n") end
+  end
+  f:close()
+end
+
+-- 今の現像設定で書き出す（長辺1200px）。ファイル名＝写真のID。kinds があれば .cur も書く
+local function render(photos, dir, kinds, keep)
+  if not keep then clearDir(dir) end
+  if #photos == 0 then return end
   local session = LrExportSession({
     photosToExport = photos,
     exportSettings = {
@@ -115,20 +128,41 @@ local function render(photos, dir, withCur)
     if ok then
       local id = tostring(r.photo.localIdentifier)
       LrFileUtils.move(pathOrMsg, LrPathUtils.child(dir, id .. ".jpg"))
-      if withCur then
-        local s = r.photo:getDevelopSettings()
-        local f = io.open(LrPathUtils.child(dir, id .. ".cur"), "w")
-        if f then
-          for _, k in ipairs(CUR_KEYS) do
-            if s[k] ~= nil then f:write(k, "=", tostring(s[k]), "\n") end
-          end
-          f:close()
-        end
-      end
+      if kinds then writeCur(dir, r.photo, kinds[id]) end
     else
       log("書き出し失敗: " .. tostring(pathOrMsg))
     end
   end
+end
+
+-- プレビューから取る（AIマスク入りの写真は書き出すと「AIの更新」の確認が出て止まるので、こちらを使う）
+local function renderPreview(photos, dir, kinds, keep)
+  if not keep then clearDir(dir) end
+  if #photos == 0 then return end
+  local latest, holders, got = {}, {}, 0
+  for _, p in ipairs(photos) do
+    local id = tostring(p.localIdentifier)
+    holders[#holders + 1] = p:requestJpegThumbnail(1600, 1600, function(jpeg)
+      if jpeg and #jpeg > 2000 then
+        if not latest[id] then got = got + 1 end
+        latest[id] = jpeg
+      end
+    end)
+  end
+  for _ = 1, 120 do
+    if got >= #photos then break end
+    LrTasks.sleep(0.5)
+  end
+  LrTasks.sleep(6) -- 新しい設定で作り直されたプレビューが届くのを待つ
+  for _, p in ipairs(photos) do
+    local id = tostring(p.localIdentifier)
+    if latest[id] then
+      local f = io.open(LrPathUtils.child(dir, id .. ".jpg"), "wb")
+      if f then f:write(latest[id]) f:close() end
+      if kinds then writeCur(dir, p, kinds[id]) end
+    end
+  end
+  holders = nil
 end
 
 -- AIに判断させる（mode = "plan" | "review"）。戻り値 { [ID] = { portrait=bool, kv={Key=数値} } }
@@ -235,13 +269,13 @@ function M.run(targets, progress)
   -- ① 見て決める
   step("① AIが " .. #targets .. "枚を見てレタッチを決めています…")
   local dir = M.WORK .. "\\in"
-  render(targets, dir, false)
+  render(targets, dir, nil)
   local res, err = askAI("plan", dir)
   if not res then log("⚠ " .. err) return 0, err end
 
   -- ② 当てる
   local pp, ps = findPreset(M.PRESET_PORTRAIT), findPreset(M.PRESET_SNAP)
-  local done, np = {}, 0
+  local done, np, kinds = {}, 0, {}
   catalog:withWriteAccessDo("NAOE AIレタッチ", function()
     for _, p in ipairs(targets) do
       local r = res[tostring(p.localIdentifier)]
@@ -250,6 +284,7 @@ function M.run(targets, progress)
         if preset then p:applyDevelopPreset(preset, _PLUGIN) end
         applyKV(p, r.kv)
         done[#done + 1] = p
+        kinds[tostring(p.localIdentifier)] = r.portrait and "P" or "S"
         if r.portrait then np = np + 1 end
       end
     end
@@ -260,7 +295,13 @@ function M.run(targets, progress)
     if #done == 0 then break end
     step("③ 仕上がりをチェック中（" .. i .. "/" .. M.REVIEWS .. "）…")
     local rdir = M.WORK .. "\\review"
-    render(done, rdir, true)
+    -- スナップは書き出し（正確）、ポートレートは肌のAIマスク入りなのでプレビューから
+    local ps, ss = {}, {}
+    for _, p in ipairs(done) do
+      if kinds[tostring(p.localIdentifier)] == "P" then ps[#ps + 1] = p else ss[#ss + 1] = p end
+    end
+    render(ss, rdir, kinds)
+    renderPreview(ps, rdir, kinds, true)
     local fix = askAI("review", rdir)
     if not fix then break end
     local changed = 0
@@ -281,5 +322,59 @@ function M.run(targets, progress)
   log(msg)
   return #done, msg
 end
+
+-- ---- 取り込んだ写真の自動レタッチ ----
+-- D:/現像中 の日付フォルダ（直近14日）にある、未レタッチのRAWが対象。一度試した写真は auto-tried.txt に記録して繰り返さない
+local TRIED = M.WORK .. "\\auto-tried.txt"
+local function loadTried()
+  local t = {}
+  local f = io.open(TRIED, "r")
+  if f then
+    for line in f:lines() do t[line] = true end
+    f:close()
+  end
+  return t
+end
+local function addTried(photos)
+  local f = io.open(TRIED, "a")
+  if not f then return end
+  for _, p in ipairs(photos) do f:write(tostring(p.localIdentifier), "\n") end
+  f:close()
+end
+
+function M.findImported(limit)
+  local catalog = LrApplication.activeCatalog()
+  local tried = loadTried()
+  local cutoff = os.date("%Y-%m-%d", os.time() - 14 * 86400)
+  local out = {}
+  local function walk(folder)
+    if #out >= limit then return end
+    local name = folder:getName()
+    if name:match("^%d%d%d%d%-%d%d%-%d%d$") then
+      if name >= cutoff and folder:getPath():find("現像中", 1, true) then
+        for _, p in ipairs(folder:getPhotos(false)) do
+          if #out >= limit then return end
+          local id = tostring(p.localIdentifier)
+          if not tried[id] and p:getRawMetadata("fileFormat") == "RAW" and M.isUnedited(p) then out[#out + 1] = p end
+        end
+      end
+      return
+    end
+    for _, c in ipairs(folder:getChildren()) do walk(c) end
+  end
+  for _, f in ipairs(catalog:getFolders()) do walk(f) end
+  return out
+end
+
+-- 1回分（多い時は数回に分けて少しずつ）
+function M.runImported(progress)
+  local targets = M.findImported(30)
+  if #targets == 0 then return 0, "取り込んだ写真で未レタッチのRAWはありません" end
+  addTried(targets) -- 失敗しても同じ写真を何度も試さない
+  return M.run(targets, progress)
+end
+
+M.AUTO_FLAG = M.WORK .. "\\auto.on"
+function M.autoOn() return LrFileUtils.exists(M.AUTO_FLAG) end
 
 return M

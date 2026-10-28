@@ -14,5 +14,6 @@
     "quality": 95
   },
   "aiModel": "sonnet",
-  "retouchModel": "opus"
+  "retouchModel": "opus",
+  "retouchModelSnap": "sonnet"
 }
