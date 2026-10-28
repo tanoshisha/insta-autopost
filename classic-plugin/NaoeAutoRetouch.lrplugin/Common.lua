@@ -1,9 +1,14 @@
--- 共通処理：コレクション探し・未レタッチの判定・AI判定（PCの node + claude）・レタッチの適用
+-- 共通処理：コレクション探し・未レタッチ/ノイズ除去の判定・AIレタッチ（PCの node + claude）
+-- AIレタッチの流れ:
+--   ① 写真をLightroomで書き出す（今の見た目そのまま）→ AIが1枚ずつ見て現像設定を決める（白飛び等は数値でも確認）
+--   ② 当てる（ポートレートは肌のマスク入りのプリセットを土台に）
+--   ③ レタッチ後をもう一度書き出す → AIがプロの目でチェックして仕上げの修正（2回まで）
 local LrApplication = import "LrApplication"
 local LrTasks = import "LrTasks"
 local LrFileUtils = import "LrFileUtils"
 local LrPathUtils = import "LrPathUtils"
 local LrDate = import "LrDate"
+local LrExportSession = import "LrExportSession"
 
 local M = {}
 M.COLLECTION = "インスタ投稿"
@@ -12,21 +17,16 @@ M.WORK = M.ROOT .. "\\.work\\classic"
 M.NODE = "C:\\Program Files\\nodejs\\node.exe"
 M.PRESET_PORTRAIT = "NAOE ポートレート"
 M.PRESET_SNAP = "NAOE スナップ"
+M.REVIEWS = 2 -- 仕上げチェックの回数
 
--- プリセットが見つからない時の予備（make-presets.js の集計結果と同じ値）
-M.STYLE = {
-  portrait = {
-    Contrast2012 = 0, Highlights2012 = -100, Shadows2012 = 25, Whites2012 = 0, Blacks2012 = -20,
-    Texture = 0, Clarity2012 = 0, Dehaze = 0, Vibrance = 0, Saturation = 0,
-    SplitToningShadowHue = 200, SplitToningShadowSaturation = 17,
-    SplitToningHighlightHue = 33, SplitToningHighlightSaturation = 14, SplitToningBalance = 0, ColorGradeBlending = 50,
-  },
-  snap = {
-    Contrast2012 = 20, Highlights2012 = -20, Shadows2012 = 10, Whites2012 = 0, Blacks2012 = -20,
-    Texture = 25, Clarity2012 = 25, Dehaze = 0, Vibrance = 0, Saturation = 0,
-    SplitToningShadowHue = 214, SplitToningShadowSaturation = 23,
-    SplitToningHighlightHue = 23, SplitToningHighlightSaturation = 23, SplitToningBalance = 0, ColorGradeBlending = 50,
-  },
+-- AIに「今の設定」として見せる項目
+local CUR_KEYS = {
+  "Exposure2012", "Contrast2012", "Highlights2012", "Shadows2012", "Whites2012", "Blacks2012",
+  "Texture", "Clarity2012", "Dehaze", "Vibrance", "Saturation", "Temperature", "Tint", "PostCropVignetteAmount",
+  "ParametricShadows", "ParametricDarks", "ParametricLights", "ParametricHighlights",
+  "SaturationAdjustmentOrange", "LuminanceAdjustmentOrange", "SaturationAdjustmentBlue", "LuminanceAdjustmentBlue",
+  "SaturationAdjustmentGreen", "SplitToningShadowHue", "SplitToningShadowSaturation", "SplitToningHighlightHue",
+  "SplitToningHighlightSaturation",
 }
 
 local function log(msg)
@@ -80,93 +80,163 @@ local function findPreset(name)
   end
 end
 
--- 写真の縮小JPEGを書き出す（AIに見せる用）
-local function exportThumbs(photos, dir)
+local function clearDir(dir)
   LrFileUtils.createAllDirectories(dir)
   for f in LrFileUtils.files(dir) do LrFileUtils.delete(f) end
-  local pending = 0
-  local holders = {}
-  for _, p in ipairs(photos) do
-    local id = tostring(p.localIdentifier)
-    local path = LrPathUtils.child(dir, id .. ".jpg")
-    pending = pending + 1
-    local done = false
-    holders[#holders + 1] = p:requestJpegThumbnail(1024, 1024, function(jpeg)
-      if jpeg and #jpeg > 2000 then
-        local f = io.open(path, "wb")
-        if f then f:write(jpeg) f:close() end
-        if not done then done = true pending = pending - 1 end
-      end
-    end)
-  end
-  -- 全部そろうまで最大60秒待つ
-  for _ = 1, 120 do
-    if pending <= 0 then break end
-    LrTasks.sleep(0.5)
-  end
-  holders = nil
 end
 
--- AI判定：classic-classify.js が result.tsv（ID・ポートレート・露光量の補正）を書く
-local function classify(dir)
-  local cmd = '""' .. M.NODE .. '" "' .. M.ROOT .. '\\classic-classify.js" "' .. dir .. '""'
+-- 今の現像設定で書き出す（長辺1200px）。ファイル名＝写真のID
+local function render(photos, dir, withCur)
+  clearDir(dir)
+  local session = LrExportSession({
+    photosToExport = photos,
+    exportSettings = {
+      LR_export_destinationType = "specificFolder",
+      LR_export_destinationPathPrefix = dir,
+      LR_export_useSubfolder = false,
+      LR_format = "JPEG",
+      LR_jpeg_quality = 0.9,
+      LR_export_colorSpace = "sRGB",
+      LR_size_doConstrain = true,
+      LR_size_resizeType = "longEdge",
+      LR_size_maxHeight = 1200,
+      LR_size_maxWidth = 1200,
+      LR_size_units = "pixels",
+      LR_size_resolution = 72,
+      LR_outputSharpeningOn = false,
+      LR_collisionHandling = "overwrite",
+      LR_minimizeEmbeddedMetadata = true,
+      LR_removeLocationMetadata = true,
+      LR_includeVideoFiles = false,
+    },
+  })
+  for _, r in session:renditions() do
+    local ok, pathOrMsg = r:waitForRender()
+    if ok then
+      local id = tostring(r.photo.localIdentifier)
+      LrFileUtils.move(pathOrMsg, LrPathUtils.child(dir, id .. ".jpg"))
+      if withCur then
+        local s = r.photo:getDevelopSettings()
+        local f = io.open(LrPathUtils.child(dir, id .. ".cur"), "w")
+        if f then
+          for _, k in ipairs(CUR_KEYS) do
+            if s[k] ~= nil then f:write(k, "=", tostring(s[k]), "\n") end
+          end
+          f:close()
+        end
+      end
+    else
+      log("書き出し失敗: " .. tostring(pathOrMsg))
+    end
+  end
+end
+
+-- AIに判断させる（mode = "plan" | "review"）。戻り値 { [ID] = { portrait=bool, kv={Key=数値} } }
+local function askAI(mode, dir)
+  local cmd = '""' .. M.NODE .. '" "' .. M.ROOT .. '\\classic-ai-retouch.js" ' .. mode .. ' "' .. dir .. '""'
   local code = LrTasks.execute(cmd)
-  local out = {}
   local f = io.open(dir .. "\\result.tsv", "r")
-  if not f then return nil, "AIの判定結果がありません（終了コード " .. tostring(code) .. "）" end
+  if not f then return nil, "AIの結果がありません（終了コード " .. tostring(code) .. "）。.work\\classic\\retouch.log を確認" end
+  local out = {}
   for line in f:lines() do
-    local id, portrait, ev = line:match("^(%S+)\t(%d)\t([%-%d%.]+)")
-    if id then out[id] = { portrait = portrait == "1", ev = tonumber(ev) or 0 } end
+    local id, kind, rest = line:match("^(%S+)\t([PS])\t?(.*)$")
+    if id then
+      local kv = {}
+      for k, v in (rest or ""):gmatch("([%w]+)=([%-%d%.]+)") do kv[k] = tonumber(v) end
+      out[id] = { portrait = kind == "P", kv = kv }
+    end
   end
   f:close()
   return out
 end
 
--- 本体。quiet=true なら確認ダイアログを出さない（自動実行用）。戻り値: 処理した枚数, メッセージ
-function M.run(quiet)
+-- 設定を当てる（TempDelta/TintDelta は今の色温度/色かぶりからの差）
+local function applyKV(photo, kv)
+  local t = {}
+  local cur = photo:getDevelopSettings()
+  for k, v in pairs(kv) do
+    if k == "TempDelta" then
+      if v ~= 0 then
+        t.WhiteBalance = "Custom"
+        t.Temperature = math.floor((tonumber(cur.Temperature) or 5500) + v + 0.5)
+        t.Tint = t.Tint or tonumber(cur.Tint) or 0
+      end
+    elseif k == "TintDelta" then
+      if v ~= 0 then
+        t.WhiteBalance = "Custom"
+        t.Temperature = t.Temperature or tonumber(cur.Temperature) or 5500
+        t.Tint = math.floor((tonumber(cur.Tint) or 0) + v + 0.5)
+      end
+    else
+      t[k] = v
+    end
+  end
+  if next(t) then photo:applyDevelopSettings(t) end
+end
+
+-- 本体。targets を省くと「インスタ投稿」の未レタッチ写真。progress は LrProgressScope（無くてもよい）
+function M.run(targets, progress)
   local catalog = LrApplication.activeCatalog()
-  local col = M.findCollection(catalog)
-  if not col then return 0, "コレクション「" .. M.COLLECTION .. "」が見つかりません" end
-  local targets = {}
-  for _, p in ipairs(col:getPhotos()) do
-    if M.isUnedited(p) then targets[#targets + 1] = p end
+  if not targets then
+    local col = M.findCollection(catalog)
+    if not col then return 0, "コレクション「" .. M.COLLECTION .. "」が見つかりません" end
+    targets = {}
+    for _, p in ipairs(col:getPhotos()) do
+      if M.isUnedited(p) then targets[#targets + 1] = p end
+    end
   end
-  if #targets == 0 then return 0, "未レタッチの写真はありません" end
-  log("未レタッチ " .. #targets .. "枚")
+  if #targets == 0 then return 0, "レタッチする写真はありません" end
+  log("AIレタッチ開始 " .. #targets .. "枚")
+  local function step(text) if progress then progress:setCaption(text) end end
 
+  -- ① 見て決める
+  step("① AIが " .. #targets .. "枚を見てレタッチを決めています…")
   local dir = M.WORK .. "\\in"
-  exportThumbs(targets, dir)
-  local res, err = classify(dir)
-  if not res then
-    log("⚠ " .. err)
-    return 0, err
-  end
+  render(targets, dir, false)
+  local res, err = askAI("plan", dir)
+  if not res then log("⚠ " .. err) return 0, err end
 
+  -- ② 当てる
   local pp, ps = findPreset(M.PRESET_PORTRAIT), findPreset(M.PRESET_SNAP)
-  local n, np = 0, 0
-  catalog:withWriteAccessDo("NAOE 自動レタッチ", function()
+  local done, np = {}, 0
+  catalog:withWriteAccessDo("NAOE AIレタッチ", function()
     for _, p in ipairs(targets) do
       local r = res[tostring(p.localIdentifier)]
       if r then
-        local base = tonumber(p:getDevelopSettings().Exposure2012) or 0
         local preset = r.portrait and pp or ps
-        if preset then
-          p:applyDevelopPreset(preset, _PLUGIN)
-        else
-          p:applyDevelopSettings(r.portrait and M.STYLE.portrait or M.STYLE.snap)
-        end
-        -- 露光量は写真ごとにAIの見立てで（今の明るさからの補正）
-        local ev = math.max(-1.5, math.min(2.5, base + r.ev))
-        p:applyDevelopSettings({ Exposure2012 = math.floor(ev * 100 + 0.5) / 100 })
-        n = n + 1
+        if preset then p:applyDevelopPreset(preset, _PLUGIN) end
+        applyKV(p, r.kv)
+        done[#done + 1] = p
         if r.portrait then np = np + 1 end
       end
     end
-  end, { timeout = 120 })
-  local msg = n .. "枚をレタッチしました（ポートレート " .. np .. "枚 / スナップ " .. (n - np) .. "枚）"
-  if not pp or not ps then msg = msg .. "\n※プリセットが見つからなかったため、肌のマスクなしの設定で当てました" end
+  end, { timeout = 300 })
+
+  -- ③ 仕上げチェック
+  for i = 1, M.REVIEWS do
+    if #done == 0 then break end
+    step("③ 仕上がりをチェック中（" .. i .. "/" .. M.REVIEWS .. "）…")
+    local rdir = M.WORK .. "\\review"
+    render(done, rdir, true)
+    local fix = askAI("review", rdir)
+    if not fix then break end
+    local changed = 0
+    catalog:withWriteAccessDo("NAOE AIレタッチ（仕上げ）", function()
+      for _, p in ipairs(done) do
+        local r = fix[tostring(p.localIdentifier)]
+        if r and next(r.kv) then
+          applyKV(p, r.kv)
+          changed = changed + 1
+        end
+      end
+    end, { timeout = 300 })
+    log("仕上げ " .. i .. "回目: " .. changed .. "枚を修正")
+    if changed == 0 then break end
+  end
+
+  local msg = #done .. "枚をAIレタッチしました（ポートレート " .. np .. "枚 / スナップ " .. (#done - np) .. "枚）"
   log(msg)
-  return n, msg
+  return #done, msg
 end
 
 return M

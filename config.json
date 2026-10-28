@@ -13,5 +13,6 @@
     "width": 1440,
     "quality": 95
   },
-  "aiModel": "sonnet"
+  "aiModel": "sonnet",
+  "retouchModel": "opus"
 }

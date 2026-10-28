@@ -9,7 +9,7 @@ LrTasks.startAsyncTask(function()
   while true do
     -- 自動実行は .work\classic\auto.on があるときだけ（最初は手動で確かめてから有効にする）
     local ok, n = true, 0
-    if LrFileUtils.exists(Common.WORK .. "\\auto.on") then ok, n = LrTasks.pcall(Common.run, true) end
+    if LrFileUtils.exists(Common.WORK .. "\\auto.on") then ok, n = LrTasks.pcall(Common.run, nil, nil) end
     if not ok then
       fails = fails + 1
       Common.log("自動実行エラー: " .. tostring(n))
