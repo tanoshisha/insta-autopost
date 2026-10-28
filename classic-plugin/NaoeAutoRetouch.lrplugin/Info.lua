@@ -8,6 +8,7 @@ return {
   LrInitPlugin = "Init.lua",
   LrLibraryMenuItems = {
     { title = "インスタ投稿を自動レタッチ", file = "RunRetouch.lua" },
+    { title = "インスタ投稿でノイズ除去がまだの写真を選択", file = "SelectDenoise.lua" },
     { title = "選択中の写真の現像設定を書き出す（調査用）", file = "DumpSettings.lua" },
   },
   LrExportMenuItems = {

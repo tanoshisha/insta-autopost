@@ -61,6 +61,17 @@ function M.isUnedited(photo)
     and zero(s.Contrast2012) and zero(s.Texture) and zero(s.Clarity2012)
 end
 
+-- AIノイズ除去がまだか（RAWだけ。ノイズ除去は FilterList に Name=Enhance として入る）
+function M.needsDenoise(photo)
+  if photo:getRawMetadata("isVirtualCopy") then return false end
+  if photo:getRawMetadata("fileFormat") ~= "RAW" then return false end
+  local fl = photo:getDevelopSettings().FilterList
+  for _, f in pairs((fl and fl.Filters) or {}) do
+    if type(f) == "table" and f.Name == "Enhance" then return false end
+  end
+  return true
+end
+
 local function findPreset(name)
   for _, folder in ipairs(LrApplication.developPresetFolders()) do
     for _, p in ipairs(folder:getDevelopPresets()) do
