@@ -181,21 +181,32 @@ M.DONE_COLLECTION = "インスタ投稿（処理済み）"
 function M.moveProcessed()
   local f = io.open(M.ROOT .. "\\classic-processed.tsv", "r")
   if not f then return 0 end
-  local keys = {}
+  -- 照合は「ファイル名の頭（拡張子や -強化-NR などを除く）＋撮影日」。日付が取れない写真はファイル名の頭だけ
+  local function base(name) return (tostring(name):match("^([^%.%-_ ]+)") or tostring(name)):upper() end
+  local keys, names = {}, {}
   for line in f:lines() do
     local name, date = line:match("^([^\t]+)\t(%S+)")
-    if name then keys[name .. "|" .. date] = true end
+    if name then
+      keys[base(name) .. "|" .. date:sub(1, 10)] = true
+      names[base(name)] = (names[base(name)] or 0) + 1
+    end
   end
   f:close()
   local catalog = LrApplication.activeCatalog()
   local col = M.findCollection(catalog)
   if not col then return 0 end
-  local list = {}
+  local list, miss = {}, {}
   for _, p in ipairs(col:getPhotos()) do
-    local t = p:getRawMetadata("dateTimeOriginal")
-    local key = tostring(p:getFormattedMetadata("fileName")) .. "|" .. (t and LrDate.timeToUserFormat(t, "%Y-%m-%dT%H:%M") or "")
-    if keys[key] then list[#list + 1] = p end
+    local b = base(p:getFormattedMetadata("fileName"))
+    local t = p:getRawMetadata("dateTimeOriginal") or p:getRawMetadata("captureTime") or p:getRawMetadata("dateTime")
+    local hit = t and keys[b .. "|" .. LrDate.timeToUserFormat(t, "%Y-%m-%d")] or (not t and names[b] == 1)
+    if hit then
+      list[#list + 1] = p
+    elseif #miss < 8 then
+      miss[#miss + 1] = tostring(p:getFormattedMetadata("fileName")) .. "@" .. (t and LrDate.timeToUserFormat(t, "%Y-%m-%dT%H:%M:%S") or "日時なし")
+    end
   end
+  if #miss > 0 then log("処理済みと照合できなかった写真（一部）: " .. table.concat(miss, ", ")) end
   if #list == 0 then return 0 end
   catalog:withWriteAccessDo("処理済みを移動", function()
     local dest = catalog:createCollection(M.DONE_COLLECTION, nil, true)
