@@ -199,7 +199,27 @@ async function refreshInsights() {
     type: m.media_type,
     head: (m.caption || "").split("\n")[0].slice(0, 40),
   }));
-  syncCommit("insights", [], () => ({ "insights.json": { updatedAt: new Date().toISOString(), media } }));
+  // 直近25件はリーチ・保存・シェアも
+  for (const m of media.slice(0, 25)) {
+    try {
+      const r = await graph("GET", `/${m.id}/insights`, { metric: "reach,saved,shares,views" });
+      for (const x of r.data || []) m[x.name] = x.values?.[0]?.value ?? null;
+    } catch {}
+  }
+  const account = {};
+  try {
+    const on = await graph("GET", `/${process.env.IG_USER_ID}/insights`, { metric: "online_followers", period: "lifetime" });
+    const v = (on.data?.[0]?.values || []).map((x) => x.value).filter((x) => x && Object.keys(x).length).pop();
+    if (v) account.online = v; // 時（UTC）ごとのオンラインのフォロワー数
+  } catch {}
+  try {
+    const fc = await graph("GET", `/${process.env.IG_USER_ID}/insights`, { metric: "follower_count", period: "day" });
+    account.followerDaily = (fc.data?.[0]?.values || []).map((x) => ({ day: x.end_time.slice(0, 10), n: x.value }));
+    const me = await graph("GET", `/${process.env.IG_USER_ID}`, { fields: "followers_count,media_count" });
+    account.followers = me.followers_count;
+  } catch {}
+  const hist = [...(cur?.followerHist || []).filter((x) => x.day !== nowJst().day), ...(account.followers ? [{ day: nowJst().day, n: account.followers }] : [])].slice(-120);
+  syncCommit("insights", [], () => ({ "insights.json": { updatedAt: new Date().toISOString(), media, account, followerHist: hist } }));
   console.log(`反応を更新しました（${media.length}件）`);
 }
 
@@ -231,6 +251,77 @@ async function refreshExplore() {
   if (!out.length) return;
   syncCommit("explore", [], () => ({ "explore.json": { updatedAt: new Date().toISOString(), ids, media: out.slice(0, 200) } }));
   console.log(`交流リストを更新しました（${out.length}件）`);
+}
+
+// ---- コメント（30分ごと）：スパムっぽいものは自動で非表示。アプリで書いた返信（actions.json）を送る ----
+const SPAM = /(https?:\/\/|www\.|\.com\b|\bdm\b|promo|promot|collab|ambassador|send (a )?pic|check (my|out)|crypto|bitcoin|forex|invest|giveaway|followers?\s*(free|cheap)|稼げ|副業|在宅|LINE(追加|登録)|プロフ(を)?見て|💰|📈)/i;
+async function refreshComments() {
+  const cur = read("comments.json", null);
+  const acts = read("actions.json", []);
+  const due = !cur || Date.now() - Date.parse(cur.updatedAt) > 30 * 60e3;
+  if (!due && !acts.length) return;
+  const me = cfg.username || "hayato_naoe";
+  const done = [];
+  // アプリからの依頼（返信・非表示を戻す）
+  for (const a of acts) {
+    try {
+      if (a.type === "reply") await graph("POST", `/${a.commentId}/replies`, { message: a.text });
+      else if (a.type === "unhide") await graph("POST", `/${a.commentId}`, { hide: "false" });
+      else if (a.type === "hide") await graph("POST", `/${a.commentId}`, { hide: "true" });
+      done.push({ ...a, ok: true });
+    } catch (e) {
+      done.push({ ...a, ok: false, error: e.message.slice(0, 120) });
+    }
+  }
+  let items = cur?.items || [];
+  if (due) {
+    const list = await graph("GET", `/${process.env.IG_USER_ID}/media`, { fields: "id,permalink,media_url,thumbnail_url,comments_count,timestamp", limit: "20" });
+    const fresh = [];
+    for (const m of (list.data || []).filter((x) => x.comments_count > 0)) {
+      const c = await graph("GET", `/${m.id}/comments`, { fields: "id,username,text,timestamp,hidden,replies{username}", limit: "50" }).catch(() => ({ data: [] }));
+      for (const x of c.data || []) {
+        if (x.username === me) continue;
+        const old = items.find((y) => y.id === x.id) || {};
+        const replied = (x.replies?.data || []).some((r) => r.username === me) || !!old.replied;
+        let hidden = !!x.hidden;
+        let spam = old.spam || false;
+        if (!hidden && !old.checked && SPAM.test(x.text || "")) {
+          try {
+            await graph("POST", `/${x.id}`, { hide: "true" });
+            hidden = spam = true;
+            console.log(`スパムっぽいコメントを非表示: @${x.username}`);
+          } catch {}
+        }
+        fresh.push({ id: x.id, mediaId: m.id, url: m.permalink, img: m.media_url || m.thumbnail_url, username: x.username, text: x.text, at: x.timestamp, hidden, spam, replied, checked: true });
+      }
+    }
+    items = fresh.sort((a, b) => b.at.localeCompare(a.at)).slice(0, 300);
+  }
+  for (const d of done) {
+    const it = items.find((x) => x.id === d.commentId);
+    if (it && d.ok) {
+      if (d.type === "reply") it.replied = true;
+      if (d.type === "unhide") (it.hidden = false), (it.spam = false);
+      if (d.type === "hide") it.hidden = true;
+    }
+  }
+  const changed = JSON.stringify(items) !== JSON.stringify(cur?.items || []) || done.length;
+  if (!changed && cur) return;
+  syncCommit("comments", [], (remote) => {
+    const left = remote("actions.json", []).filter((a) => !done.some((d) => d.at === a.at && d.commentId === a.commentId));
+    const out = { "comments.json": { updatedAt: new Date().toISOString(), items, log: [...done, ...(cur?.log || [])].slice(0, 50) } };
+    out["actions.json"] = left.length ? left : null;
+    return out;
+  });
+}
+
+// ---- タグ付け（6時間ごと）：自分がタグ付けされた投稿の一覧 → tagged.json ----
+async function refreshTagged() {
+  const cur = read("tagged.json", null);
+  if (cur && Date.now() - Date.parse(cur.updatedAt) < 6 * 3600e3) return;
+  const j = await graph("GET", `/${process.env.IG_USER_ID}/tags`, { fields: "id,username,permalink,media_type,media_url,thumbnail_url,timestamp,caption", limit: "50" });
+  const items = (j.data || []).map((m) => ({ id: m.id, username: m.username, url: m.permalink, img: m.media_url || m.thumbnail_url, at: m.timestamp, head: (m.caption || "").split("\n")[0].slice(0, 50) }));
+  syncCommit("tagged", [], () => ({ "tagged.json": { updatedAt: new Date().toISOString(), items } }));
 }
 
 // ---- うまくいかなかった時はアプリに出す（status.json）。うまくいったら消す ----
@@ -350,6 +441,16 @@ main()
       await refreshExplore();
     } catch (e) {
       console.log("交流リストの取得に失敗: " + e.message);
+    }
+    try {
+      await refreshComments();
+    } catch (e) {
+      console.log("コメントの取得に失敗: " + e.message);
+    }
+    try {
+      await refreshTagged();
+    } catch (e) {
+      console.log("タグ付けの取得に失敗: " + e.message);
     }
     if (!process.exitCode) setStatus(null);
   })
