@@ -37,14 +37,14 @@ const LOCK = path.join(ROOT, ".work", "reel-pc.lock");
       const n = (x.rev || 0) + 1;
       const video = `specials/${x.id}/reel-${n}.mp4`;
       fs.mkdirSync(path.join(ROOT, path.dirname(video)), { recursive: true });
-      const r = await makeReelAE(items, path.join(ROOT, video), ROOT, { style: x.style || "oto", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats });
+      const r = await makeReelAE(items, path.join(ROOT, video), ROOT, { durations: x.durations || null, style: x.style || "oto", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats });
       const cover = video.replace(/\.mp4$/, "-cover.jpg");
       const old = [x.video, x.cover].filter(Boolean);
       makeSync(ROOT)(`reel video ${x.id} (${r.engine || "ffmpeg"} ${r.bpm}bpm)`, [video, cover], (rm) => {
         const sp = rm("specials.json", []);
         const k = sp.findIndex((y) => y.id === x.id);
         if (k === -1) return {};
-        const again = ["bpm", "beats", "hook", "reelTitle", "reelSub", "answer", "format", "style"].some((f) => sp[k][f] !== x[f]);
+        const again = ["bpm", "beats", "hook", "reelTitle", "reelSub", "answer", "format", "style", "durations", "images"].some((f) => JSON.stringify(sp[k][f]) !== JSON.stringify(x[f]));
         sp[k] = { ...sp[k], video, cover, rev: n, seconds: r.seconds, beatsUsed: r.beats, engine: r.engine || "ffmpeg", rebuild: again, builtAt: new Date().toISOString() };
         const out = { "specials.json": sp };
         for (const f of old) out[f] = null;

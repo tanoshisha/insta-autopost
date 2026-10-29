@@ -148,7 +148,7 @@ async function postSpecial(today, posted) {
 
 // リールの写真と設定（形式・つかみの一言・撮影データ・クイズの答え）
 const reelItems = (x) => x.images.map((p, i) => ({ src: path.join(ROOT, p), shot: x.shots?.[i] || null, place: x.places?.[i] || null }));
-const reelOpts = (x) => ({ style: x.style || "oto", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats });
+const reelOpts = (x) => ({ durations: x.durations || null, style: x.style || "oto", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats });
 
 // ---- リールの動画を前もって作っておく（アプリで再生・保存して、インスタで曲を付けて投稿する） ----
 //   予約されたリール・アプリでテンポやタイトルを変えたリール（rebuild）を作り直す。ファイル名を毎回変えて、古い動画が見えないように
@@ -174,7 +174,7 @@ async function buildReels() {
       const k = sp.findIndex((y) => y.id === x.id);
       if (k === -1) return {};
       // 作っている間にアプリでまた変えられていたら、もう一度作る
-      const again = ["bpm", "beats", "hook", "reelTitle", "reelSub", "answer", "format"].some((f) => sp[k][f] !== x[f]);
+      const again = ["bpm", "beats", "hook", "reelTitle", "reelSub", "answer", "format", "style", "durations", "images"].some((f) => JSON.stringify(sp[k][f]) !== JSON.stringify(x[f]));
       sp[k] = { ...sp[k], video, cover, rev: n, seconds: r.seconds, beatsUsed: r.beats, rebuild: again, builtAt: new Date().toISOString() };
       const out = { "specials.json": sp };
       for (const f of old) out[f] = null;

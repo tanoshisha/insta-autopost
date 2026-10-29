@@ -126,7 +126,7 @@ const THEME = {
         continue;
       }
       for (const x of items) usedIds.add(x.id);
-      plans.push({ format: "dump", theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
+      plans.push({ format: "dump", theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, pool: cands, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
       console.log(`  AI：${d} → ${items.length}枚（${r.theme}）`);
     } catch (e) {
       console.log("  ⚠ " + e.message);
@@ -142,7 +142,7 @@ const THEME = {
         console.log(`  （${t}：条件に合う写真が${items.length}枚だけなので見送り）`);
         continue;
       }
-      plans.push({ format: "dump", theme: t, items, hook: r.hook, tag: r.tag, label: r.theme });
+      plans.push({ format: "dump", theme: t, items, pool: g, hook: r.hook, tag: r.tag, label: r.theme });
       console.log(`  AI：${t} → ${items.length}枚「${r.hook}」`);
     } catch (e) {
       console.log("  ⚠ " + e.message);
@@ -172,6 +172,14 @@ const THEME = {
       await sharp(path.join(DIR, `${x.id}.jpg`)).rotate().resize({ width: 2560, height: 2560, fit: "inside" }).jpeg({ quality: 90 }).toFile(path.join(ROOT, rel));
       images.push(rel);
     }
+    // 差し替え候補（同じ束で選ばれなかった写真）も置いておく（iPhoneの音ハメ画面で入れ替えられるように）
+    const cands = [];
+    for (const [j, x] of (plan.pool || []).filter((y) => !items.includes(y)).slice(0, 12).entries()) {
+      const rel = `${dir}/c${j + 1}.jpg`;
+      await sharp(path.join(DIR, `${x.id}.jpg`)).rotate().resize({ width: 2560, height: 2560, fit: "inside" }).jpeg({ quality: 88 }).toFile(path.join(ROOT, rel));
+      cands.push(rel);
+    }
+    files.push(...cands);
     fs.copyFileSync(path.join(ROOT, images[0]), path.join(ROOT, dir, "thumb.jpg"));
     files.push(...images, `${dir}/thumb.jpg`);
     const th = THEME[plan.theme];
@@ -186,6 +194,7 @@ const THEME = {
       postAt: `${day}T19:00:00+09:00`,
       images,
       thumb: `${dir}/thumb.jpg`,
+      cands,
       shots: items.map((x) => x.shot || null),
       places: items.map((x) => x.place || null),
       sources: items.map((x) => `lr:${x.id}`),
