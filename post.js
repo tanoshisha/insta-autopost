@@ -203,6 +203,36 @@ async function refreshInsights() {
   console.log(`反応を更新しました（${media.length}件）`);
 }
 
+// ---- 交流リスト：よく使うハッシュタグの人気・新着投稿を12時間に1回集める → explore.json（いいねは自分で押す） ----
+//   インスタの決まりで、調べられるハッシュタグは7日間で30種類まで（ここでは決まった数個だけ使う）
+async function refreshExplore() {
+  const cur = read("explore.json", null);
+  if (cur && Date.now() - Date.parse(cur.updatedAt) < 12 * 3600e3) return;
+  const tags = cfg.explore || ["東京カメラ部", "ファインダー越しの私の世界", "写真好きな人と繋がりたい", "ポートレート", "ストリートスナップ"];
+  const ids = { ...(cur?.ids || {}) };
+  const out = [];
+  const seen = new Set();
+  for (const t of tags) {
+    try {
+      if (!ids[t]) ids[t] = (await graph("GET", "/ig_hashtag_search", { user_id: process.env.IG_USER_ID, q: t })).data?.[0]?.id;
+      if (!ids[t]) continue;
+      for (const kind of ["top_media", "recent_media"]) {
+        const j = await graph("GET", `/${ids[t]}/${kind}`, { user_id: process.env.IG_USER_ID, fields: "id,permalink,media_type,like_count,comments_count,media_url,timestamp", limit: "25" });
+        for (const m of j.data || []) {
+          if (seen.has(m.id) || m.media_type === "VIDEO" || !m.media_url) continue;
+          seen.add(m.id);
+          out.push({ id: m.id, tag: t, kind: kind === "top_media" ? "top" : "new", url: m.permalink, img: m.media_url, likes: m.like_count ?? null, at: m.timestamp });
+        }
+      }
+    } catch (e) {
+      console.log(`交流リスト #${t}: ${e.message}`);
+    }
+  }
+  if (!out.length) return;
+  syncCommit("explore", [], () => ({ "explore.json": { updatedAt: new Date().toISOString(), ids, media: out.slice(0, 200) } }));
+  console.log(`交流リストを更新しました（${out.length}件）`);
+}
+
 // ---- うまくいかなかった時はアプリに出す（status.json）。うまくいったら消す ----
 function setStatus(error) {
   const cur = read("status.json", null);
@@ -315,6 +345,11 @@ main()
       await refreshInsights();
     } catch (e) {
       console.log("反応の取得に失敗: " + e.message);
+    }
+    try {
+      await refreshExplore();
+    } catch (e) {
+      console.log("交流リストの取得に失敗: " + e.message);
     }
     if (!process.exitCode) setStatus(null);
   })
