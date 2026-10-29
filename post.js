@@ -571,9 +571,9 @@ async function main() {
       setStatus("スレッズ: " + e.message.slice(0, 250));
     } catch {}
   }
-  // 「新しい投稿」のストーリー用の画像を、元の画像が消える前に作っておく（1日1回まで）
+  // 「新しい投稿」のストーリー用の画像を、元の画像が消える前に作っておく（投稿のたびに）
   let storyRel = null;
-  if (storyCfg().newPost && !posted.some((p) => p.day === today && p.slot === "newpost-story")) {
+  if (storyCfg().newPost) { // 投稿のたびに毎回
     try {
       storyRel = `specials/auto/newpost-${item.id}.jpg`;
       await composeStory(fs.readFileSync(path.join(ROOT, item.image || item.images[0])), "newpost", storyRel);
