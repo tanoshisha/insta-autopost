@@ -379,13 +379,43 @@ async function memoryStory(today, now, posted) {
   console.log("あの日の一枚をストーリーに投稿しました");
 }
 
-// ---- スレッズにも（スレッズ用に書き直して）。THREADS_TOKEN が無い時は何もしない ----
+// ---- スレッズのトークン：自分だけの「秘密のGist」に置いて、1週間ごとに自動で更新（60日の期限を気にしなくていい） ----
+//   GIST_TOKEN（gist だけ触れる鍵）が無い時は、Secrets の THREADS_TOKEN をそのまま使う
+const GIST_DESC = "insta-autopost: threads token (自動更新)";
+let thToken = null;
+async function threadsToken() {
+  if (thToken) return thToken;
+  const gt = process.env.GIST_TOKEN;
+  if (!gt) return (thToken = process.env.THREADS_TOKEN || null);
+  const H = { Authorization: `Bearer ${gt}`, Accept: "application/vnd.github+json", "User-Agent": "insta-autopost", "Content-Type": "application/json" };
+  const list = await (await fetch("https://api.github.com/gists?per_page=100", { headers: H })).json();
+  const g = Array.isArray(list) ? list.find((x) => x.description === GIST_DESC) : null;
+  const put = (url, method, token) =>
+    fetch(url, { method, headers: H, body: JSON.stringify({ description: GIST_DESC, public: false, files: { "threads.json": { content: JSON.stringify({ token, refreshedAt: new Date().toISOString() }) } } }) });
+  if (!g) {
+    if (!process.env.THREADS_TOKEN) return null;
+    await put("https://api.github.com/gists", "POST", process.env.THREADS_TOKEN); // 初回：Secrets のトークンで作る
+    return (thToken = process.env.THREADS_TOKEN);
+  }
+  const d = JSON.parse((await (await fetch(g.url, { headers: H })).json()).files["threads.json"].content);
+  thToken = d.token;
+  if (Date.now() - Date.parse(d.refreshedAt) > 7 * 864e5) {
+    thToken = await require("./lib/threads").refreshToken(d.token);
+    await put(g.url, "PATCH", thToken);
+    console.log("スレッズのトークンを更新しました");
+  }
+  return thToken;
+}
+
+// ---- スレッズにも（スレッズ用に書き直して）。トークンが無い時は何もしない ----
 async function toThreads(item, text) {
-  if (!process.env.THREADS_TOKEN || !cfg.threadsUserId || cfg.threads === false) return;
+  if (!cfg.threadsUserId || cfg.threads === false) return;
+  const token = await threadsToken();
+  if (!token) return;
   const th = require("./lib/threads");
   const imgs = (item.images?.length ? item.images : [item.image]).filter(Boolean);
   const id = await th.postToThreads({
-    token: process.env.THREADS_TOKEN,
+    token,
     userId: cfg.threadsUserId,
     imageUrls: imgs.map((p) => `https://raw.githubusercontent.com/${process.env.GITHUB_REPOSITORY}/main/${p}`),
     text: text || th.threadsText(item, `${cfg.hashtags.default} ${cfg.hashtags.portrait}`),
@@ -477,6 +507,11 @@ main()
       await refreshTagged();
     } catch (e) {
       console.log("タグ付けの取得に失敗: " + e.message);
+    }
+    try {
+      if (process.env.GIST_TOKEN && nowJst().min < 10) await threadsToken(); // 投稿がない日も、毎日0時台に1回確かめて更新
+    } catch (e) {
+      console.log("スレッズのトークンの確認に失敗: " + e.message);
     }
     if (!process.exitCode) setStatus(null);
   })

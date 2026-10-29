@@ -45,6 +45,7 @@ jobs:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
           FORCE: ${{ inputs.force && '1' || '' }}
         run: |
           # 「今すぐ1枚」で起動した時は、まず1枚投稿してから見張りを続ける
