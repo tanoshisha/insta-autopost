@@ -34,7 +34,7 @@ function biggestJpeg(buf) {
   const db = new DatabaseSync(CAT, { readOnly: true });
   const rows = db
     .prepare(
-      `select i.id_local id, i.captureTime t, i.rating r, f.baseName name, fo.pathFromRoot dir
+      `select i.id_local id, i.captureTime t, i.rating r, i.orientation o, f.baseName name, fo.pathFromRoot dir
        from Adobe_images i join Adobe_imageDevelopSettings d on d.image = i.id_local
        join AgLibraryFile f on f.id_local = i.rootFile join AgLibraryFolder fo on fo.id_local = f.folder
        where (i.rating = 5 or d.text like '%Highlights2012 = -%') and fo.pathFromRoot not like '%スクールフォト%'
@@ -66,9 +66,12 @@ function biggestJpeg(buf) {
     try {
       const m = await sharp(jpg).metadata();
       if (Math.max(m.width, m.height) < 1400) continue; // 小さすぎるプレビューは使わない
-      fs.writeFileSync(path.join(OUT, `${r.id}.jpg`), jpg);
-      await sharp(jpg).resize(512, 512, { fit: "inside" }).jpeg({ quality: 70 }).toFile(path.join(OUT, "thumbs", `${r.id}.jpg`));
-      list.push({ id: r.id, t: r.t, name: r.name, dir: r.dir, w: m.width, h: m.height, star: r.r === 5 });
+      // プレビューは回転前のまま入っているので、カタログの向きで回す（AB=そのまま／BC=右90°／CD=180°／DA=左90°）
+      const ang = { AB: 0, BC: 90, CD: 180, DA: 270 }[r.o] || 0;
+      const fixed = ang ? await sharp(jpg).rotate(ang).jpeg({ quality: 95 }).toBuffer() : jpg;
+      fs.writeFileSync(path.join(OUT, `${r.id}.jpg`), fixed);
+      await sharp(fixed).resize(512, 512, { fit: "inside" }).jpeg({ quality: 70 }).toFile(path.join(OUT, "thumbs", `${r.id}.jpg`));
+      list.push({ id: r.id, t: r.t, name: r.name, dir: r.dir, w: ang % 180 ? m.height : m.width, h: ang % 180 ? m.width : m.height, star: r.r === 5 });
       lastT = t;
     } catch {}
   }
