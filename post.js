@@ -151,9 +151,9 @@ async function postSpecial(today, posted) {
 async function buildReels() {
   const list = read("specials.json", []).filter((s) => s.kind === "reel" && !s.skipped && (s.rebuild || !s.video) && s.images?.length);
   if (list.length && process.platform === "linux") {
-    // タイトルの日本語用フォント（起動時に入れているが、入る前から動いている時のために）
+    // 動画づくりの ffmpeg とタイトルの日本語フォント（起動時に入れているが、入る前から動いている時のために）
     try {
-      require("child_process").execSync('fc-list | grep -qi "Noto Sans CJK" || (sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk)', { stdio: "ignore", timeout: 240000 });
+      require("child_process").execSync('(command -v ffmpeg >/dev/null && fc-list | grep -qi "Noto Sans CJK") || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk)', { stdio: "ignore", timeout: 240000 });
     } catch {}
   }
   for (const x of list.slice(0, 1)) {
