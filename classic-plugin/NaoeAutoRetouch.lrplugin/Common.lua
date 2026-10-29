@@ -374,6 +374,103 @@ function M.runImported(progress)
   return M.run(targets, progress)
 end
 
+-- ---- スクールフォトの自動レタッチ（外部のAIには送らない。このPCの中だけで決める） ----
+-- D:/スクールフォト の中の未レタッチのRAWが対象。場面のプリセット（ISOで体育館・室内・屋外）→ ホワイトバランス自動
+-- → 明るさを測って露光量を合わせる（逆光・くもりはプリセットを替える）
+M.SCHOOL_PRESETS = {
+  "スクール 01 基本（屋外・晴れ）", "スクール 02 屋外・くもり／日陰", "スクール 03 逆光の人物", "スクール 04 体育館（高感度）", "スクール 05 教室・室内",
+}
+function M.findSchool(limit)
+  local catalog = LrApplication.activeCatalog()
+  local tried = loadTried()
+  local out = {}
+  local function walk(folder, inside)
+    if #out >= limit then return end
+    inside = inside or folder:getPath():find("スクールフォト", 1, true) ~= nil
+    if inside then
+      for _, p in ipairs(folder:getPhotos(false)) do
+        if #out >= limit then return end
+        local id = tostring(p.localIdentifier)
+        if not tried[id] and p:getRawMetadata("fileFormat") == "RAW" and M.isUnedited(p) then out[#out + 1] = p end
+      end
+    end
+    for _, ch in ipairs(folder:getChildren()) do walk(ch, inside) end
+  end
+  for _, f in ipairs(catalog:getFolders()) do walk(f, false) end
+  return out
+end
+
+local function writeSchoolCur(dir, p, first)
+  local s = p:getDevelopSettings()
+  local f = io.open(LrPathUtils.child(dir, tostring(p.localIdentifier) .. ".cur"), "w")
+  if not f then return end
+  f:write("Exposure2012=", tostring(s.Exposure2012 or 0), "\n")
+  f:write("ISO=", tostring(p:getRawMetadata("isoSpeedRating") or 0), "\n")
+  f:write("First=", first and "1" or "0", "\n")
+  f:close()
+end
+
+local function askSchool(dir)
+  local cmd = '""' .. M.NODE .. '" "' .. M.ROOT .. '\\school-retouch.js" "' .. dir .. '""'
+  LrTasks.execute(cmd)
+  local f = io.open(dir .. "\\result.tsv", "r")
+  if not f then return nil end
+  local out = {}
+  for line in f:lines() do
+    local id, rest = line:match("^(%S+)\t[PS]\t?(.*)$")
+    if id then
+      local kv = {}
+      for k, v in (rest or ""):gmatch("([%w]+)=([%-%d%.]+)") do kv[k] = tonumber(v) end
+      out[id] = kv
+    end
+  end
+  f:close()
+  return out
+end
+
+function M.runSchool(progress)
+  local targets = M.findSchool(60)
+  if #targets == 0 then return 0, "スクールフォトで未レタッチのRAWはありません" end
+  local presets = {}
+  for i, n in ipairs(M.SCHOOL_PRESETS) do presets[i] = findPreset(n) end
+  if not presets[1] then return 0, "スクールフォトのプリセットが見つかりません（Lightroom を再起動してください）" end
+  addTried(targets)
+  log("スクールフォトの自動レタッチ開始 " .. #targets .. "枚")
+  local catalog = LrApplication.activeCatalog()
+  -- ① 場面の土台：ISOで選ぶ（2500以上=体育館、800以上=室内、それ以外=屋外）＋ホワイトバランス自動
+  catalog:withWriteAccessDo("スクールフォト 自動レタッチ", function()
+    for _, p in ipairs(targets) do
+      local iso = tonumber(p:getRawMetadata("isoSpeedRating")) or 0
+      local idx = iso >= 2500 and 4 or (iso >= 800 and 5 or 1)
+      if presets[idx] then p:applyDevelopPreset(presets[idx], _PLUGIN) end
+      p:applyDevelopSettings({ WhiteBalance = "Auto" })
+    end
+  end, { timeout = 300 })
+  -- ② 明るさ合わせ（1回目：場面の判定＋明るさ → 2回目：微調整）
+  local dir = M.WORK .. "\\school"
+  for pass = 1, 2 do
+    if progress then progress:setCaption("スクールフォト：明るさを合わせています（" .. pass .. "/2）…") end
+    render(targets, dir, nil)
+    for _, p in ipairs(targets) do writeSchoolCur(dir, p, pass == 1) end
+    local res = askSchool(dir)
+    if not res then break end
+    catalog:withWriteAccessDo("スクールフォト 明るさ", function()
+      for _, p in ipairs(targets) do
+        local kv = res[tostring(p.localIdentifier)]
+        if kv then
+          local pr = kv.Preset
+          kv.Preset = nil
+          if pr and presets[pr] then p:applyDevelopPreset(presets[pr], _PLUGIN) end
+          if next(kv) then p:applyDevelopSettings(kv) end
+        end
+      end
+    end, { timeout = 300 })
+  end
+  local msg = #targets .. "枚のスクールフォトを自動レタッチしました"
+  log(msg)
+  return #targets, msg
+end
+
 M.AUTO_FLAG = M.WORK .. "\\auto.on"
 function M.autoOn() return LrFileUtils.exists(M.AUTO_FLAG) end
 
