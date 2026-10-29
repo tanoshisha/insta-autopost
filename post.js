@@ -130,16 +130,17 @@ async function postSpecial(today, posted) {
   }
   const item = due.kind === "story" ? await withSeats(due) : due.kind === "reel" ? await withVideo(due) : due;
   const { pub, info } = await publish(item);
+  let thr = null;
   if (due.kind === "flyer") {
     try {
-      await toThreads({ ...due, images: due.images.slice(0, 1) }, due.threadsText); // サイトのスレッズ用告知文で
+      thr = await toThreads({ ...due, images: due.images.slice(0, 1) }, due.threadsText); // サイトのスレッズ用告知文で
     } catch (e) {
       console.log("フライヤーのスレッズ投稿は失敗: " + e.message);
     }
   }
   const { images, thumb, _extra, ...rest } = item;
   // 記録のあと、元の画像・残り人数入りの画像の両方を消す
-  record({ ...due, images: [...due.images, ...(item._extra ? item.images : [])] }, { ...rest, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: nowIso, day: today, slot: "special" }, "specials.json");
+  record({ ...due, images: [...due.images, ...(item._extra ? item.images : [])] }, { ...rest, threads: thr?.permalink || (thr ? true : null), mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: nowIso, day: today, slot: "special" }, "specials.json");
 }
 
 // ---- リールの動画を作る（GitHub の実行環境の ffmpeg で）→ 公開URLで読めるように先に送る ----
@@ -421,6 +422,7 @@ async function toThreads(item, text) {
     text: text || th.threadsText(item, `${cfg.hashtags.default} ${cfg.hashtags.portrait}`),
   });
   if (id) console.log("スレッズにも投稿しました");
+  return id;
 }
 
 async function main() {
@@ -458,8 +460,9 @@ async function main() {
     return record(item, null);
   }
   const { pub, info } = await publish(item);
+  let thr = null;
   try {
-    await toThreads(item); // 画像が消える前に
+    thr = await toThreads(item); // 画像が消える前に
   } catch (e) {
     console.log("スレッズへの投稿は失敗: " + e.message);
   }
@@ -475,7 +478,7 @@ async function main() {
     }
   }
   const { image, images, thumb, ...rest } = item;
-  record(item, { ...rest, count: (images || [image]).length, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot });
+  record(item, { ...rest, count: (images || [image]).length, threads: thr?.permalink || (thr ? true : null), mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot });
   if (storyRel) {
     try {
       await postAutoStory("newpost", storyRel, { of: item.id }, today);
