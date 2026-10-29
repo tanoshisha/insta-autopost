@@ -345,12 +345,22 @@ function setStatus(error) {
 const storyCfg = () => ({ newPost: true, memory: true, ...(cfg.stories || {}) });
 async function composeStory(buf, badgeKey, outRel) {
   const sharp = require("sharp");
-  const bg = await sharp(buf).resize(1080, 1920, { fit: "cover" }).blur(45).modulate({ brightness: 0.5 }).toBuffer();
-  const fg = await sharp(buf).resize(880, 1100, { fit: "cover" }).toBuffer();
-  const out = await sharp(bg)
-    .composite([{ input: fg, left: 100, top: 250 }, { input: fs.readFileSync(path.join(ROOT, "assets", "seat", `${badgeKey}.png`)), left: 90, top: 1400 }])
-    .jpeg({ quality: 92, mozjpeg: true })
-    .toBuffer();
+  let out;
+  if (badgeKey === "newpost") {
+    // 写真を全面にぼかして敷き、上に控えめな文字だけ（投稿を開かないとはっきり見えない）
+    const bg = await sharp(buf).resize(1080, 1920, { fit: "cover" }).blur(30).modulate({ brightness: 0.72 }).toBuffer();
+    out = await sharp(bg)
+      .composite([{ input: fs.readFileSync(path.join(ROOT, "assets", "seat", "newpost-overlay.png")) }])
+      .jpeg({ quality: 92, mozjpeg: true })
+      .toBuffer();
+  } else {
+    const bg = await sharp(buf).resize(1080, 1920, { fit: "cover" }).blur(45).modulate({ brightness: 0.5 }).toBuffer();
+    const fg = await sharp(buf).resize(880, 1100, { fit: "cover" }).toBuffer();
+    out = await sharp(bg)
+      .composite([{ input: fg, left: 100, top: 250 }, { input: fs.readFileSync(path.join(ROOT, "assets", "seat", `${badgeKey}.png`)), left: 90, top: 1400 }])
+      .jpeg({ quality: 92, mozjpeg: true })
+      .toBuffer();
+  }
   fs.mkdirSync(path.dirname(path.join(ROOT, outRel)), { recursive: true });
   fs.writeFileSync(path.join(ROOT, outRel), out);
   syncCommit(`story image ${outRel}`, [outRel], () => ({}));
