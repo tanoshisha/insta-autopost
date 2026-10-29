@@ -27,6 +27,7 @@ jobs:
           cache: npm
       - name: 画像処理の部品（ストーリーの残り人数用）
         run: npm ci --omit=dev --no-audit --no-fund
+        continue-on-error: true # 失敗しても投稿は止めない（残り人数なしで投稿）
       - name: git設定
         run: |
           git config user.name "insta-bot"
