@@ -47,7 +47,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "video": "specials/reel-2026-10-31/reel-5.mp4",
     "cover": "specials/reel-2026-10-31/reel-5-cover.jpg",
     "rev": 5,
@@ -56,7 +56,7 @@
     "builtAt": "2026-10-29T16:22:23.592Z",
     "format": "dump",
     "hook": "ハロウィンの夜、何枚目が好き？",
-    "rebuildAt": "2026-10-29T16:13:02.624Z",
+    "rebuildAt": "2026-10-29T17:01:07.612Z",
     "engine": "ae",
     "style": "oto"
   },
@@ -194,7 +194,7 @@
     ],
     "bpm": 96,
     "rebuild": true,
-    "rebuildAt": "2026-10-29T16:54:27.558Z"
+    "rebuildAt": "2026-10-29T17:01:07.612Z"
   },
   {
     "id": "reel-2026-11-07",
@@ -283,7 +283,7 @@
     ],
     "bpm": 151,
     "rebuild": true,
-    "rebuildAt": "2026-10-29T16:53:31.113Z",
+    "rebuildAt": "2026-10-29T17:01:07.612Z",
     "video": "specials/reel-2026-11-07/reel-1.mp4",
     "cover": "specials/reel-2026-11-07/reel-1-cover.jpg",
     "rev": 1,
@@ -379,7 +379,7 @@
     ],
     "bpm": 96,
     "rebuild": true,
-    "rebuildAt": "2026-10-29T16:53:32.255Z",
+    "rebuildAt": "2026-10-29T17:01:07.612Z",
     "video": "specials/reel-2026-11-11/reel-1.mp4",
     "cover": "specials/reel-2026-11-11/reel-1-cover.jpg",
     "rev": 1,
@@ -471,7 +471,7 @@
     ],
     "bpm": 119,
     "rebuild": true,
-    "rebuildAt": "2026-10-29T16:53:32.773Z"
+    "rebuildAt": "2026-10-29T17:01:07.612Z"
   },
   {
     "id": "reel-2026-11-18",
@@ -556,6 +556,6 @@
     ],
     "bpm": 151,
     "rebuild": true,
-    "rebuildAt": "2026-10-29T16:53:33.462Z"
+    "rebuildAt": "2026-10-29T17:01:07.612Z"
   }
 ]
