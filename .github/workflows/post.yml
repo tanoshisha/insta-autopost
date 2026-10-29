@@ -1,8 +1,10 @@
 name: インスタ自動投稿
 
+# GitHub の定期起動は混んでいると数時間おきにしか動かない。
+# そこで、1回起動したら約5時間45分起きたままにして、1分ごとに予定時刻を確認して投稿する。
+# 次の起動は前のが終わるまで待機し（同時には動かない）、終わったらすぐ続きを引き継ぐ。
 on:
   schedule:
-    # 30分ごとに起動し、schedule.json の投稿時刻を過ぎていれば投稿（GitHubの都合で数分〜数十分遅れることがある）
     - cron: "7,37 * * * *"
   workflow_dispatch:
     inputs:
@@ -14,11 +16,14 @@ on:
 permissions:
   contents: write
 
-concurrency: post
+concurrency:
+  group: post
+  cancel-in-progress: false
 
 jobs:
   post:
     runs-on: ubuntu-latest
+    timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -32,9 +37,17 @@ jobs:
         run: |
           git config user.name "insta-bot"
           git config user.email "insta-bot@users.noreply.github.com"
-      - name: 投稿
+      - name: 投稿（1分ごとに予定時刻を確認）
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
           FORCE: ${{ inputs.force && '1' || '' }}
-        run: node post.js
+        run: |
+          if [ "$FORCE" = "1" ]; then node post.js; exit $?; fi
+          end=$((SECONDS + 20700))
+          while [ $SECONDS -lt $end ]; do
+            # アプリやPCでの変更（並べ替え・ペースなど）を毎回取り込んでから確認
+            git fetch -q origin main && git reset -q --hard origin/main
+            node post.js || echo "（この回はエラー。1分後にもう一度確認します）"
+            sleep 60
+          done
