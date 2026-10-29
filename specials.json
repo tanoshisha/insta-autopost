@@ -47,7 +47,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "video": "specials/reel-2026-10-31/reel-2.mp4",
     "cover": "specials/reel-2026-10-31/reel-2-cover.jpg",
     "rev": 2,
@@ -55,7 +55,8 @@
     "beatsUsed": 2,
     "builtAt": "2026-10-29T14:48:54.830Z",
     "format": "dump",
-    "hook": "ハロウィンの夜、何枚目が好き？"
+    "hook": "ハロウィンの夜、何枚目が好き？",
+    "rebuildAt": "2026-10-29T15:34:58.768Z"
   },
   {
     "id": "story-2026-11-07-7",
