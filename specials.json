@@ -112,6 +112,206 @@
     "skipped": false
   },
   {
+    "id": "reel-2026-11-01",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（鎌倉 神社と庭さんぽ）",
+    "postAt": "2026-11-01T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-01/1.jpg",
+      "specials/reel-2026-11-01/2.jpg",
+      "specials/reel-2026-11-01/3.jpg",
+      "specials/reel-2026-11-01/4.jpg",
+      "specials/reel-2026-11-01/5.jpg",
+      "specials/reel-2026-11-01/6.jpg",
+      "specials/reel-2026-11-01/7.jpg",
+      "specials/reel-2026-11-01/8.jpg",
+      "specials/reel-2026-11-01/9.jpg",
+      "specials/reel-2026-11-01/10.jpg",
+      "specials/reel-2026-11-01/11.jpg",
+      "specials/reel-2026-11-01/12.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-01/thumb.jpg",
+    "cands": [
+      "specials/reel-2026-11-01/c1.jpg",
+      "specials/reel-2026-11-01/c2.jpg",
+      "specials/reel-2026-11-01/c3.jpg",
+      "specials/reel-2026-11-01/c4.jpg",
+      "specials/reel-2026-11-01/c5.jpg",
+      "specials/reel-2026-11-01/c6.jpg",
+      "specials/reel-2026-11-01/c7.jpg",
+      "specials/reel-2026-11-01/c8.jpg",
+      "specials/reel-2026-11-01/c9.jpg",
+      "specials/reel-2026-11-01/c10.jpg",
+      "specials/reel-2026-11-01/c11.jpg"
+    ],
+    "shots": [
+      "176mm／f5.6／1/200秒／ISO200",
+      "200mm／f4／1/200秒／ISO400",
+      "89mm／f4／1/100秒／ISO320",
+      "200mm／f4／1/250秒／ISO160",
+      "106mm／f4／1/160秒／ISO500",
+      "155mm／f4／1/160秒／ISO1000",
+      "200mm／f4／1/250秒／ISO1250",
+      "200mm／f4／1/250秒／ISO1250",
+      "200mm／f4／1/250秒／ISO2500",
+      "200mm／f4／1/250秒／ISO800",
+      "200mm／f4／1/200秒／ISO400",
+      "35mm／f2／1/200秒／ISO100"
+    ],
+    "places": [
+      "鎌倉",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "sources": [
+      "lr:2841503",
+      "lr:2838558",
+      "lr:2843317",
+      "lr:2842216",
+      "lr:2841585",
+      "lr:2841137",
+      "lr:2841626",
+      "lr:2841096",
+      "lr:2841865",
+      "lr:2842830",
+      "lr:2842134",
+      "lr:2841380"
+    ],
+    "hook": "鎌倉、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "caption": "何枚目が好きか、コメントで教えてください📷\n\n#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #鎌倉",
+    "head": "",
+    "portrait": false,
+    "locationName": "鎌倉",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Just the Two of Us",
+        "a": "Grover Washington, Jr.",
+        "bpm": 96,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "マリブコーク",
+        "a": "踊ってばかりの国",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "LOVEずっきゅん",
+        "a": "相対性理論",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 96,
+    "rebuild": true,
+    "rebuildAt": "2026-10-29T20:18:36.984Z"
+  },
+  {
+    "id": "reel-2026-11-02",
+    "kind": "reel",
+    "format": "settings",
+    "style": "mv",
+    "title": "リール（撮影データ）",
+    "postAt": "2026-11-02T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-02/1.jpg",
+      "specials/reel-2026-11-02/2.jpg",
+      "specials/reel-2026-11-02/3.jpg",
+      "specials/reel-2026-11-02/4.jpg",
+      "specials/reel-2026-11-02/5.jpg",
+      "specials/reel-2026-11-02/6.jpg",
+      "specials/reel-2026-11-02/7.jpg",
+      "specials/reel-2026-11-02/8.jpg",
+      "specials/reel-2026-11-02/9.jpg",
+      "specials/reel-2026-11-02/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-02/thumb.jpg",
+    "cands": [],
+    "shots": [
+      "35mm／f16／30秒／ISO50",
+      "35mm／f2／1/80秒／ISO640",
+      "32mm／f4／1/60秒／ISO12800",
+      "45mm／f4／1/60秒／ISO12800",
+      "200mm／f4／1/30秒／ISO12800",
+      "70mm／f4／1/80秒／ISO12800",
+      "81mm／f4／1/160秒／ISO3200",
+      "85mm／f1.8／1/100秒／ISO320",
+      "155mm／f4／1/320秒／ISO4000",
+      "85mm／f1.8／1/100秒／ISO2000"
+    ],
+    "places": [
+      null,
+      "東京タワー",
+      "明治神宮",
+      "新宿",
+      "東京タワー・増上寺",
+      "東京タワー周辺",
+      "明治神宮",
+      null,
+      "明治神宮",
+      null
+    ],
+    "sources": [
+      "lr:2591885",
+      "lr:1746365",
+      "lr:73423",
+      "lr:2444",
+      "lr:2845068",
+      "lr:1746277",
+      "lr:69909",
+      "lr:1505403",
+      "lr:176869",
+      "lr:3029291"
+    ],
+    "hook": "この夜、この設定で撮ってます",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "caption": "保存して、撮るときの参考にどうぞ📷\n\n#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #東京夜景",
+    "head": "",
+    "portrait": false,
+    "locationName": "東京タワー",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "SUMMER SUSPICION",
+        "a": "杉山清貴&オメガトライブ",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "Say It Ain't So",
+        "a": "Weezer",
+        "bpm": 76,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-10-29T20:18:37.805Z"
+  },
+  {
     "id": "reel-2026-11-04",
     "kind": "reel",
     "format": "dump",
