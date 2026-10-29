@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T12:40:22.027Z",
+  "updatedAt": "2026-10-29T12:41:33.610Z",
   "items": [
     {
       "id": "18095209388665891",
@@ -127,7 +127,7 @@
       "at": "2026-10-09T21:05:24+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     },
     {
@@ -153,7 +153,7 @@
       "at": "2026-10-08T02:43:26+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     },
     {
@@ -166,7 +166,7 @@
       "at": "2026-10-06T05:11:36+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     },
     {
@@ -177,7 +177,7 @@
       "username": "enough_81",
       "text": "👏❤️👏❤️🙌",
       "at": "2026-09-29T04:17:38+0000",
-      "hidden": false,
+      "hidden": true,
       "spam": false,
       "replied": false,
       "checked": true
@@ -197,6 +197,42 @@
     }
   ],
   "log": [
+    {
+      "type": "hide",
+      "commentId": "18050207468807278",
+      "text": "",
+      "at": "2026-10-29T12:40:05.868Z",
+      "ok": true
+    },
+    {
+      "type": "reply",
+      "commentId": "18050207468807278",
+      "text": "❤️",
+      "at": "2026-10-29T12:40:26.236Z",
+      "ok": false,
+      "error": "/18050207468807278/replies: The requested resource does not exist"
+    },
+    {
+      "type": "reply",
+      "commentId": "17957755191251087",
+      "text": "ありがとうございます！",
+      "at": "2026-10-29T12:40:32.019Z",
+      "ok": true
+    },
+    {
+      "type": "reply",
+      "commentId": "18147117457490071",
+      "text": "❤️",
+      "at": "2026-10-29T12:40:40.407Z",
+      "ok": true
+    },
+    {
+      "type": "reply",
+      "commentId": "18081095949401089",
+      "text": "❤️",
+      "at": "2026-10-29T12:41:16.288Z",
+      "ok": true
+    },
     {
       "type": "reply",
       "commentId": "18111754172023531",
