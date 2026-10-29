@@ -435,14 +435,14 @@
       }
     ],
     "bpm": 151,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-29T20:23:15.004Z",
-    "video": "specials/reel-2026-11-04/reel-1.mp4",
-    "cover": "specials/reel-2026-11-04/reel-1-cover.jpg",
-    "rev": 1,
-    "seconds": 6,
-    "beatsUsed": 1,
-    "engine": "ae",
-    "builtAt": "2026-10-29T17:20:16.251Z"
+    "video": "specials/reel-2026-11-04/reel-2.mp4",
+    "cover": "specials/reel-2026-11-04/reel-2-cover.jpg",
+    "rev": 2,
+    "seconds": 13.91,
+    "beatsUsed": 2,
+    "engine": "ffmpeg",
+    "builtAt": "2026-10-29T20:40:47.303Z"
   }
 ]
