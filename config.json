@@ -13,14 +13,15 @@
     "width": 1440,
     "quality": 95
   },
-  "aiModel": "sonnet",
+  "aiModel": "opus",
   "retouchModel": "opus",
-  "retouchModelSnap": "sonnet",
+  "retouchModelSnap": "opus",
   "stories": {
     "newPost": true,
     "memory": true
   },
   "threadsUserId": "28992079977112031",
   "threadsTokenSetAt": null,
-  "threadsAutoRefresh": true
+  "threadsAutoRefresh": true,
+  "minScore": 8
 }

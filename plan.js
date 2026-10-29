@@ -94,16 +94,21 @@ async function collect(state) {
 // ---- AI選定（このPCの claude コマンドを使う） ----
 function aiSelect(batch) {
   const lines = batch.map((it) => `- ${it.thumb}（撮影 ${it.takenLabel}${it.event ? `・${it.event.title}` : ""}）`).join("\n");
-  const prompt = `あなたは写真家のInstagramアカウントの編集者です。カレントフォルダにある次の候補写真を Read ツールで全部見てください。
-候補は多めに入っているので、インスタに載せる価値のある写真だけを「厳選」してください。
+  const minScore = cfg.minScore ?? 8;
+  const prompt = `あなたは写真家のInstagramアカウントの編集者で、大きな写真コンテストの審査員も務めるプロです。カレントフォルダにある次の候補写真を Read ツールで全部見てください。
+このアカウントはフォロワー1万人を目指していて、「お金を払ってもらえる作品／フォトコンテストで入賞するレベル」の写真だけを載せます。
 
 ${lines}
 
 各写真について判断:
-- use: 載せるなら true。基準は厳しめに:
+- score: 1〜10点。フォトコンの審査と同じ目で、構図・光・瞬間（決定的瞬間/表情）・技術（ピント・ブレ・露出）・物語性・独自性を総合して厳しく採点。
+  10=大きなコンテストでグランプリ級 / 9=入賞級 / 8=作品として販売できる・依頼が来るレベル / 7=上手いが普通 / 6以下=記録写真・スナップの域。
+  「よく撮れている」だけでは7点。見た人が指を止めて保存したくなる強さがあって初めて8点以上。
+- use: score が ${minScore} 以上なら true、それ未満は false。さらに:
   ・同じ場所・同じ被写体・似た構図が続く時は一番良い1枚だけ（はっきり別の魅力がある時だけ2枚まで）
-  ・ピンボケ・ブレ・露出の失敗・何を撮ったか伝わりにくい記録写真は false
-  ・目安として候補の3〜4割くらいが残るイメージ（良い写真が多ければもっと残してよい）
+  ・ピンボケ・ブレ・露出の失敗・何を撮ったか伝わりにくい写真は点数に関係なく false
+  ・残る枚数が少なくなっても基準は下げない
+- tone: 全体の明るさ。"dark"（夜・暗い）/"mid"/"bright"（昼の明るい写真）のどれか。
 - portrait: 人物が主役のポートレートなら true（街並みの中の小さな人影・後ろ姿のスナップは false）。
 - focusY: 縦長写真を4:5に上下トリミングする時に残したい中心の縦位置（0=上端, 0.5=中央, 1=下端）。顔や主題が切れない値に。
 - note: 一言（use=true なら写真の内容、false なら見送った理由。例「t003と似た構図」「ブレ」）。
@@ -111,7 +116,7 @@ use=true の写真だけ、投稿用に次も書く:
 ${CAPTION_RULES}
 
 出力は次のJSONだけ（説明文やコードブロック不要）:
-{"photos":[{"file":"t001.jpg","use":true,"portrait":false,"focusY":0.5,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
+{"photos":[{"file":"t001.jpg","score":8,"tone":"dark","use":true,"portrait":false,"focusY":0.5,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
   return new Promise((resolve, reject) => {
     const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd: WORK });
     let out = "";
@@ -383,7 +388,10 @@ async function main() {
   }
   for (const [bi, batch] of batches.entries()) {
     const info = Object.fromEntries((results[bi].photos || []).map((p) => [p.file, p]));
-    for (const it of batch) it.ai = info[it.thumb] || { use: true, note: "（AIの判定なし）" };
+    for (const it of batch) {
+      it.ai = info[it.thumb] || { use: true, note: "（AIの判定なし）" };
+      if (typeof it.ai.score === "number" && it.ai.score < (cfg.minScore ?? 8)) it.ai.use = false; // 点数が足りない写真は載せない
+    }
   }
 
   // 新しい写真だけ画像を作る（予約中・見送り中の写真は前に作った画像をそのまま使う）
@@ -391,6 +399,7 @@ async function main() {
   const newFiles = [];
   for (const it of targets) {
     const use = it.ai.use !== false;
+    if (typeof it.ai.score === "number") it.ai.note = `[${it.ai.score}点] ${it.ai.note || ""}`;
     console.log(`  ${use ? "✓" : "✗"} ${it.id} ${it.ai.portrait ? "[ポートレート]" : ""} ${it.ai.note || ""}`);
     if (known.has(it.id)) continue;
     const portrait = !!it.ai.portrait;
@@ -414,6 +423,8 @@ async function main() {
       locationName,
       locationId,
       note: it.ai.note || "",
+      score: it.ai.score ?? null,
+      tone: it.ai.tone || null,
       alt: it.ai.alt || "",
     });
   }

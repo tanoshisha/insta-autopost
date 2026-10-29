@@ -468,7 +468,30 @@ async function main() {
   if (!slot) return console.log(`今は投稿時刻ではありません（今日の予定: ${times.join(" / ") || "お休み"}）`);
   if (!queue.length) return console.log("予約が空です");
 
-  const item = queue[0];
+  // グリッドの統一感：明るい写真（昼など）が2枚続かないよう、直前が明るければ次の3枚から暗めの写真を先に出す
+  const lumOf = async (it) => {
+    try {
+      const st = await require("sharp")(path.join(ROOT, it.image || it.images[0])).stats();
+      return Math.round(0.299 * st.channels[0].mean + 0.587 * st.channels[1].mean + 0.114 * st.channels[2].mean);
+    } catch {
+      return null;
+    }
+  };
+  const BRIGHT = 110;
+  const lastFeed = [...posted].reverse().find((p) => !p.kind && typeof p.lum === "number");
+  let item = queue[0];
+  let lum = await lumOf(item);
+  if (lastFeed && lastFeed.lum >= BRIGHT && lum >= BRIGHT) {
+    for (const alt of queue.slice(1, 4)) {
+      const l = await lumOf(alt);
+      if (l !== null && l < BRIGHT) {
+        console.log(`明るい写真が続くので、先に ${alt.id} を投稿します（グリッドの統一感）`);
+        item = alt;
+        lum = l;
+        break;
+      }
+    }
+  }
   // 前回、投稿後の記録だけ失敗していた場合は記録だけ直す（二重投稿しない）
   if (posted.some((p) => p.id === item.id)) {
     console.log("投稿済みの写真が予約に残っていたので外します: " + item.id);
@@ -493,7 +516,7 @@ async function main() {
     }
   }
   const { image, images, thumb, ...rest } = item;
-  record(item, { ...rest, count: (images || [image]).length, threads: thr?.permalink || (thr ? true : null), mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot });
+  record(item, { ...rest, count: (images || [image]).length, threads: thr?.permalink || (thr ? true : null), mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot, lum });
   if (storyRel) {
     try {
       await postAutoStory("newpost", storyRel, { of: item.id }, today);
