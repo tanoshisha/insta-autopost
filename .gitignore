@@ -10,3 +10,4 @@ auto-plan.log
 classic-processed.tsv
 classic-cloud-remove.tsv
 classic-tpw-events.tsv
+threads-token.enc

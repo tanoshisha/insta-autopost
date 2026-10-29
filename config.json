@@ -19,5 +19,7 @@
   "stories": {
     "newPost": true,
     "memory": true
-  }
+  },
+  "threadsUserId": "28992079977112031",
+  "threadsTokenSetAt": null
 }

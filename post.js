@@ -130,6 +130,13 @@ async function postSpecial(today, posted) {
   }
   const item = due.kind === "story" ? await withSeats(due) : due.kind === "reel" ? await withVideo(due) : due;
   const { pub, info } = await publish(item);
+  if (due.kind === "flyer") {
+    try {
+      await toThreads({ ...due, images: due.images.slice(0, 1) }, due.threadsText); // サイトのスレッズ用告知文で
+    } catch (e) {
+      console.log("フライヤーのスレッズ投稿は失敗: " + e.message);
+    }
+  }
   const { images, thumb, _extra, ...rest } = item;
   // 記録のあと、元の画像・残り人数入りの画像の両方を消す
   record({ ...due, images: [...due.images, ...(item._extra ? item.images : [])] }, { ...rest, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: nowIso, day: today, slot: "special" }, "specials.json");
@@ -372,6 +379,20 @@ async function memoryStory(today, now, posted) {
   console.log("あの日の一枚をストーリーに投稿しました");
 }
 
+// ---- スレッズにも（スレッズ用に書き直して）。THREADS_TOKEN が無い時は何もしない ----
+async function toThreads(item, text) {
+  if (!process.env.THREADS_TOKEN || !cfg.threadsUserId || cfg.threads === false) return;
+  const th = require("./lib/threads");
+  const imgs = (item.images?.length ? item.images : [item.image]).filter(Boolean);
+  const id = await th.postToThreads({
+    token: process.env.THREADS_TOKEN,
+    userId: cfg.threadsUserId,
+    imageUrls: imgs.map((p) => `https://raw.githubusercontent.com/${process.env.GITHUB_REPOSITORY}/main/${p}`),
+    text: text || th.threadsText(item, `${cfg.hashtags.default} ${cfg.hashtags.portrait}`),
+  });
+  if (id) console.log("スレッズにも投稿しました");
+}
+
 async function main() {
   const queue = read("queue.json", []);
   const posted = read("posted.json", []);
@@ -407,6 +428,11 @@ async function main() {
     return record(item, null);
   }
   const { pub, info } = await publish(item);
+  try {
+    await toThreads(item); // 画像が消える前に
+  } catch (e) {
+    console.log("スレッズへの投稿は失敗: " + e.message);
+  }
   // 「新しい投稿」のストーリー用の画像を、元の画像が消える前に作っておく（1日1回まで）
   let storyRel = null;
   if (storyCfg().newPost && !posted.some((p) => p.day === today && p.slot === "newpost-story")) {

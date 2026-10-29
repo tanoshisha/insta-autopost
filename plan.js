@@ -292,6 +292,15 @@ async function writeProcessed() {
   console.log(`処理済みでまだ「${cfg.lightroom.albumName}」にある写真: ${rows.length}枚（Classicで移動）`);
 }
 
+async function refreshThreadsLocal() {
+  const sec = readJson("secrets.local.json", {});
+  if (!sec.threadsToken || (sec.threadsRefreshedAt && Date.now() - Date.parse(sec.threadsRefreshedAt) < 7 * 864e5)) return;
+  sec.threadsToken = await require("./lib/threads").refreshToken(sec.threadsToken);
+  sec.threadsRefreshedAt = new Date().toISOString();
+  fs.writeFileSync(path.join(ROOT, "secrets.local.json"), JSON.stringify(sec, null, 2));
+  console.log("スレッズのトークンを更新しました（手元）");
+}
+
 async function main() {
   fs.mkdirSync(WORK, { recursive: true });
   for (const f of fs.readdirSync(WORK)) fs.rmSync(path.join(WORK, f), { recursive: true, force: true });
@@ -313,6 +322,7 @@ async function main() {
   fs.writeFileSync(path.join(ROOT, "places.json"), JSON.stringify(places, null, 2) + "\n"); // findLocationId が読むので最新にしておく
 
   if (!DRY) {
+    await refreshThreadsLocal().catch((e) => console.log("⚠ スレッズのトークン更新: " + e.message));
     try {
       await syncEdits();
       git(["fetch", "-q", "origin", "main"]);
