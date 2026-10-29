@@ -24,13 +24,13 @@ function curate(theme, cands) {
 
 ${lines}
 
-次の条件で 8〜10枚を選び、見せる順番に並べてください:
+次の条件で 14〜18枚を選び、見せる順番に並べてください（曲に合わせて1枚0.5秒ほどで切り替える写真まとめの動画です）:
 - 人が1人でも写っている写真は入れない（小さな人影・後ろ姿・お面やコスプレの人も含めて、人の姿が分かるものは全部なし）
 - テーマに合わない写真は入れない（迷ったら入れない）
 - ほぼ同じ構図・同じ場面の写真は1枚だけ
 - 1枚目は、いちばん指が止まる強い写真
 - 並びは、明るさ・色・寄り引きに流れがあるように（似た写真が続かない）
-条件に合う写真が8枚に満たなければ、ある分だけ。
+条件に合う写真が14枚に満たなければ、ある分だけ。
 
 つかみの一言（最初の1秒に大きく出す文字）も1つ。短く自然に、写真好きが思わずコメントしたくなる問いかけ（例「東京タワー、何枚目が好き？」）。AIっぽい言い回し・絵文字は使わない。
 ハッシュタグを1つ（このテーマで人気のもの）。
@@ -90,7 +90,7 @@ const THEME = {
   const groups = {};
   for (const x of ok) (groups[x.theme] = groups[x.theme] || []).push(x);
   const themes = Object.entries(groups)
-    .filter(([t, g]) => THEME[t] && g.length >= 7)
+    .filter(([t, g]) => THEME[t] && g.length >= 12)
     .sort((a, b) => b[1].slice(0, 8).reduce((s, x) => s + x.score, 0) - a[1].slice(0, 8).reduce((s, x) => s + x.score, 0));
   // 空いている 水・土 19:00
   const taken = new Set([...specials, ...posted].filter((x) => x.kind === "reel").map((x) => x.postAt.slice(0, 10)));
@@ -106,9 +106,9 @@ const THEME = {
   for (const [t, g] of themes) {
     if (plans.length >= COUNT - 1) break;
     try {
-      const r = await curate(t, g.slice(0, 24));
+      const r = await curate(t, g.slice(0, 36));
       const items = r.ids.map((id) => g.find((x) => String(x.id) === String(id))).filter(Boolean);
-      if (items.length < 7) {
+      if (items.length < 12) {
         console.log(`  （${t}：条件に合う写真が${items.length}枚だけなので見送り）`);
         continue;
       }
