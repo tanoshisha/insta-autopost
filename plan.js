@@ -116,13 +116,19 @@ ${lines}
 - extra: use=false の写真のうち、score が6〜7で、ピント・ブレ・露出に問題がなく、同じ日の高得点の写真の「2枚目以降」に添えると投稿が豊かになる写真なら true（ほぼ同じ構図の写真は false）。
 - tone: 全体の明るさ。"dark"（夜・暗い）/"mid"/"bright"（昼の明るい写真）のどれか。
 - portrait: 人物が主役のポートレートなら true（街並みの中の小さな人影・後ろ姿のスナップは false）。
-- focusY: 縦長写真を4:5に上下トリミングする時に残したい中心の縦位置（0=上端, 0.5=中央, 1=下端）。顔や主題が切れない値に。
+- crop: 投稿は必ず4:5（縦長）に切り取る。トップのフォトエディターとして、作品がいちばん強く見える切り取り方を決める。
+  {"cx":横の中心(0=左端〜1=右端),"cy":縦の中心(0=上端〜1=下端),"zoom":寄り具合(1=4:5で取れる最大の範囲、1.2=さらに1.2倍寄る、最大1.6)}
+  ・横長の写真は左右を大きく切ることになるので、主題・視線の向き・余白を考えて位置を決める（主題をど真ん中に置くとは限らない。三分割や視線の先の余白も）
+  ・ポートレートは頭・あご・手を不自然に切らない。顔の上に少し余白、視線の先に空間
+  ・画面の端の余計なもの（見切れた人・看板・電線・明るいゴミ）は、寄って画面の外に出せるならそうする。ただし画質が落ちるほど寄らない（zoomは基本1〜1.3）
+- remove: 切り取っても残る、消しゴムで消した方が作品が良くなるもの（例「右奥を横切る人」「左下の空き缶」）。なければ空の配列。主役や場の雰囲気を作る人は消さない。
+- hdr: 明暗差が大きい場面（逆光・夜景の光源と暗部・窓のある室内など）で、ハイライトとシャドウを両方しっかり起こした方が良い写真なら true。true でも不自然なHDR感は出さず、自然に見える範囲で。
 - note: 一言（use=true なら写真の内容、false なら見送った理由。例「t003と似た構図」「ブレ」）。
 use=true の写真だけ、投稿用に次も書く:
 ${CAPTION_RULES}
 
 出力は次のJSONだけ（説明文やコードブロック不要）:
-{"photos":[{"file":"t001.jpg","score":8,"tone":"dark","use":true,"extra":false,"portrait":false,"focusY":0.5,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
+{"photos":[{"file":"t001.jpg","score":8,"tone":"dark","use":true,"extra":false,"portrait":false,"crop":{"cx":0.5,"cy":0.5,"zoom":1},"remove":[],"hdr":false,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
   return new Promise((resolve, reject) => {
     const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd: WORK });
     let out = "";
@@ -217,7 +223,7 @@ async function syncEdits() {
       git(["checkout", "origin/main", "--", x.image]); // 今の画像（構図を合わせるため）
     } catch {}
     const imgPath = path.join(ROOT, x.image);
-    await makePostImage(buf, imgPath, cfg.image, { keepFrom: imgPath });
+    await makePostImage(buf, imgPath, cfg.image, x.crop ? { crop: x.crop } : { keepFrom: imgPath });
     const thumb = x.thumb || `queue/thumbs/${x.id}.jpg`;
     await makeThumb(imgPath, path.join(ROOT, thumb));
     files.push(x.image, thumb);
@@ -412,7 +418,7 @@ async function main() {
     const locationName = await placeFor(it, places);
     const locationId = locationName ? await findLocationId(locationName, secrets.igToken) : null;
     const imgPath = path.join(QDIR, `${it.id}.jpg`);
-    await makePostImage(it.file, imgPath, cfg.image, { focusY: it.ai.focusY ?? 0.5 });
+    await makePostImage(it.file, imgPath, cfg.image, it.ai.crop ? { crop: it.ai.crop } : { focusY: it.ai.focusY ?? 0.5 });
     await makeThumb(imgPath, path.join(QDIR, "thumbs", `${it.id}.jpg`));
     newFiles.push(`queue/${it.id}.jpg`, `queue/thumbs/${it.id}.jpg`);
     fresh.push({
@@ -430,6 +436,9 @@ async function main() {
       locationId,
       note: it.ai.note || "",
       score: it.ai.score ?? null,
+      crop: it.ai.crop || null,
+      remove: it.ai.remove?.length ? it.ai.remove : undefined,
+      hdr: it.ai.hdr || undefined,
       tone: it.ai.tone || null,
       alt: it.ai.alt || "",
     });

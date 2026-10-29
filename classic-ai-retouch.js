@@ -24,7 +24,23 @@ const RANGE = {
   SplitToningShadowHue: [0, 359], SplitToningShadowSaturation: [0, 40], SplitToningHighlightHue: [0, 359],
   SplitToningHighlightSaturation: [0, 40], SplitToningBalance: [-60, 60],
   ParametricShadows: [-40, 40], ParametricDarks: [-40, 40], ParametricLights: [-40, 40], ParametricHighlights: [-40, 40],
+  ParametricShadowSplit: [10, 40], ParametricMidtoneSplit: [35, 65], ParametricHighlightSplit: [60, 90],
+  // カラーグレーディング（3ウェイ）
+  ColorGradeMidtoneHue: [0, 359], ColorGradeMidtoneSat: [0, 30], ColorGradeShadowLum: [-40, 40], ColorGradeMidtoneLum: [-40, 40],
+  ColorGradeHighlightLum: [-40, 40], ColorGradeGlobalHue: [0, 359], ColorGradeGlobalSat: [0, 25], ColorGradeBlending: [0, 100],
+  // ディテール（シャープ・ノイズ）
+  Sharpness: [0, 90], SharpenRadius: [0.5, 2.5], SharpenDetail: [0, 70], SharpenEdgeMasking: [0, 95],
+  LuminanceSmoothing: [0, 60], LuminanceNoiseReductionDetail: [0, 80], ColorNoiseReduction: [0, 60],
+  // レンズ補正・ゆがみ・傾き
+  LensProfileEnable: [0, 1], AutoLateralCA: [0, 1], LensManualDistortionAmount: [-20, 20],
+  DefringePurpleAmount: [0, 10], DefringeGreenAmount: [0, 10],
+  PerspectiveUpright: [0, 4], PerspectiveVertical: [-30, 30], PerspectiveHorizontal: [-30, 30], PerspectiveRotate: [-5, 5], CropAngle: [-6, 6],
+  // 周辺減光の形・粒子・キャリブレーション
+  PostCropVignetteMidpoint: [0, 100], PostCropVignetteFeather: [0, 100], PostCropVignetteHighlightContrast: [0, 100],
+  GrainAmount: [0, 30], GrainSize: [0, 50], GrainFrequency: [0, 70],
+  ShadowTint: [-30, 30], RedHue: [-40, 40], RedSaturation: [-40, 40], GreenHue: [-40, 40], GreenSaturation: [-40, 40], BlueHue: [-40, 40], BlueSaturation: [-40, 40],
 };
+const DECIMAL = new Set(["Exposure2012", "SharpenRadius", "PerspectiveRotate", "CropAngle"]);
 for (const c of ["Red", "Orange", "Yellow", "Green", "Aqua", "Blue", "Purple", "Magenta"]) {
   RANGE[`HueAdjustment${c}`] = [-40, 40];
   RANGE[`SaturationAdjustment${c}`] = [-60, 40];
@@ -81,7 +97,22 @@ Exposure2012, Contrast2012, Highlights2012, Shadows2012, Whites2012, Blacks2012,
 TempDelta(K), TintDelta, PostCropVignetteAmount(負で周辺減光),
 ParametricShadows/Darks/Lights/Highlights（トーンカーブ）,
 HueAdjustment{Red,Orange,Yellow,Green,Aqua,Blue,Purple,Magenta}, SaturationAdjustment{同}, LuminanceAdjustment{同},
-SplitToningShadowHue, SplitToningShadowSaturation, SplitToningHighlightHue, SplitToningHighlightSaturation, SplitToningBalance`;
+SplitToningShadowHue, SplitToningShadowSaturation, SplitToningHighlightHue, SplitToningHighlightSaturation, SplitToningBalance（＝カラーグレーディングのシャドウ/ハイライト）,
+ColorGradeMidtoneHue/Sat, ColorGradeShadowLum/MidtoneLum/HighlightLum, ColorGradeGlobalHue/Sat, ColorGradeBlending,
+ParametricShadowSplit/MidtoneSplit/HighlightSplit（トーンカーブの区切り）,
+Sharpness, SharpenRadius, SharpenDetail, SharpenEdgeMasking, LuminanceSmoothing, LuminanceNoiseReductionDetail, ColorNoiseReduction,
+LensProfileEnable(1で有効), AutoLateralCA(1で色収差除去), LensManualDistortionAmount, DefringePurpleAmount, DefringeGreenAmount,
+PerspectiveUpright(0オフ/1自動/2フル/3水平/4垂直), PerspectiveVertical, PerspectiveHorizontal, PerspectiveRotate, CropAngle(傾き補正・度),
+PostCropVignetteMidpoint/Feather/HighlightContrast, GrainAmount/Size/Frequency,
+ShadowTint, RedHue/RedSaturation, GreenHue/GreenSaturation, BlueHue/BlueSaturation（キャリブレーション）
+
+【全部の項目を使ってよい】基本補正だけで終わらせず、必要なものは全部使う。
+- レンズ補正（LensProfileEnable=1・AutoLateralCA=1）は基本いつも有効に。
+- 水平・垂直：傾いた水平線や、建物の縦の線の倒れは直す（CropAngle・PerspectiveUpright 3/4 など）。わざと傾けた構図はそのまま。投稿は後で4:5に切り抜くので、Lightroomでは切り抜かない。
+- シャープ・ノイズ：高感度の夜景はノイズを抑え（輝度ノイズ15〜35）、シャープはエッジだけに（マスク50〜80）。ポートレートの肌にシャープをかけすぎない。
+- キャリブレーションで色の土台を整えるのも可（例：ブルーの彩度+で空気を澄ませる、レッドの色相で肌を整える）。
+- 粒子は作品の雰囲気に合う時だけ控えめに。
+- 【HDR的な仕上げの判断】逆光・夜景の光源と暗部・窓のある室内など明暗差が大きい時は、ハイライトを大きく下げシャドウを起こし、トーンカーブで中間のメリハリを戻す。ただしHDR感（灰色っぽい・ハロ・平坦）は出さない。明暗差を活かした方がドラマチックな写真（シルエット・光の筋）は暗部を起こさない。どちらが作品として強いかで決める。`;
 
 // ポートレートは専用の基準で、いちばん賢いモデルが担当する
 const PORTRAIT = `【ポートレートの基準】雑誌・広告のポートレートを手がけるトップレタッチャーとして判断する。
@@ -208,8 +239,10 @@ function clean(settings) {
     const x = Number(v);
     if (!r || !isFinite(x)) continue;
     const c = Math.min(r[1], Math.max(r[0], x));
-    out.push(`${k}=${k === "Exposure2012" ? c.toFixed(2) : Math.round(c)}`);
+    out.push(`${k}=${DECIMAL.has(k) ? c.toFixed(k === "Exposure2012" ? 2 : 1) : Math.round(c)}`);
   }
+  // 傾き・ゆがみを直した時は、白いすき間が出ないよう自動で切り抜く
+  if (out.some((x) => /^(PerspectiveUpright|PerspectiveVertical|PerspectiveHorizontal|PerspectiveRotate|CropAngle)=(?!0(.0)?$)/.test(x))) out.push("CropConstrainToWarp=1");
   return out.join(";");
 }
 

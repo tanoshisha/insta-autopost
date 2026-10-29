@@ -26,7 +26,7 @@ local CUR_KEYS = {
   "ParametricShadows", "ParametricDarks", "ParametricLights", "ParametricHighlights",
   "SaturationAdjustmentOrange", "LuminanceAdjustmentOrange", "SaturationAdjustmentBlue", "LuminanceAdjustmentBlue",
   "SaturationAdjustmentGreen", "SplitToningShadowHue", "SplitToningShadowSaturation", "SplitToningHighlightHue",
-  "SplitToningHighlightSaturation",
+  "SplitToningHighlightSaturation", "LensProfileEnable", "Sharpness", "LuminanceSmoothing", "CropAngle", "PerspectiveUpright",
 }
 
 local function log(msg)
