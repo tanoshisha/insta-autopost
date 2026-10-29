@@ -149,6 +149,25 @@ const THEME = {
       console.log("  ⚠ " + e.message);
     }
   }
+  // 色味でまとめる：テーマや場所が違っても、夜は夜・昼は昼で色がそろう写真を1本に（「夜の東京まとめ」「昼の東京まとめ」）
+  for (const [tone, label, theme] of [["dark", "夜の東京まとめ", "夜景・ビル"], ["bright", "昼の東京まとめ", "建物・建築"], ["mid", "東京スナップまとめ", "建物・建築"]]) {
+    if (plans.length >= COUNT - 1) break;
+    const taken2 = new Set(plans.flatMap((p) => p.items.map((x) => x.id)));
+    const pool = ok.filter((x) => x.tone === tone && !taken2.has(x.id));
+    if (pool.length < 14) continue;
+    try {
+      const r = await curate(`${label}（テーマや場所は違ってよい。色味がそろう写真を選ぶ）`, pool.slice(0, 40));
+      const items = r.ids.map((id) => pool.find((x) => String(x.id) === String(id))).filter(Boolean);
+      if (items.length < 12) {
+        console.log(`  （${label}：条件に合う写真が${items.length}枚だけなので見送り）`);
+        continue;
+      }
+      plans.push({ format: "dump", theme, items, pool, hook: r.hook, tag: r.tag, label });
+      console.log(`  AI：${label} → ${items.length}枚`);
+    } catch (e) {
+      console.log("  ⚠ " + e.message);
+    }
+  }
   const shotCands = ok.filter((x) => x.shot && x.tone === "dark" && !plans.some((p) => p.items.includes(x))).slice(0, 24);
   if (shotCands.length >= 8 && plans.length < COUNT) {
     try {

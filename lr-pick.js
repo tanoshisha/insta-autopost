@@ -1,5 +1,6 @@
 // lr-pick.js — Lightroom Classic のカタログから、リールに使える写真（レタッチ済み・★5、人の顔なし）を集める
 //   レタッチ後の見た目は Lightroom のプレビュー（Previews.lrdata の .lrprev の中の JPEG）から取り出す（Lightroom を開いていても読める）
+//   対象：★5・採用の旗（P）・レタッチ済み の写真
 //   node lr-pick.js      → .work/lrpick/<id>.jpg（大）と thumbs/<id>.jpg（AIが見る用）と list.json
 const fs = require("fs");
 const path = require("path");
@@ -37,7 +38,7 @@ function biggestJpeg(buf) {
       `select i.id_local id, i.captureTime t, i.rating r, i.orientation o, f.baseName name, fo.pathFromRoot dir
        from Adobe_images i join Adobe_imageDevelopSettings d on d.image = i.id_local
        join AgLibraryFile f on f.id_local = i.rootFile join AgLibraryFolder fo on fo.id_local = f.folder
-       where (i.rating = 5 or d.text like '%Highlights2012 = -%') and fo.pathFromRoot not like '%スクールフォト%'
+       where (i.rating = 5 or i.pick = 1 or d.text like '%Highlights2012 = -%') and fo.pathFromRoot not like '%スクールフォト%'
        and not exists (select 1 from AgLibraryFace fa where fa.image = i.id_local)
        order by i.captureTime`
     )
