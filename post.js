@@ -347,10 +347,15 @@ async function composeStory(buf, badgeKey, outRel) {
   const sharp = require("sharp");
   let out;
   if (badgeKey === "newpost") {
-    // 写真を全面にぼかして敷き、上に控えめな文字だけ（投稿を開かないとはっきり見えない）
-    const bg = await sharp(buf).resize(1080, 1920, { fit: "cover" }).blur(30).modulate({ brightness: 0.72 }).toBuffer();
-    out = await sharp(bg)
-      .composite([{ input: fs.readFileSync(path.join(ROOT, "assets", "seat", "newpost-overlay.png")) }])
+    // 写真を全面に敷き、真ん中だけ少しくっきり→外側へグラデーションで強くぼかす。上に控えめな文字（投稿を開かないとはっきり見えない）
+    const base = await sharp(buf).resize(1080, 1920, { fit: "cover" }).toBuffer();
+    const clear = await sharp(base).modulate({ brightness: 0.8 }).toBuffer();
+    const mask = Buffer.from(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920"><defs><radialGradient id="g" cx="50%" cy="46%" r="50%" gradientTransform="translate(0.5 0.46) scale(1 0.56) translate(-0.5 -0.46)"><stop offset="0.26" stop-color="#fff" stop-opacity="0"/><stop offset="0.62" stop-color="#fff" stop-opacity="1"/></radialGradient></defs><rect width="1080" height="1920" fill="url(#g)"/></svg>`
+    );
+    const blurred = await sharp(base).blur(30).modulate({ brightness: 0.68 }).ensureAlpha().composite([{ input: mask, blend: "dest-in" }]).png().toBuffer();
+    out = await sharp(clear)
+      .composite([{ input: blurred }, { input: fs.readFileSync(path.join(ROOT, "assets", "seat", "newpost-overlay.png")) }])
       .jpeg({ quality: 92, mozjpeg: true })
       .toBuffer();
   } else {
