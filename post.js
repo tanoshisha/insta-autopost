@@ -120,9 +120,48 @@ async function postSpecial(today, posted) {
       return record(due, null, "specials.json");
     }
   }
-  const { pub, info } = await publish(due);
-  const { images, thumb, ...rest } = due;
-  record(due, { ...rest, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: nowIso, day: today, slot: "special" }, "specials.json");
+  const item = due.kind === "story" ? await withSeats(due) : due;
+  const { pub, info } = await publish(item);
+  const { images, thumb, _extra, ...rest } = item;
+  // 記録のあと、元の画像・残り人数入りの画像の両方を消す
+  record({ ...due, images: [...due.images, ...(item._extra ? item.images : [])] }, { ...rest, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: nowIso, day: today, slot: "special" }, "specials.json");
+}
+
+// ---- ストーリーに「残りN名」を重ねる（投稿の直前に、サイトの予約システムから最新の人数を取る） ----
+// サイトと同じルール：定員まで空きがある間は「募集中」、残り9名以下は「残りN名」、定員に達したら「追加1枠」
+const SITE = "https://tokyo-photowalk.com";
+async function seatKey(date) {
+  const ev = (await fetch(`${SITE}/events.json?t=${Date.now()}`).then((r) => r.json())).find((e) => e.date === date);
+  if (!ev) return null;
+  let live = null;
+  try {
+    const conf = await fetch(`${SITE}/booking-config.js?t=${Date.now()}`).then((r) => r.text());
+    const api = conf.match(/TPW_BOOKING_API\s*=\s*'([^']+)'/)?.[1];
+    if (api) live = (await fetch(`${api}?action=counts&t=${Date.now()}`, { redirect: "follow" }).then((r) => r.json())).counts?.[date] ?? null;
+  } catch {}
+  const cap = ev.capacity || 10;
+  let n = live != null ? Number(live) : Number(ev.booked || 0);
+  if (ev.seats != null && ev.seats !== "") n = Math.max(n, cap - Number(ev.seats));
+  if (n < cap) return cap - n < 10 ? `left${cap - n}` : "open";
+  return "extra";
+}
+async function withSeats(item) {
+  try {
+    const sharp = require("sharp");
+    const key = await seatKey(item.eventDate);
+    const badge = key && path.join(ROOT, "assets", "seat", `${key}.png`);
+    if (!badge || !fs.existsSync(badge)) return item;
+    const out = item.images[0].replace(/\.jpg$/, "-seat.jpg");
+    const buf = await sharp(path.join(ROOT, item.images[0])).composite([{ input: fs.readFileSync(badge), left: 90, top: 1400 }]).jpeg({ quality: 92, mozjpeg: true }).toBuffer();
+    fs.writeFileSync(path.join(ROOT, out), buf);
+    syncCommit(`story ${item.id}: ${key}`, [out], () => ({})); // 公開URLで読めるように先に送る
+    console.log(`残り人数を重ねました（${key}）`);
+    await sleep(5000);
+    return { ...item, images: [out], seat: key, _extra: true };
+  } catch (e) {
+    console.log("残り人数を重ねられなかったので、そのまま投稿します: " + e.message);
+    return item;
+  }
 }
 
 async function main() {
