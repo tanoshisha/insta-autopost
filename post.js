@@ -146,6 +146,10 @@ async function postSpecial(today, posted) {
   record({ ...due, images: [...due.images, ...(item._extra ? item.images : [])] }, { ...rest, threads: thr?.permalink || (thr ? true : null), mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: nowIso, day: today, slot: "special" }, "specials.json");
 }
 
+// リールの写真と設定（形式・つかみの一言・撮影データ・クイズの答え）
+const reelItems = (x) => x.images.map((p, i) => ({ src: path.join(ROOT, p), shot: x.shots?.[i] || null, place: x.places?.[i] || null }));
+const reelOpts = (x) => ({ format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats });
+
 // ---- リールの動画を前もって作っておく（アプリで再生・保存して、インスタで曲を付けて投稿する） ----
 //   予約されたリール・アプリでテンポやタイトルを変えたリール（rebuild）を作り直す。ファイル名を毎回変えて、古い動画が見えないように
 async function buildReels() {
@@ -160,7 +164,7 @@ async function buildReels() {
     const { makeReel } = require("./lib/reel");
     const n = (x.rev || 0) + 1;
     const video = `specials/${x.id}/reel-${n}.mp4`;
-    const r = await makeReel(x.images.map((p) => path.join(ROOT, p)), path.join(ROOT, video), ROOT, { bpm: x.bpm, beats: x.beats, title: x.reelTitle, sub: x.reelSub });
+    const r = await makeReel(reelItems(x), path.join(ROOT, video), ROOT, reelOpts(x));
     const cover = video.replace(/.mp4$/, "-cover.jpg");
     const old = [x.video, x.cover].filter(Boolean);
     syncCommit(`reel video ${x.id} (${r.bpm}bpm)`, [video, cover], (remote) => {
@@ -168,7 +172,7 @@ async function buildReels() {
       const k = sp.findIndex((y) => y.id === x.id);
       if (k === -1) return {};
       // 作っている間にアプリでまた変えられていたら、もう一度作る
-      const again = sp[k].bpm !== x.bpm || sp[k].beats !== x.beats || sp[k].reelTitle !== x.reelTitle || sp[k].reelSub !== x.reelSub;
+      const again = ["bpm", "beats", "hook", "reelTitle", "reelSub", "answer", "format"].some((f) => sp[k][f] !== x[f]);
       sp[k] = { ...sp[k], video, cover, rev: n, seconds: r.seconds, beatsUsed: r.beats, rebuild: again, builtAt: new Date().toISOString() };
       const out = { "specials.json": sp };
       for (const f of old) out[f] = null;
@@ -182,7 +186,7 @@ async function buildReels() {
 async function withVideo(item) {
   const { makeReel } = require("./lib/reel");
   const video = item.images[0].replace(/[^/]+$/, "reel.mp4");
-  const r = await makeReel(item.images.map((p) => path.join(ROOT, p)), path.join(ROOT, video), ROOT, { bpm: item.bpm, beats: item.beats, title: item.reelTitle, sub: item.reelSub });
+  const r = await makeReel(reelItems(item), path.join(ROOT, video), ROOT, reelOpts(item));
   syncCommit(`reel video ${item.id}`, [video], () => ({}));
   const sha = require("child_process").execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim();
   console.log(`リールの動画を作りました（${r.seconds}秒）`);

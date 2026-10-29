@@ -262,18 +262,9 @@ ${CAPTION_RULES}
 }
 
 async function runReels() {
-  const r = planReels({ root: ROOT, queue: remoteJson("queue.json", []), pool: remoteJson("pool.json", []), specials: remoteJson("specials.json", []), posted: remoteJson("posted.json", []), cfg });
+  const r = await planReels({ root: ROOT, queue: remoteJson("queue.json", []), pool: remoteJson("pool.json", []), specials: remoteJson("specials.json", []), posted: remoteJson("posted.json", []), cfg, secrets });
   if (!r.add.length) return;
-  // リールの一言とハッシュタグはAIが写真を見て書く
-  for (const x of r.add) {
-    try {
-      const dir = path.join(ROOT, path.dirname(x.images[0]));
-      const out = await askReelCaption(dir, x.images.map((f) => path.basename(f)));
-      x.caption = buildCaption({ head: x.head, base: x.portrait ? cfg.hashtags.portrait : cfg.hashtags.default, extra: out.tags });
-    } catch (e) {
-      console.log("  リールの一言はAIで作れませんでした: " + e.message);
-    }
-  }
+  // キャプションは形式ごとの問いかけ＋ハッシュタグ（AIの文章は使わない）
   makeSync(ROOT)(`リール予約 +${r.add.length}`, r.files, (remote) => {
     const cur = remote("specials.json", []);
     for (const a of r.add) if (!cur.some((x) => x.id === a.id)) cur.push(a);
