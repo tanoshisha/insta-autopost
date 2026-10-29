@@ -14,6 +14,7 @@ const exifr = require("exifr");
 const { pullAlbum, connect, listAlbum, fetchFresh } = require("./lib/lightroom");
 const { makePostImage, makeThumb } = require("./lib/image");
 const { planFlyers } = require("./lib/flyer");
+const { planReels } = require("./lib/reels-plan");
 const { buildCaption, CAPTION_RULES } = require("./lib/caption");
 const { loadEvents, jstDate, eventPlaceName, reverseGeocode, findLocationId } = require("./lib/places");
 const { makeSync, insertByDate } = require("./lib/sync");
@@ -110,7 +111,7 @@ use=true の写真だけ、投稿用に次も書く:
 ${CAPTION_RULES}
 
 出力は次のJSONだけ（説明文やコードブロック不要）:
-{"photos":[{"file":"t001.jpg","use":true,"portrait":false,"focusY":0.5,"note":"…","line":"…","tags":["#鎌倉"],"alt":"…"}]}`;
+{"photos":[{"file":"t001.jpg","use":true,"portrait":false,"focusY":0.5,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
   return new Promise((resolve, reject) => {
     const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd: WORK });
     let out = "";
@@ -137,7 +138,7 @@ ${CAPTION_RULES}
 function caption(it, portrait) {
   const base = portrait ? cfg.hashtags.portrait : cfg.hashtags.default;
   const head = it.event ? cfg.tpwHeader.replace("{vol}", it.event.vol).replace("{title}", it.event.title) : "";
-  return buildCaption({ head, line: it.ai?.line, base, extra: it.ai?.tags });
+  return buildCaption({ head, base, extra: it.ai?.tags }); // 文章はAIでは書かない（アプリで自分で書く）
 }
 
 // iPhoneアプリでもフォトウォークの回を判定できるよう、開催回の一覧を書き出す（公開情報のみ）
@@ -220,6 +221,49 @@ async function syncEdits() {
 }
 
 // ---- フォトウォークのフライヤー（開催2週間前の21:00・複数枚）を予約 ----
+function askReelCaption(cwd, files) {
+  const prompt = `カレントフォルダの写真（同じ日に撮った ${files.length}枚）を Read ツールで全部見てください: ${files.join(" ")}
+これを1本のスライドショー動画（リール）にして投稿します。動画全体に添える言葉を書いてください:
+${CAPTION_RULES}
+出力は次のJSONだけ: {"tags":["#…"]}`;
+  return new Promise((resolve, reject) => {
+    const CL = path.join(process.env.USERPROFILE || "", ".local", "bin", "claude.exe");
+    const pr = spawn(fs.existsSync(CL) ? CL : "claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd });
+    let out = "";
+    pr.stdout.on("data", (d) => (out += d));
+    pr.on("error", reject);
+    pr.on("close", () => {
+      try {
+        resolve(JSON.parse((JSON.parse(out).result || "").match(/\{[\s\S]*\}/)[0]));
+      } catch (e) {
+        reject(e);
+      }
+    });
+    pr.stdin.end(prompt);
+  });
+}
+
+async function runReels() {
+  const r = planReels({ root: ROOT, queue: remoteJson("queue.json", []), pool: remoteJson("pool.json", []), specials: remoteJson("specials.json", []), posted: remoteJson("posted.json", []), cfg });
+  if (!r.add.length) return;
+  // リールの一言とハッシュタグはAIが写真を見て書く
+  for (const x of r.add) {
+    try {
+      const dir = path.join(ROOT, path.dirname(x.images[0]));
+      const out = await askReelCaption(dir, x.images.map((f) => path.basename(f)));
+      x.caption = buildCaption({ head: x.head, base: x.portrait ? cfg.hashtags.portrait : cfg.hashtags.default, extra: out.tags });
+    } catch (e) {
+      console.log("  リールの一言はAIで作れませんでした: " + e.message);
+    }
+  }
+  makeSync(ROOT)(`リール予約 +${r.add.length}`, r.files, (remote) => {
+    const cur = remote("specials.json", []);
+    for (const a of r.add) if (!cur.some((x) => x.id === a.id)) cur.push(a);
+    cur.sort((a, b) => a.postAt.localeCompare(b.postAt));
+    return { "specials.json": cur };
+  });
+}
+
 async function runFlyers() {
   const tpwDir = path.resolve(cfg.tpwEventsDir, "..", "..");
   const specials = remoteJson("specials.json", []);
@@ -280,6 +324,12 @@ async function main() {
       git(["fetch", "-q", "origin", "main"]);
     } catch (e) {
       console.log("⚠ フライヤー予約でエラー: " + e.message);
+    }
+    try {
+      await runReels();
+      git(["fetch", "-q", "origin", "main"]);
+    } catch (e) {
+      console.log("⚠ リール予約でエラー: " + e.message);
     }
   }
   const items = await collect(state);
@@ -355,7 +405,6 @@ async function main() {
       locationId,
       note: it.ai.note || "",
       alt: it.ai.alt || "",
-      line: it.ai.line || "",
     });
   }
   const decision = new Map(targets.map((it) => [it.id, it.ai]));

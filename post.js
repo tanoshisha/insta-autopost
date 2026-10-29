@@ -57,8 +57,8 @@ async function create(params, droppable) {
   }
   throw new Error("投稿の準備に失敗しました");
 }
-async function waitReady(id) {
-  for (let i = 0; i < 40; i++) {
+async function waitReady(id, tries = 40) {
+  for (let i = 0; i < tries; i++) {
     const s = await graph("GET", `/${id}`, { fields: "status_code" });
     if (s.status_code === "FINISHED") return;
     if (s.status_code === "ERROR") throw new Error("インスタ側で画像の処理に失敗");
@@ -77,7 +77,13 @@ async function publish(item) {
   const tags = item.userTags?.length ? JSON.stringify(item.userTags.map(({ username, x, y }) => ({ username, x, y }))) : null;
   console.log(`投稿: ${item.id}（${images.length}枚）`);
   let container;
-  if (item.kind === "story") {
+  if (item.kind === "reel") {
+    // 動画は jsDelivr（GitHubのファイルを正しい形式で配る CDN）経由で渡す。コミットを指定するので最新が読まれる
+    const params = { media_type: "REELS", video_url: `https://cdn.jsdelivr.net/gh/${process.env.GITHUB_REPOSITORY}@${item.sha}/${item.video}`, caption: item.caption, share_to_feed: "true" };
+    if (locationId) params.location_id = locationId;
+    container = await create(params, ["location_id"]);
+    await waitReady(container.id, 120); // 動画の処理は数分かかる
+  } else if (item.kind === "story") {
     // ストーリー（キャプション・位置情報なし）
     container = await create({ image_url: url(images[0]), media_type: "STORIES" }, []);
   } else if (images.length === 1) {
@@ -122,11 +128,23 @@ async function postSpecial(today, posted) {
       return record(due, null, "specials.json");
     }
   }
-  const item = due.kind === "story" ? await withSeats(due) : due;
+  const item = due.kind === "story" ? await withSeats(due) : due.kind === "reel" ? await withVideo(due) : due;
   const { pub, info } = await publish(item);
   const { images, thumb, _extra, ...rest } = item;
   // 記録のあと、元の画像・残り人数入りの画像の両方を消す
   record({ ...due, images: [...due.images, ...(item._extra ? item.images : [])] }, { ...rest, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: nowIso, day: today, slot: "special" }, "specials.json");
+}
+
+// ---- リールの動画を作る（GitHub の実行環境の ffmpeg で）→ 公開URLで読めるように先に送る ----
+async function withVideo(item) {
+  const { makeReel } = require("./lib/reel");
+  const video = item.images[0].replace(/[^/]+$/, "reel.mp4");
+  const r = await makeReel(item.images.map((p) => path.join(ROOT, p)), path.join(ROOT, video), ROOT);
+  syncCommit(`reel video ${item.id}`, [video], () => ({}));
+  const sha = require("child_process").execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim();
+  console.log(`リールの動画を作りました（${r.seconds}秒）`);
+  await sleep(8000);
+  return { ...item, video, sha, images: [...item.images, video], _extra: true };
 }
 
 // ---- ストーリーに「残りN名」を重ねる（投稿の直前に、サイトの予約システムから最新の人数を取る） ----
