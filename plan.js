@@ -108,6 +108,7 @@ ${lines}
   ・同じ場所・同じ被写体・似た構図が続く時は一番良い1枚だけ（はっきり別の魅力がある時だけ2枚まで）
   ・ピンボケ・ブレ・露出の失敗・何を撮ったか伝わりにくい写真は点数に関係なく false
   ・残る枚数が少なくなっても基準は下げない
+- extra: use=false の写真のうち、score が6〜7で、ピント・ブレ・露出に問題がなく、同じ日の高得点の写真の「2枚目以降」に添えると投稿が豊かになる写真なら true（ほぼ同じ構図の写真は false）。
 - tone: 全体の明るさ。"dark"（夜・暗い）/"mid"/"bright"（昼の明るい写真）のどれか。
 - portrait: 人物が主役のポートレートなら true（街並みの中の小さな人影・後ろ姿のスナップは false）。
 - focusY: 縦長写真を4:5に上下トリミングする時に残したい中心の縦位置（0=上端, 0.5=中央, 1=下端）。顔や主題が切れない値に。
@@ -116,7 +117,7 @@ use=true の写真だけ、投稿用に次も書く:
 ${CAPTION_RULES}
 
 出力は次のJSONだけ（説明文やコードブロック不要）:
-{"photos":[{"file":"t001.jpg","score":8,"tone":"dark","use":true,"portrait":false,"focusY":0.5,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
+{"photos":[{"file":"t001.jpg","score":8,"tone":"dark","use":true,"extra":false,"portrait":false,"focusY":0.5,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
   return new Promise((resolve, reject) => {
     const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd: WORK });
     let out = "";
@@ -428,7 +429,31 @@ async function main() {
       alt: it.ai.alt || "",
     });
   }
-  const decision = new Map(targets.map((it) => [it.id, it.ai]));
+  // 複数枚投稿：8点の写真を1枚目に、同じ日・近い時間（2時間以内）の6〜7点の写真を2枚目以降に添える（最大4枚）
+  //   9点以上は1枚で見せた方が強いので単独のまま。添えた写真は見送りに入れない（アプリで「1枚ずつに戻す」もできる）
+  const aiOf = new Map(targets.map((it) => [it.id, it.ai]));
+  const absorbed = new Set();
+  const near = (a, b) => a.date === b.date && (!a.takenAt || !b.takenAt || Math.abs(Date.parse(a.takenAt) - Date.parse(b.takenAt)) <= 2 * 3600e3);
+  for (const cover of fresh) {
+    const ca = aiOf.get(cover.id);
+    if (ca?.use === false || (ca?.score ?? 0) >= 9 || typeof ca?.score !== "number") continue;
+    const comps = fresh
+      .filter((x) => x.id !== cover.id && !absorbed.has(x.id) && near(cover, x))
+      .filter((x) => {
+        const a = aiOf.get(x.id);
+        return a?.use === false && a.extra === true && (a.score ?? 0) >= 6;
+      })
+      .sort((a, b) => (aiOf.get(b.id).score ?? 0) - (aiOf.get(a.id).score ?? 0))
+      .slice(0, 4);
+    if (!comps.length) continue;
+    for (const c of comps) absorbed.add(c.id);
+    const { ...solo } = cover;
+    cover.images = [cover.image, ...comps.map((c) => c.image)];
+    cover.parts = [solo, ...comps];
+    cover.note = `${cover.images.length}枚の複数枚投稿（1枚目 ${ca.score}点）`;
+    console.log(`  ＋ ${cover.id} に ${comps.length}枚を添えて複数枚投稿に`);
+  }
+  const decision = new Map(targets.filter((it) => !absorbed.has(it.id)).map((it) => [it.id, it.ai]));
   const keepN = targets.filter((it) => it.ai.use !== false).length;
 
   for (const it of items) {
