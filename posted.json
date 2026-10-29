@@ -103,13 +103,14 @@
       "いつものフライヤーの写真"
     ],
     "skipped": false,
-    "threads": null,
+    "threads": "https://www.threads.com/@hayato_naoe/post/DfFCy06FHtX",
     "mediaId": "18138467026642252",
     "permalink": "https://www.instagram.com/p/DfE9WLaj4SZ/",
     "mediaUrl": "https://scontent-lga3-3.cdninstagram.com/v/t51.82787-15/870018771_17951157318314997_5011997195097522582_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=104&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=Jooq1oF10i8Q7kNvwE2Np6V&_nc_oc=AdpGGV3NRQXwVd5kypKzqgmzbXw1mktdb800NsBcB8qqfxU5l1EkLXKdKcsOTbx0AaM&_nc_zt=23&_nc_ht=scontent-lga3-3.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=_vNkgpPnW_SA2taDY3FkZQ&oh=00_AQQvN8Qan0M1_R56HM88zAy7QW2w-7QcRxKFQOFxLAQiUQ&oe=6AE91426",
     "postedAt": "2026-10-29T12:00:11.360Z",
     "day": "2026-10-29",
-    "slot": "special"
+    "slot": "special",
+    "threadsError": null
   },
   {
     "id": "2026-10-23_86fba21b6392",
@@ -175,13 +176,14 @@
       }
     ],
     "count": 3,
-    "threads": null,
+    "threads": "https://www.threads.com/@hayato_naoe/post/DfFC1tlFOfP",
     "mediaId": "18014693348986414",
     "permalink": "https://www.instagram.com/p/DfE9agqjVEY/",
     "mediaUrl": "https://scontent-lga3-3.cdninstagram.com/v/t51.82787-15/870251629_17951157678314997_6421088888816067357_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=Tp80XySn7-kQ7kNvwHWr0oJ&_nc_oc=AdoxNAYmMIG4FQKlB2eia5uFwODjabm8uHKIqBaaxVPtEXrTJjFB0sMI6XxRZ_Ux8aQ&_nc_zt=23&_nc_ht=scontent-lga3-3.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=JZ6P-zw3fU5hftmdhAC68g&oh=00_AQTK5d2F61WRwXeqeMENwR-9hORsxs7cakN62v5-hwdPpw&oe=6AE8F78F",
     "postedAt": "2026-10-29T12:01:43.177Z",
     "day": "2026-10-29",
     "slot": "21:00",
-    "lum": 100
+    "lum": 100,
+    "threadsError": null
   }
 ]
