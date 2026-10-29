@@ -28,6 +28,25 @@
     "skipped": false
   },
   {
+    "id": "reel-2026-10-31",
+    "kind": "reel",
+    "sourceDate": "2026-10-14",
+    "title": "リール：10/14の写真（6枚）",
+    "postAt": "2026-10-31T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-10-31/1.jpg",
+      "specials/reel-2026-10-31/2.jpg",
+      "specials/reel-2026-10-31/3.jpg",
+      "specials/reel-2026-10-31/4.jpg",
+      "specials/reel-2026-10-31/5.jpg",
+      "specials/reel-2026-10-31/6.jpg"
+    ],
+    "thumb": "specials/reel-2026-10-31/thumb.jpg",
+    "caption": "#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活",
+    "locationName": null,
+    "skipped": false
+  },
+  {
     "id": "flyer-2026-11-14",
     "kind": "flyer",
     "eventDate": "2026-11-14",
