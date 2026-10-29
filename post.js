@@ -84,13 +84,15 @@ async function publish(item) {
     const params = { image_url: url(images[0]), caption: item.caption };
     if (locationId) params.location_id = locationId;
     if (tags) params.user_tags = tags;
-    container = await create(params, ["user_tags", "location_id"]);
+    if (item.alt) params.alt_text = item.alt.slice(0, 1000); // 写真の説明（読み上げ・検索向け）
+    container = await create(params, ["user_tags", "alt_text", "location_id"]);
   } else {
     const children = [];
     for (const [i, p] of images.slice(0, 20).entries()) {
       const params = { image_url: url(p), is_carousel_item: "true" };
       if (i === 0 && tags) params.user_tags = tags;
-      const c = await create(params, ["user_tags"]);
+      if (i === 0 && item.alt) params.alt_text = item.alt.slice(0, 1000);
+      const c = await create(params, ["user_tags", "alt_text"]);
       await waitReady(c.id);
       children.push(c.id);
     }

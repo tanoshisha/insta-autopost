@@ -14,6 +14,7 @@ const exifr = require("exifr");
 const { pullAlbum, connect, listAlbum, fetchFresh } = require("./lib/lightroom");
 const { makePostImage, makeThumb } = require("./lib/image");
 const { planFlyers } = require("./lib/flyer");
+const { buildCaption, CAPTION_RULES } = require("./lib/caption");
 const { loadEvents, jstDate, eventPlaceName, reverseGeocode, findLocationId } = require("./lib/places");
 const { makeSync, insertByDate } = require("./lib/sync");
 
@@ -105,9 +106,11 @@ ${lines}
 - portrait: 人物が主役のポートレートなら true（街並みの中の小さな人影・後ろ姿のスナップは false）。
 - focusY: 縦長写真を4:5に上下トリミングする時に残したい中心の縦位置（0=上端, 0.5=中央, 1=下端）。顔や主題が切れない値に。
 - note: 一言（use=true なら写真の内容、false なら見送った理由。例「t003と似た構図」「ブレ」）。
+use=true の写真だけ、投稿用に次も書く:
+${CAPTION_RULES}
 
 出力は次のJSONだけ（説明文やコードブロック不要）:
-{"photos":[{"file":"t001.jpg","use":true,"portrait":false,"focusY":0.5,"note":"…"}]}`;
+{"photos":[{"file":"t001.jpg","use":true,"portrait":false,"focusY":0.5,"note":"…","line":"…","tags":["#鎌倉"],"alt":"…"}]}`;
   return new Promise((resolve, reject) => {
     const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd: WORK });
     let out = "";
@@ -132,10 +135,9 @@ ${lines}
 }
 
 function caption(it, portrait) {
-  const tags = portrait ? cfg.hashtags.portrait : cfg.hashtags.default;
-  if (!it.event) return tags;
-  const head = cfg.tpwHeader.replace("{vol}", it.event.vol).replace("{title}", it.event.title);
-  return `${head}\n\n${tags}`;
+  const base = portrait ? cfg.hashtags.portrait : cfg.hashtags.default;
+  const head = it.event ? cfg.tpwHeader.replace("{vol}", it.event.vol).replace("{title}", it.event.title) : "";
+  return buildCaption({ head, line: it.ai?.line, base, extra: it.ai?.tags });
 }
 
 // iPhoneアプリでもフォトウォークの回を判定できるよう、開催回の一覧を書き出す（公開情報のみ）
@@ -352,6 +354,8 @@ async function main() {
       locationName,
       locationId,
       note: it.ai.note || "",
+      alt: it.ai.alt || "",
+      line: it.ai.line || "",
     });
   }
   const decision = new Map(targets.map((it) => [it.id, it.ai]));
