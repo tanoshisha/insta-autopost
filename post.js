@@ -299,6 +299,7 @@ async function refreshExplore() {
 // ---- コメント（30分ごと）：スパムっぽいものは自動で非表示。アプリで書いた返信（actions.json）を送る ----
 const SPAM = /(https?:\/\/|www\.|\.com\b|\bdm\b|promo|promot|collab|ambassador|send (a )?pic|check (my|out)|crypto|bitcoin|forex|invest|giveaway|followers?\s*(free|cheap)|稼げ|副業|在宅|LINE(追加|登録)|プロフ(を)?見て|💰|📈)/i;
 async function refreshComments() {
+  let threadsStats = null;
   const cur = read("comments.json", null);
   const acts = read("actions.json", []);
   const due = !cur || Date.now() - Date.parse(cur.updatedAt) > 30 * 60e3;
@@ -308,7 +309,14 @@ async function refreshComments() {
   // アプリからの依頼（返信・非表示を戻す）
   for (const a of acts) {
     try {
-      if (a.type === "reply") await graph("POST", `/${a.commentId}/replies`, { message: a.text });
+      if (a.commentId.startsWith("th:")) {
+        // スレッズの返信
+        const th = require("./lib/threads");
+        const token = await threadsToken();
+        const rid = a.commentId.slice(3);
+        if (a.type === "reply") await th.replyTo({ token, userId: cfg.threadsUserId, replyToId: rid, text: a.text });
+        else await th.hideReply({ token, replyId: rid, hide: a.type === "hide" });
+      } else if (a.type === "reply") await graph("POST", `/${a.commentId}/replies`, { message: a.text });
       else if (a.type === "unhide") await graph("POST", `/${a.commentId}`, { hide: "false" });
       else if (a.type === "hide") await graph("POST", `/${a.commentId}`, { hide: "true" });
       done.push({ ...a, ok: true });
@@ -338,6 +346,21 @@ async function refreshComments() {
         fresh.push({ id: x.id, mediaId: m.id, url: m.permalink, img: m.media_url || m.thumbnail_url, username: x.username, text: x.text, at: x.timestamp, hidden, spam, replied, checked: true });
       }
     }
+    // スレッズの返信と、投稿ごとの数字（表示・いいね・返信）
+    let thPosts = null;
+    if (cfg.threadsUserId && cfg.threads !== false) {
+      try {
+        const r = await require("./lib/threads").recent({ token: await threadsToken(), me });
+        for (const x of r.replies) {
+          const old = items.find((y) => y.id === x.id) || {};
+          fresh.push({ ...x, replied: x.replied || !!old.replied, checked: true });
+        }
+        thPosts = r.posts;
+      } catch (e) {
+        console.log("スレッズの返信の確認に失敗: " + e.message);
+      }
+    }
+    if (thPosts) threadsStats = { updatedAt: new Date().toISOString(), posts: thPosts };
     items = fresh.sort((a, b) => b.at.localeCompare(a.at)).slice(0, 300);
   }
   for (const d of done) {
@@ -348,12 +371,13 @@ async function refreshComments() {
       if (d.type === "hide") it.hidden = true;
     }
   }
-  const changed = JSON.stringify(items) !== JSON.stringify(cur?.items || []) || done.length;
+  const changed = JSON.stringify(items) !== JSON.stringify(cur?.items || []) || done.length || threadsStats;
   if (!changed && cur) return;
   syncCommit("comments", [], (remote) => {
     const left = remote("actions.json", []).filter((a) => !done.some((d) => d.at === a.at && d.commentId === a.commentId));
     const out = { "comments.json": { updatedAt: new Date().toISOString(), items, log: [...done, ...(cur?.log || [])].slice(0, 50) } };
     out["actions.json"] = left.length ? left : null;
+    if (threadsStats) out["threads.json"] = threadsStats;
     return out;
   });
 }

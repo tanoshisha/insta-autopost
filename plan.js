@@ -84,6 +84,7 @@ async function collect(state) {
       if (ex) {
         it.takenAt = it.takenAt || ex.DateTimeOriginal || ex.CreateDate || null;
         if (!it.gps && typeof ex.latitude === "number") it.gps = { lat: ex.latitude, lng: ex.longitude };
+        it.shot = it.shot || require("./lib/lightroom").shotLine(ex);
       }
     } catch {}
     out.push(it);
@@ -436,6 +437,7 @@ async function main() {
       locationId,
       note: it.ai.note || "",
       score: it.ai.score ?? null,
+      shot: it.shot || null,
       crop: it.ai.crop || null,
       remove: it.ai.remove?.length ? it.ai.remove : undefined,
       hdr: it.ai.hdr || undefined,
