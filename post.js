@@ -164,6 +164,32 @@ async function withSeats(item) {
   }
 }
 
+// ---- 投稿の反応（いいね・コメント数）を6時間に1回取る → insights.json（アプリの「投稿済み」と「反応がいい時間帯」用）----
+async function refreshInsights() {
+  const cur = read("insights.json", null);
+  if (cur && Date.now() - Date.parse(cur.updatedAt) < 6 * 3600e3) return;
+  const j = await graph("GET", `/${process.env.IG_USER_ID}/media`, { fields: "id,timestamp,like_count,comments_count,permalink,media_type,media_url,thumbnail_url,caption", limit: "60" });
+  const media = (j.data || []).map((m) => ({
+    id: m.id,
+    at: m.timestamp,
+    likes: m.like_count ?? null,
+    comments: m.comments_count ?? null,
+    url: m.permalink,
+    img: m.media_type === "VIDEO" ? m.thumbnail_url : m.media_url,
+    type: m.media_type,
+    head: (m.caption || "").split("\n")[0].slice(0, 40),
+  }));
+  syncCommit("insights", [], () => ({ "insights.json": { updatedAt: new Date().toISOString(), media } }));
+  console.log(`反応を更新しました（${media.length}件）`);
+}
+
+// ---- うまくいかなかった時はアプリに出す（status.json）。うまくいったら消す ----
+function setStatus(error) {
+  const cur = read("status.json", null);
+  if (!error && !cur?.error) return;
+  syncCommit(error ? "status: error" : "status: ok", [], () => ({ "status.json": error ? { error, at: new Date().toISOString() } : null }));
+}
+
 async function main() {
   const queue = read("queue.json", []);
   const posted = read("posted.json", []);
@@ -175,6 +201,9 @@ async function main() {
   } catch (e) {
     console.error("フライヤー投稿のエラー: " + e.message);
     process.exitCode = 1;
+    try {
+      setStatus("フライヤー/ストーリー: " + e.message.slice(0, 280));
+    } catch {}
   }
 
   const times = timesFor(today, read("schedule.json", null));
@@ -195,7 +224,19 @@ async function main() {
   record(item, { ...rest, count: (images || [image]).length, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot });
 }
 
-main().catch((e) => {
-  console.error("エラー: " + e.message);
-  process.exit(1);
-});
+main()
+  .then(async () => {
+    try {
+      await refreshInsights();
+    } catch (e) {
+      console.log("反応の取得に失敗: " + e.message);
+    }
+    if (!process.exitCode) setStatus(null);
+  })
+  .catch((e) => {
+    console.error("エラー: " + e.message);
+    try {
+      setStatus(e.message.slice(0, 300));
+    } catch {}
+    process.exit(1);
+  });
