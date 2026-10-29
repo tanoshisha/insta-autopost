@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T12:41:33.610Z",
+  "updatedAt": "2026-10-29T12:42:48.322Z",
   "items": [
     {
       "id": "18095209388665891",
@@ -24,7 +24,7 @@
       "at": "2026-10-28T11:12:45+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     },
     {
@@ -37,7 +37,7 @@
       "at": "2026-10-26T08:50:25+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     },
     {
@@ -50,7 +50,7 @@
       "at": "2026-10-24T00:05:55+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     },
     {
@@ -63,7 +63,7 @@
       "at": "2026-10-19T17:07:44+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     },
     {
@@ -76,7 +76,7 @@
       "at": "2026-10-15T19:16:39+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     },
     {
@@ -114,7 +114,7 @@
       "at": "2026-10-09T21:30:09+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     },
     {
@@ -197,6 +197,48 @@
     }
   ],
   "log": [
+    {
+      "type": "reply",
+      "commentId": "18464855539187312",
+      "text": "❤️",
+      "at": "2026-10-29T12:41:24.024Z",
+      "ok": true
+    },
+    {
+      "type": "reply",
+      "commentId": "18116119598084845",
+      "text": "❤️",
+      "at": "2026-10-29T12:41:40.680Z",
+      "ok": true
+    },
+    {
+      "type": "reply",
+      "commentId": "17919879087246198",
+      "text": "❤️",
+      "at": "2026-10-29T12:41:54.642Z",
+      "ok": true
+    },
+    {
+      "type": "reply",
+      "commentId": "17940395781395014",
+      "text": "❤️",
+      "at": "2026-10-29T12:42:02.518Z",
+      "ok": true
+    },
+    {
+      "type": "reply",
+      "commentId": "18126333763925262",
+      "text": "❤️",
+      "at": "2026-10-29T12:42:08.837Z",
+      "ok": true
+    },
+    {
+      "type": "reply",
+      "commentId": "18201014362382998",
+      "text": "めちゃくちゃすごかったです😂",
+      "at": "2026-10-29T12:42:25.006Z",
+      "ok": true
+    },
     {
       "type": "hide",
       "commentId": "18050207468807278",
