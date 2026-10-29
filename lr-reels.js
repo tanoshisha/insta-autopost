@@ -18,7 +18,7 @@ const REPLACE = process.argv.includes("--replace"); // Lightroom から作った
 const { spawn } = require("child_process");
 
 // AI（いちばん賢いモデル）がテーマごとに選び直す：人がまったく写っていない・テーマに合う・似た写真は1枚・流れのある順番
-function curate(theme, cands) {
+function curate(theme, cands, session = false) {
   const lines = cands.map((x) => `- thumbs/${x.id}.jpg`).join("\n");
   const prompt = `カレントフォルダの次の写真を Read ツールで全部見てください。写真家のインスタのリール（縦の動画・写真を曲に合わせて切り替える）を1本作ります。テーマは「${theme}」の候補です。
 
@@ -26,7 +26,8 @@ ${lines}
 
 次の条件で 14〜18枚を選び、見せる順番に並べてください（曲に合わせて1枚0.5秒ほどで切り替える写真まとめの動画です）:
 - 人が1人でも写っている写真は入れない（小さな人影・後ろ姿・お面やコスプレの人も含めて、人の姿が分かるものは全部なし）
-- テーマに合わない写真は入れない（迷ったら入れない）
+- ${session ? "同じ日・同じ場所で撮った写真です。時間の流れ（夕方→夜など）や歩いた順に、ストーリーのある並びにする" : "テーマに合わない写真は入れない（迷ったら入れない）"}
+- 色味・雰囲気がそろうこと（1本の作品に見えるように）。色味や雰囲気が浮く写真は入れない
 - ほぼ同じ構図・同じ場面の写真は1枚だけ
 - 1枚目は、いちばん指が止まる強い写真
 - 並びは、明るさ・色・寄り引きに流れがあるように（似た写真が続かない）
@@ -89,6 +90,15 @@ const THEME = {
   // テーマの束（7枚以上）→ 点数の高い順
   const groups = {};
   for (const x of ok) (groups[x.theme] = groups[x.theme] || []).push(x);
+  // 同じ日の撮影（同じ場所・同じ光で色味がそろい、撮った順でストーリーになる）。6点以上・人なし・12枚以上
+  const usedDays = new Set([...specials, ...posted].filter((x) => x.kind === "reel" && x.sourceDate).map((x) => x.sourceDate)); // ほかのリールで使った日（10/31のハロウィンなど）
+  const byDay = {};
+  for (const x of judged.filter((x) => !x.people && x.score >= 6 && !used.has(`lr:${x.id}`))) (byDay[String(x.t).slice(0, 10)] = byDay[String(x.t).slice(0, 10)] || []).push(x);
+  const sessions = Object.entries(byDay)
+    .filter(([d, g]) => g.length >= 12 && !usedDays.has(d))
+    .map(([d, g]) => [d, g.sort((a, b) => String(a.t).localeCompare(String(b.t)))])
+    .sort((a, b) => b[1].reduce((s, x) => s + x.score, 0) / b[1].length - a[1].reduce((s, x) => s + x.score, 0) / a[1].length);
+  console.log("同じ日の撮影：" + sessions.map(([d, g]) => `${d}（${g.length}枚）`).join("・"));
   const themes = Object.entries(groups)
     .filter(([t, g]) => THEME[t] && g.length >= 12)
     .sort((a, b) => b[1].slice(0, 8).reduce((s, x) => s + x.score, 0) - a[1].slice(0, 8).reduce((s, x) => s + x.score, 0));
@@ -103,7 +113,27 @@ const THEME = {
   const files = [];
   // 「撮影データ」の回も1本（点数が高く、データのある写真から）
   const plans = [];
-  for (const [t, g] of themes) {
+  const usedIds = new Set();
+  for (const [d, g] of sessions) {
+    if (plans.length >= COUNT - 1) break;
+    try {
+      const cands = g.slice(0, 40);
+      const top = (k) => Object.entries(cands.reduce((m, x) => ((m[x[k]] = (m[x[k]] || 0) + 1), m), {})).sort((a, b) => b[1] - a[1])[0]?.[0];
+      const r = await curate(`${d} の撮影（${top("place") || top("theme")}）`, cands, true);
+      const items = r.ids.map((id) => cands.find((x) => String(x.id) === String(id))).filter(Boolean);
+      if (items.length < 12) {
+        console.log(`  （${d}：条件に合う写真が${items.length}枚だけなので見送り）`);
+        continue;
+      }
+      for (const x of items) usedIds.add(x.id);
+      plans.push({ format: "dump", theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
+      console.log(`  AI：${d} → ${items.length}枚（${r.theme}）`);
+    } catch (e) {
+      console.log("  ⚠ " + e.message);
+    }
+  }
+  for (const [t, g0] of themes) {
+    const g = g0.filter((x) => !usedIds.has(x.id));
     if (plans.length >= COUNT - 1) break;
     try {
       const r = await curate(t, g.slice(0, 36));
