@@ -4,6 +4,9 @@ name: インスタ自動投稿
 # そこで、1回起動したら約5時間45分起きたままにして、1分ごとに予定時刻を確認して投稿する。
 # 次の起動は前のが終わるまで待機し（同時には動かない）、終わったらすぐ続きを引き継ぐ。
 on:
+  # アプリやPCで予約を変えた時（push）にも起動 → 止まっていても自動で見張りが再開する
+  push:
+    branches: [main]
   schedule:
     - cron: "7,37 * * * *"
   workflow_dispatch:
@@ -43,7 +46,9 @@ jobs:
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
           FORCE: ${{ inputs.force && '1' || '' }}
         run: |
-          if [ "$FORCE" = "1" ]; then node post.js; exit $?; fi
+          # 「今すぐ1枚」で起動した時は、まず1枚投稿してから見張りを続ける
+          if [ "$FORCE" = "1" ]; then node post.js || true; fi
+          export FORCE=
           end=$((SECONDS + 20700))
           while [ $SECONDS -lt $end ]; do
             # アプリやPCでの変更（並べ替え・ペースなど）を毎回取り込んでから確認
