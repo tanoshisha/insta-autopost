@@ -77,7 +77,10 @@ async function publish(item) {
   const tags = item.userTags?.length ? JSON.stringify(item.userTags.map(({ username, x, y }) => ({ username, x, y }))) : null;
   console.log(`投稿: ${item.id}（${images.length}枚）`);
   let container;
-  if (images.length === 1) {
+  if (item.kind === "story") {
+    // ストーリー（キャプション・位置情報なし）
+    container = await create({ image_url: url(images[0]), media_type: "STORIES" }, []);
+  } else if (images.length === 1) {
     const params = { image_url: url(images[0]), caption: item.caption };
     if (locationId) params.location_id = locationId;
     if (tags) params.user_tags = tags;

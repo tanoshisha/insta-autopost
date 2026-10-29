@@ -222,10 +222,10 @@ async function runFlyers() {
   const tpwDir = path.resolve(cfg.tpwEventsDir, "..", "..");
   const specials = remoteJson("specials.json", []);
   const postedIds = new Set(remoteJson("posted.json", []).map((p) => p.id));
-  const { add, files } = await planFlyers({ root: ROOT, tpwDir, specials, postedIds, secrets, eventPlaceName });
-  if (!add.length) return;
-  makeSync(ROOT)(`フライヤー予約 +${add.length}`, files, (remote) => {
-    const cur = remote("specials.json", []);
+  const { add, files, updates } = await planFlyers({ root: ROOT, tpwDir, specials, postedIds, secrets, eventPlaceName });
+  if (!add.length && !Object.keys(updates || {}).length) return;
+  makeSync(ROOT)(`フライヤー・ストーリー予約 +${add.length}`, files, (remote) => {
+    const cur = remote("specials.json", []).map((x) => (updates?.[x.id] ? { ...x, ...updates[x.id] } : x));
     for (const a of add) if (!cur.some((x) => x.id === a.id)) cur.push(a);
     cur.sort((a, b) => a.postAt.localeCompare(b.postAt));
     return { "specials.json": cur };
