@@ -47,7 +47,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "video": "specials/reel-2026-10-31/reel-4.mp4",
     "cover": "specials/reel-2026-10-31/reel-4-cover.jpg",
     "rev": 4,
@@ -56,9 +56,9 @@
     "builtAt": "2026-10-29T16:04:44.994Z",
     "format": "dump",
     "hook": "ハロウィンの夜、何枚目が好き？",
-    "rebuildAt": "2026-10-29T15:58:16.032Z",
+    "rebuildAt": "2026-10-29T16:13:02.624Z",
     "engine": "ae",
-    "style": "mv"
+    "style": "oto"
   },
   {
     "id": "story-2026-11-07-7",
