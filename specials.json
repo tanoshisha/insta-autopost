@@ -28,6 +28,19 @@
     "skipped": false
   },
   {
+    "id": "story-2026-11-07-7",
+    "kind": "story",
+    "eventDate": "2026-11-07",
+    "title": "根津神社フォトウォーク（7日前）",
+    "postAt": "2026-10-31T20:00:00+09:00",
+    "images": [
+      "specials/story-2026-11-07-7/story.jpg"
+    ],
+    "thumb": "specials/story-2026-11-07-7/thumb.jpg",
+    "caption": "",
+    "skipped": false
+  },
+  {
     "id": "flyer-2026-11-14",
     "kind": "flyer",
     "eventDate": "2026-11-14",
@@ -53,6 +66,19 @@
       "雨あがりの水たまりに映る、ライトアップされた東京駅・丸の内の赤レンガ駅舎",
       "撮影後のカフェに参加者全員で集合"
     ],
+    "skipped": false
+  },
+  {
+    "id": "story-2026-11-14-14",
+    "kind": "story",
+    "eventDate": "2026-11-14",
+    "title": "神楽坂フォトウォーク（14日前）",
+    "postAt": "2026-10-31T21:30:00+09:00",
+    "images": [
+      "specials/story-2026-11-14-14/story.jpg"
+    ],
+    "thumb": "specials/story-2026-11-14-14/thumb.jpg",
+    "caption": "",
     "skipped": false
   }
 ]
