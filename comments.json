@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T12:32:03.177Z",
+  "updatedAt": "2026-10-29T12:40:22.027Z",
   "items": [
     {
       "id": "18095209388665891",
@@ -192,9 +192,17 @@
       "at": "2026-09-28T10:55:30+0000",
       "hidden": false,
       "spam": false,
-      "replied": false,
+      "replied": true,
       "checked": true
     }
   ],
-  "log": []
+  "log": [
+    {
+      "type": "reply",
+      "commentId": "18111754172023531",
+      "text": "ありがとうございます！",
+      "at": "2026-10-29T12:39:38.156Z",
+      "ok": true
+    }
+  ]
 }
