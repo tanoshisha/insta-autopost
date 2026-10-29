@@ -3,7 +3,7 @@
     "id": "reel-2026-10-31",
     "kind": "reel",
     "sourceDate": "2026-10-23",
-    "title": "リール：10/23のハロウィン（6枚）",
+    "title": "リール：10/23の横浜イングリッシュガーデン（10枚）",
     "postAt": "2026-10-31T19:00:00+09:00",
     "images": [
       "specials/reel-2026-10-31/1.jpg",
@@ -11,14 +11,43 @@
       "specials/reel-2026-10-31/3.jpg",
       "specials/reel-2026-10-31/4.jpg",
       "specials/reel-2026-10-31/5.jpg",
-      "specials/reel-2026-10-31/6.jpg"
+      "specials/reel-2026-10-31/6.jpg",
+      "specials/reel-2026-10-31/7.jpg",
+      "specials/reel-2026-10-31/8.jpg",
+      "specials/reel-2026-10-31/9.jpg",
+      "specials/reel-2026-10-31/10.jpg"
     ],
     "thumb": "specials/reel-2026-10-31/thumb.jpg",
     "caption": "#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #ハロウィン #ジャックオランタン",
     "head": "",
     "portrait": false,
-    "locationName": null,
-    "skipped": false
+    "locationName": "横浜イングリッシュガーデン",
+    "skipped": false,
+    "manual": true,
+    "reelTitle": "横浜イングリッシュガーデン",
+    "reelSub": "2026.10.23",
+    "songs": [
+      {
+        "t": "Halloween Waltz",
+        "a": "Moon blues",
+        "bpm": null,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "雰囲気に合う"
+      },
+      {
+        "t": "東京は夜の七時",
+        "a": "ピチカート・ファイヴ",
+        "bpm": null,
+        "why": "この写真家らしい"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true
   },
   {
     "id": "story-2026-11-07-7",
