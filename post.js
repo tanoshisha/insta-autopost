@@ -192,12 +192,58 @@ function setStatus(error) {
   syncCommit(error ? "status: error" : "status: ok", [], () => ({ "status.json": error ? { error, at: new Date().toISOString() } : null }));
 }
 
+// ---- 自動ストーリー（config.json の stories で切り替え） ----
+//   newPost: フィードに投稿したら、その写真を「新しい投稿」付きでストーリーにも（1日1回まで）
+//   memory : 毎週日曜20:30に、反応が良かった昔の写真を「あの日の一枚」としてストーリーに
+const storyCfg = () => ({ newPost: true, memory: true, ...(cfg.stories || {}) });
+async function composeStory(buf, badgeKey, outRel) {
+  const sharp = require("sharp");
+  const bg = await sharp(buf).resize(1080, 1920, { fit: "cover" }).blur(45).modulate({ brightness: 0.5 }).toBuffer();
+  const fg = await sharp(buf).resize(880, 1100, { fit: "cover" }).toBuffer();
+  const out = await sharp(bg)
+    .composite([{ input: fg, left: 100, top: 250 }, { input: fs.readFileSync(path.join(ROOT, "assets", "seat", `${badgeKey}.png`)), left: 90, top: 1400 }])
+    .jpeg({ quality: 92, mozjpeg: true })
+    .toBuffer();
+  fs.mkdirSync(path.dirname(path.join(ROOT, outRel)), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, outRel), out);
+  syncCommit(`story image ${outRel}`, [outRel], () => ({}));
+  await sleep(5000);
+}
+async function postAutoStory(kind, outRel, extra, today) {
+  const { pub } = await publish({ id: outRel, kind: "story", images: [outRel] });
+  syncCommit(`posted ${kind}`, [], (remote) => {
+    const posted = remote("posted.json", []);
+    posted.push({ id: `${kind}-${Date.now()}`, kind: "story", title: kind === "memory" ? "あの日の一枚" : "新しい投稿のお知らせ", mediaId: pub.id, postedAt: new Date().toISOString(), day: today, slot: `${kind}-story`, ...extra });
+    return { "posted.json": posted, [outRel]: null };
+  });
+}
+async function memoryStory(today, now, posted) {
+  if (!storyCfg().memory) return;
+  const dow = new Date(Date.parse(today + "T00:00:00Z")).getUTCDay();
+  if (dow !== 0 || now < 20 * 60 + 30 || now > 23 * 60) return;
+  if (posted.some((p) => p.day === today && p.slot === "memory-story")) return;
+  const used = new Set(posted.filter((p) => p.memoryOf).map((p) => p.memoryOf));
+  const old = (read("insights.json", null)?.media || []).filter((m) => m.img && m.type !== "VIDEO" && Date.now() - Date.parse(m.at) > 45 * 864e5 && !used.has(m.id));
+  const best = old.sort((a, b) => (b.likes || 0) - (a.likes || 0))[0];
+  if (!best) return;
+  const buf = Buffer.from(await (await fetch(best.img)).arrayBuffer());
+  const rel = `specials/auto/memory-${today}.jpg`;
+  await composeStory(buf, "memory", rel);
+  await postAutoStory("memory", rel, { memoryOf: best.id }, today);
+  console.log("あの日の一枚をストーリーに投稿しました");
+}
+
 async function main() {
   const queue = read("queue.json", []);
   const posted = read("posted.json", []);
   const { day: today, min: now } = nowJst();
   if (read("paused.json", null)?.paused) return console.log("一時停止中（paused.json）");
 
+  try {
+    await memoryStory(today, now, posted);
+  } catch (e) {
+    console.log("あの日の一枚のストーリーは失敗: " + e.message);
+  }
   try {
     await postSpecial(today, posted);
   } catch (e) {
@@ -222,8 +268,27 @@ async function main() {
     return record(item, null);
   }
   const { pub, info } = await publish(item);
+  // 「新しい投稿」のストーリー用の画像を、元の画像が消える前に作っておく（1日1回まで）
+  let storyRel = null;
+  if (storyCfg().newPost && !posted.some((p) => p.day === today && p.slot === "newpost-story")) {
+    try {
+      storyRel = `specials/auto/newpost-${item.id}.jpg`;
+      await composeStory(fs.readFileSync(path.join(ROOT, item.image || item.images[0])), "newpost", storyRel);
+    } catch (e) {
+      console.log("新しい投稿のストーリー画像を作れませんでした: " + e.message);
+      storyRel = null;
+    }
+  }
   const { image, images, thumb, ...rest } = item;
   record(item, { ...rest, count: (images || [image]).length, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot });
+  if (storyRel) {
+    try {
+      await postAutoStory("newpost", storyRel, { of: item.id }, today);
+      console.log("新しい投稿のお知らせをストーリーに出しました");
+    } catch (e) {
+      console.log("新しい投稿のストーリーは失敗: " + e.message);
+    }
+  }
 }
 
 main()

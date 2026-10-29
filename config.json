@@ -15,5 +15,9 @@
   },
   "aiModel": "sonnet",
   "retouchModel": "opus",
-  "retouchModelSnap": "sonnet"
+  "retouchModelSnap": "sonnet",
+  "stories": {
+    "newPost": true,
+    "memory": true
+  }
 }
