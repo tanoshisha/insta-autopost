@@ -537,6 +537,9 @@ async function main() {
       await buildReels();
     } catch (e) {
       console.log("リールの動画づくりに失敗: " + e.message.slice(0, 300));
+      try {
+        setStatus("リールの動画: " + (e.message + " " + String(e.stderr || "").slice(-300)).slice(0, 400));
+      } catch {}
     }
     await postSpecial(today, posted);
   } catch (e) {
