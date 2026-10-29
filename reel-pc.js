@@ -37,7 +37,7 @@ const LOCK = path.join(ROOT, ".work", "reel-pc.lock");
       const n = (x.rev || 0) + 1;
       const video = `specials/${x.id}/reel-${n}.mp4`;
       fs.mkdirSync(path.join(ROOT, path.dirname(video)), { recursive: true });
-      const r = await makeReelAE(items, path.join(ROOT, video), ROOT, { style: x.style || "mv", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats });
+      const r = await makeReelAE(items, path.join(ROOT, video), ROOT, { style: x.style || "oto", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats });
       const cover = video.replace(/\.mp4$/, "-cover.jpg");
       const old = [x.video, x.cover].filter(Boolean);
       makeSync(ROOT)(`reel video ${x.id} (${r.engine || "ffmpeg"} ${r.bpm}bpm)`, [video, cover], (rm) => {

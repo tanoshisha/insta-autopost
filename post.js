@@ -148,7 +148,7 @@ async function postSpecial(today, posted) {
 
 // リールの写真と設定（形式・つかみの一言・撮影データ・クイズの答え）
 const reelItems = (x) => x.images.map((p, i) => ({ src: path.join(ROOT, p), shot: x.shots?.[i] || null, place: x.places?.[i] || null }));
-const reelOpts = (x) => ({ style: x.style || "mv", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats });
+const reelOpts = (x) => ({ style: x.style || "oto", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats });
 
 // ---- リールの動画を前もって作っておく（アプリで再生・保存して、インスタで曲を付けて投稿する） ----
 //   予約されたリール・アプリでテンポやタイトルを変えたリール（rebuild）を作り直す。ファイル名を毎回変えて、古い動画が見えないように
