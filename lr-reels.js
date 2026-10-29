@@ -1,5 +1,6 @@
-// lr-reels.js — Lightroom Classic の写真（人なし・AIの点数つき）からテーマごとのリールを作って予約する
-//   node lr-reels.js [本数=5]
+// lr-reels.js — Lightroom Classic の写真（人なし・AIの点数つき）からテーマごとのリールを作って予約する（毎日1本）
+//   node lr-reels.js [本数=5]          … 空いている日に入れる
+//   node lr-reels.js 3 --auto          … 毎朝：この先7日の空いている日だけ埋める
 //   写真は .work/lrpick（lr-pick.js → lr-ai-pick.js）。予約は 水・土 の空いている 19:00 に入れる
 //   動画はこのPCの After Effects が作る（reel-pc.js が10分以内に）
 const fs = require("fs");
@@ -105,9 +106,9 @@ const THEME = {
   // 空いている 水・土 19:00
   const taken = new Set([...specials, ...posted].filter((x) => x.kind === "reel").map((x) => x.postAt.slice(0, 10)));
   const slots = [];
-  for (let d = 1; slots.length < COUNT && d < 60; d++) {
+  for (let d = 1; slots.length < COUNT && d <= (process.argv.includes("--auto") ? 7 : 60); d++) {
     const day = new Date(Date.now() + 9 * 3600e3 + d * 864e5).toISOString().slice(0, 10);
-    if ([3, 6].includes(new Date(day + "T00:00:00Z").getUTCDay()) && !taken.has(day)) slots.push(day);
+    if (!taken.has(day)) slots.push(day); // 毎日1本（空いている日に）
   }
   const add = [];
   const files = [];

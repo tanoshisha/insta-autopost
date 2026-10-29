@@ -262,6 +262,7 @@ ${CAPTION_RULES}
 }
 
 async function runReels() {
+  if (cfg.reelSource === "lr") return; // リールは Lightroom Classic の写真から（lr-reels.js）。インスタの投稿から作るのは止める
   const r = await planReels({ root: ROOT, queue: remoteJson("queue.json", []), pool: remoteJson("pool.json", []), specials: remoteJson("specials.json", []), posted: remoteJson("posted.json", []), cfg, secrets });
   if (!r.add.length) return;
   // キャプションは形式ごとの問いかけ＋ハッシュタグ（AIの文章は使わない）
