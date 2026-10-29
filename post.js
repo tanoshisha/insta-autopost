@@ -117,7 +117,7 @@ async function publish(item) {
 async function postSpecial(today, posted) {
   const nowIso = new Date().toISOString();
   const due = read("specials.json", []).find(
-    (s) => !s.skipped && Date.parse(s.postAt) <= Date.now() && (!s.eventDate || s.eventDate > today) && !posted.some((p) => p.id === s.id)
+    (s) => !s.skipped && !(s.kind === "reel" && s.manual) && Date.parse(s.postAt) <= Date.now() && (!s.eventDate || s.eventDate > today) && !posted.some((p) => p.id === s.id)
   );
   if (!due) return;
   // 手で同じ回の告知を出していたら二重に投稿しない
@@ -143,11 +143,43 @@ async function postSpecial(today, posted) {
   record({ ...due, images: [...due.images, ...(item._extra ? item.images : [])] }, { ...rest, threads: thr?.permalink || (thr ? true : null), mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: nowIso, day: today, slot: "special" }, "specials.json");
 }
 
-// ---- リールの動画を作る（GitHub の実行環境の ffmpeg で）→ 公開URLで読めるように先に送る ----
+// ---- リールの動画を前もって作っておく（アプリで再生・保存して、インスタで曲を付けて投稿する） ----
+//   予約されたリール・アプリでテンポやタイトルを変えたリール（rebuild）を作り直す。ファイル名を毎回変えて、古い動画が見えないように
+async function buildReels() {
+  const list = read("specials.json", []).filter((s) => s.kind === "reel" && !s.skipped && (s.rebuild || !s.video) && s.images?.length);
+  if (list.length && process.platform === "linux") {
+    // タイトルの日本語用フォント（起動時に入れているが、入る前から動いている時のために）
+    try {
+      require("child_process").execSync('fc-list | grep -qi "Noto Sans CJK" || (sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk)', { stdio: "ignore", timeout: 240000 });
+    } catch {}
+  }
+  for (const x of list.slice(0, 1)) {
+    const { makeReel } = require("./lib/reel");
+    const n = (x.rev || 0) + 1;
+    const video = `specials/${x.id}/reel-${n}.mp4`;
+    const r = await makeReel(x.images.map((p) => path.join(ROOT, p)), path.join(ROOT, video), ROOT, { bpm: x.bpm, beats: x.beats, title: x.reelTitle, sub: x.reelSub });
+    const cover = video.replace(/.mp4$/, "-cover.jpg");
+    const old = [x.video, x.cover].filter(Boolean);
+    syncCommit(`reel video ${x.id} (${r.bpm}bpm)`, [video, cover], (remote) => {
+      const sp = remote("specials.json", []);
+      const k = sp.findIndex((y) => y.id === x.id);
+      if (k === -1) return {};
+      // 作っている間にアプリでまた変えられていたら、もう一度作る
+      const again = sp[k].bpm !== x.bpm || sp[k].beats !== x.beats || sp[k].reelTitle !== x.reelTitle || sp[k].reelSub !== x.reelSub;
+      sp[k] = { ...sp[k], video, cover, rev: n, seconds: r.seconds, beatsUsed: r.beats, rebuild: again, builtAt: new Date().toISOString() };
+      const out = { "specials.json": sp };
+      for (const f of old) out[f] = null;
+      return out;
+    });
+    console.log(`リールの動画を作りました ${x.id}（${r.seconds}秒・${r.bpm}bpm・${r.beats}拍ごと）`);
+  }
+}
+
+// ---- リールの動画を作る（自動で投稿する時）→ 公開URLで読めるように先に送る ----
 async function withVideo(item) {
   const { makeReel } = require("./lib/reel");
   const video = item.images[0].replace(/[^/]+$/, "reel.mp4");
-  const r = await makeReel(item.images.map((p) => path.join(ROOT, p)), path.join(ROOT, video), ROOT);
+  const r = await makeReel(item.images.map((p) => path.join(ROOT, p)), path.join(ROOT, video), ROOT, { bpm: item.bpm, beats: item.beats, title: item.reelTitle, sub: item.reelSub });
   syncCommit(`reel video ${item.id}`, [video], () => ({}));
   const sha = require("child_process").execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim();
   console.log(`リールの動画を作りました（${r.seconds}秒）`);
@@ -452,6 +484,11 @@ async function main() {
     console.log("あの日の一枚のストーリーは失敗: " + e.message);
   }
   try {
+    try {
+      await buildReels();
+    } catch (e) {
+      console.log("リールの動画づくりに失敗: " + e.message.slice(0, 300));
+    }
     await postSpecial(today, posted);
   } catch (e) {
     console.error("フライヤー投稿のエラー: " + e.message);
