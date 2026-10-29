@@ -136,6 +136,9 @@ async function postSpecial(today, posted) {
       thr = await toThreads({ ...due, images: due.images.slice(0, 1) }, due.threadsText); // サイトのスレッズ用告知文で
     } catch (e) {
       console.log("フライヤーのスレッズ投稿は失敗: " + e.message);
+      try {
+        setStatus("スレッズ（フライヤー）: " + e.message.slice(0, 250));
+      } catch {}
     }
   }
   const { images, thumb, _extra, ...rest } = item;
@@ -407,8 +410,8 @@ async function postAutoStory(kind, outRel, extra, today) {
   const { pub } = await publish({ id: outRel, kind: "story", images: [outRel] });
   syncCommit(`posted ${kind}`, [], (remote) => {
     const posted = remote("posted.json", []);
-    posted.push({ id: `${kind}-${Date.now()}`, kind: "story", title: kind === "memory" ? "あの日の一枚" : "新しい投稿のお知らせ", mediaId: pub.id, postedAt: new Date().toISOString(), day: today, slot: `${kind}-story`, ...extra });
-    return { "posted.json": posted, [outRel]: null };
+    posted.push({ id: `${kind}-${Date.now()}`, kind: "story", title: kind === "memory" ? "あの日の一枚" : "新しい投稿のお知らせ", mediaId: pub.id, postedAt: new Date().toISOString(), day: today, slot: `${kind}-story`, image: outRel, ...extra }); // 画像はアプリで見られるよう残す
+    return { "posted.json": posted };
   });
 }
 async function memoryStory(today, now, posted) {
@@ -433,26 +436,48 @@ const GIST_DESC = "insta-autopost: threads token (自動更新)";
 let thToken = null;
 async function threadsToken() {
   if (thToken) return thToken;
+  const th = require("./lib/threads");
+  const ok = async (t) => !!t && !!(await fetch(`https://graph.threads.net/v1.0/me?fields=id&access_token=${t}`).then((r) => r.json()).catch(() => ({})))?.id;
+  const envTok = process.env.THREADS_TOKEN || null;
   const gt = process.env.GIST_TOKEN;
-  if (!gt) return (thToken = process.env.THREADS_TOKEN || null);
+  if (!gt) {
+    if (!(await ok(envTok))) throw new Error("スレッズの鍵が使えません（GitHub の THREADS_TOKEN を確認）");
+    return (thToken = envTok);
+  }
   const H = { Authorization: `Bearer ${gt}`, Accept: "application/vnd.github+json", "User-Agent": "insta-autopost", "Content-Type": "application/json" };
-  const list = await (await fetch("https://api.github.com/gists?per_page=100", { headers: H })).json();
+  const put = async (url, method, token) => {
+    const r = await fetch(url, { method, headers: H, body: JSON.stringify({ description: GIST_DESC, public: false, files: { "threads.json": { content: JSON.stringify({ token, refreshedAt: new Date().toISOString() }) } } }) });
+    if (!r.ok) console.log(`スレッズの鍵の保存に失敗（Gist ${r.status}）`);
+  };
+  const list = await fetch("https://api.github.com/gists?per_page=100", { headers: H }).then((r) => r.json()).catch(() => null);
+  if (!Array.isArray(list)) console.log("Gist を読めません（GIST_TOKEN を確認）: " + JSON.stringify(list).slice(0, 120));
   const g = Array.isArray(list) ? list.find((x) => x.description === GIST_DESC) : null;
-  const put = (url, method, token) =>
-    fetch(url, { method, headers: H, body: JSON.stringify({ description: GIST_DESC, public: false, files: { "threads.json": { content: JSON.stringify({ token, refreshedAt: new Date().toISOString() }) } } }) });
-  if (!g) {
-    if (!process.env.THREADS_TOKEN) return null;
-    await put("https://api.github.com/gists", "POST", process.env.THREADS_TOKEN); // 初回：Secrets のトークンで作る
-    return (thToken = process.env.THREADS_TOKEN);
+  let tok = null;
+  let at = 0;
+  if (g) {
+    try {
+      const d = JSON.parse((await fetch(g.url, { headers: H }).then((r) => r.json())).files["threads.json"].content);
+      tok = d.token;
+      at = Date.parse(d.refreshedAt) || 0;
+    } catch {}
   }
-  const d = JSON.parse((await (await fetch(g.url, { headers: H })).json()).files["threads.json"].content);
-  thToken = d.token;
-  if (Date.now() - Date.parse(d.refreshedAt) > 7 * 864e5) {
-    thToken = await require("./lib/threads").refreshToken(d.token);
-    await put(g.url, "PATCH", thToken);
-    console.log("スレッズのトークンを更新しました");
+  // Gist の鍵が使えなければ、Secrets の鍵に戻す
+  if (!(await ok(tok))) {
+    if (!(await ok(envTok))) throw new Error("スレッズの鍵が使えません（Gist も THREADS_TOKEN もダメ）");
+    tok = envTok;
+    at = 0;
+    console.log("スレッズ：Secrets の鍵を使います");
   }
-  return thToken;
+  if (Date.now() - at > 7 * 864e5) {
+    try {
+      tok = await th.refreshToken(tok);
+      console.log("スレッズのトークンを更新しました");
+    } catch (e) {
+      console.log("スレッズのトークン更新は失敗（今の鍵で続けます）: " + e.message);
+    }
+    if (Array.isArray(list)) await put(g ? g.url : "https://api.github.com/gists", g ? "PATCH" : "POST", tok);
+  }
+  return (thToken = tok);
 }
 
 // ---- スレッズにも（スレッズ用に書き直して）。トークンが無い時は何もしない ----
@@ -536,10 +561,15 @@ async function main() {
   }
   const { pub, info } = await publish(item);
   let thr = null;
+  let thErr = null;
   try {
     thr = await toThreads(item); // 画像が消える前に
   } catch (e) {
     console.log("スレッズへの投稿は失敗: " + e.message);
+    thErr = e.message;
+    try {
+      setStatus("スレッズ: " + e.message.slice(0, 250));
+    } catch {}
   }
   // 「新しい投稿」のストーリー用の画像を、元の画像が消える前に作っておく（1日1回まで）
   let storyRel = null;
@@ -553,7 +583,7 @@ async function main() {
     }
   }
   const { image, images, thumb, ...rest } = item;
-  record(item, { ...rest, count: (images || [image]).length, threads: thr?.permalink || (thr ? true : null), mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot, lum });
+  record(item, { ...rest, count: (images || [image]).length, threads: thr?.permalink || (thr ? true : null), threadsError: thErr, mediaId: pub.id, permalink: info.permalink, mediaUrl: info.media_url, postedAt: new Date().toISOString(), day: today, slot, lum });
   if (storyRel) {
     try {
       await postAutoStory("newpost", storyRel, { of: item.id }, today);
