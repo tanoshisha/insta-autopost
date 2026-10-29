@@ -18,14 +18,14 @@
       "specials/reel-2026-10-31/10.jpg"
     ],
     "thumb": "specials/reel-2026-10-31/thumb.jpg",
-    "caption": "#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #ハロウィン #ジャックオランタン",
+    "caption": "何枚目が好きか、コメントで教えてください📷\n\n#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #ハロウィン #ジャックオランタン",
     "head": "",
     "portrait": false,
     "locationName": "横浜イングリッシュガーデン",
     "skipped": false,
     "manual": true,
     "reelTitle": "横浜イングリッシュガーデン",
-    "reelSub": "2026.10.23",
+    "reelSub": "横浜イングリッシュガーデン",
     "songs": [
       {
         "t": "Halloween Waltz",
@@ -47,13 +47,15 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "video": "specials/reel-2026-10-31/reel-1.mp4",
     "cover": "specials/reel-2026-10-31/reel-1-cover.jpg",
     "rev": 1,
     "seconds": 9.54,
     "beatsUsed": 2,
-    "builtAt": "2026-10-29T12:59:18.739Z"
+    "builtAt": "2026-10-29T12:59:18.739Z",
+    "format": "dump",
+    "hook": "ハロウィンの夜、何枚目が好き？"
   },
   {
     "id": "story-2026-11-07-7",
