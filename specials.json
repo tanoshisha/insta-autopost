@@ -47,7 +47,13 @@
       }
     ],
     "bpm": 151,
-    "rebuild": true
+    "rebuild": false,
+    "video": "specials/reel-2026-10-31/reel-1.mp4",
+    "cover": "specials/reel-2026-10-31/reel-1-cover.jpg",
+    "rev": 1,
+    "seconds": 9.54,
+    "beatsUsed": 2,
+    "builtAt": "2026-10-29T12:59:18.739Z"
   },
   {
     "id": "story-2026-11-07-7",
