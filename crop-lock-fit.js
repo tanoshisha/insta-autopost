@@ -11,8 +11,19 @@ const refs = JSON.parse(fs.readFileSync(OUT, "utf8"));
 const save = () => fs.writeFileSync(OUT, JSON.stringify(refs, null, 1));
 const closest = (rows, t) => rows.sort((a, b) => Math.abs(Date.parse(a.t) - Date.parse(t)) - Math.abs(Date.parse(b.t) - Date.parse(t)))[0];
 const MIN = 30; // 合った特徴点がこれ未満なら、別の写真とみなす
+// クラウドの写真から、形に関わる設定を全部（トリミング・角度・ジオメトリ・レンズ補正）
+const GEOM = /^(Crop\w+|HasCrop|Perspective\w+|Upright\w+|LensProfile\w+|LensManual\w+|AutoLateralCA)$/;
+async function cloudGeom(lr, id) {
+  const r = await fetch(`https://lr.adobe.io/v2/catalogs/${lr.catalogId}/assets/${id}/xmp/develop`, { headers: lr.headers });
+  if (!r.ok) return null;
+  const t = await r.text();
+  const g = {};
+  for (const m of t.matchAll(/crs:(\w+)="([^"]*)"/g)) if (GEOM.test(m[1])) g[m[1]] = m[2];
+  return g;
+}
 
 (async () => {
+  const lr = await require("./lib/lightroom").connect(require("./config.json").lightroom.configPath);
   const srcCache = new Map();
   const src = async (row) => {
     if (!srcCache.has(row.id)) {
@@ -23,12 +34,12 @@ const MIN = 30; // 合った特徴点がこれ未満なら、別の写真とみ�
   };
   let done = 0;
   for (const r of refs) {
-    if (r.lr) continue;
+    if (r.lr && !(process.argv.includes("--retry") && r.lr.none === "元の写真が見つからない")) continue;
     // ① クラウドに数値がある
     if (r.crop && r.cloud) {
       const base = r.cloud.name.replace(/\.[^.]+$/, "").replace(/-Enhanced-SR$/, "");
       const row = closest(byName(base), r.cloud.t);
-      r.lr = row ? { id: row.id, name: row.name, t: row.t, crop: { left: r.crop.left, top: r.crop.top, right: r.crop.right, bottom: r.crop.bottom, angle: r.crop.angle }, how: "cloud" } : { none: "Classic にない" };
+      r.lr = row ? { id: row.id, name: row.name, t: row.t, crop: { left: r.crop.left, top: r.crop.top, right: r.crop.right, bottom: r.crop.bottom, angle: r.crop.angle }, geom: await cloudGeom(lr, r.cloud.id), how: "cloud" } : { none: "Classic にない" };
       continue;
     }
     // ② 候補を集める
@@ -51,11 +62,15 @@ const MIN = 30; // 合った特徴点がこれ未満なら、別の写真とみ�
     for (const row of rows.slice(0, 12)) {
       const s = await src(row);
       if (!s) continue;
-      const f = await fitCrop(r.file, s).catch(() => null);
+      let f = await fitCrop(r.file, s).catch(() => null);
+      if (!f?.ok || f.inliers < MIN) {
+        const g = await fitCrop(r.file, s, true).catch(() => null);
+        if (g?.ok && (!f?.ok || g.inliers > f.inliers)) f = g;
+      }
       if (f?.ok && (!best || f.inliers > best.f.inliers)) best = { row, f };
     }
     if (best && best.f.inliers >= MIN) {
-      r.lr = { id: best.row.id, name: best.row.name, t: best.row.t, crop: toLrCrop(best.f, best.row.o), how: "fit", inliers: best.f.inliers };
+      r.lr = { id: best.row.id, name: best.row.name, t: best.row.t, crop: toLrCrop(best.f, best.row.o), how: "fit", inliers: best.f.inliers, warp: best.f.warp, ...(best.f.geometry ? { geometry: true } : {}) };
     } else r.lr = { none: "元の写真が見つからない", tried: rows.length, inliers: best?.f.inliers || 0 };
     if (++done % 10 === 0) save(), console.log(`${done}枚…`);
   }
@@ -65,6 +80,7 @@ const MIN = 30; // 合った特徴点がこれ未満なら、別の写真とみ�
     const a = refs.filter((r) => r.where === w);
     console.log(`${w}: ${a.length}枚 → トリミングが決まった ${a.filter((r) => r.lr?.crop).length}枚`);
   }
+  console.log(`ジオメトリを使っていて、クラウドに数値がない写真 ${ok.filter((r) => r.lr.geometry).length}枚`);
   console.log(`合計 ${ok.length}枚（Classic の写真 ${new Set(ok.map((r) => r.lr.id)).size}枚）`);
   process.exit(0);
 })();

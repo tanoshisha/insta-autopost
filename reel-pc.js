@@ -66,8 +66,18 @@ function writeClassicReels(specials) {
       const items = x.images.map((p, i) => {
         const f = path.join(tmp, `${i}.jpg`);
         fs.writeFileSync(f, git(["show", `origin/main:${p}`]));
-        return { src: f, shot: x.shots?.[i] || null, place: x.places?.[i] || null };
+        return { src: f, rel: p, shot: x.shots?.[i] || null, place: x.places?.[i] || null, source: x.sources?.[i] || null };
       });
+      // 差し替え候補（主役が見切れる写真の代わりに使う）
+      const spares = (x.cands || []).map((p, j) => {
+        const f = path.join(tmp, `c${j}.jpg`);
+        try {
+          fs.writeFileSync(f, git(["show", `origin/main:${p}`]));
+          return { src: f, rel: p };
+        } catch {
+          return null;
+        }
+      }).filter(Boolean);
       const n = (x.rev || 0) + 1;
       const video = `specials/${x.id}/reel-${n}.mp4`;
       fs.mkdirSync(path.join(ROOT, path.dirname(video)), { recursive: true });
@@ -76,7 +86,15 @@ function writeClassicReels(specials) {
       if (kitDir) for (const d of fs.readdirSync(KIT_ROOT)) if (d.startsWith(x.postAt.slice(5, 7) + x.postAt.slice(8, 10) + "_") && path.join(KIT_ROOT, d) !== kitDir) fs.rmSync(path.join(KIT_ROOT, d), { recursive: true, force: true }); // 同じ日の古いフォルダ（中身が変わった時）
       if (!VIDEO) {
         if (!kitDir) throw new Error("iCloud Drive のフォルダがありません");
-        await require("./lib/reel-kit").makeKit(items, kitDir, { layout: x.layout || null });
+        const kit = await require("./lib/reel-kit").makeKit(items, kitDir, { layout: x.layout || null, spares });
+        // 見切れて入れ替えた写真があれば、使った順に並べ直す（クラウドのアルバム・記録もこの並び）
+        const bySrc = new Map([...items, ...spares].map((it) => [it.src, it]));
+        const swapped = kit.swaps.length > 0;
+        if (swapped) {
+          const fin = kit.used.map((s) => bySrc.get(s));
+          items.splice(0, items.length, ...fin);
+          console.log(`  主役が見切れる写真を入れ替えました：${kit.swaps.map((w) => `${w.i + 1}枚目${w.to ? "→候補" : "→なし"}`).join("・")}`);
+        }
         // クラウド版 Lightroom の「リール」フォルダにも（iPhone の Lightroom で直してから Edits へ）
         try {
           const cfgL = remote("config.json", {}).lightroom;
@@ -84,7 +102,7 @@ function writeClassicReels(specials) {
             const arr = (j) => (Array.isArray(j) ? j : Object.values(j || {}));
             const cloud = Object.fromEntries([...arr(remote("pool.json", [])), ...arr(remote("queue.json", []))].filter((p) => p.image && /^[0-9a-f]{32}$/.test(String(p.lrId))).map((p) => [p.image, p.lrId]));
             const kitName = path.basename(kitDir);
-            const its = x.images.map((p, i) => ({
+            const its = items.map((it) => it.rel).map((p, i) => ({
               file: items[i].src,
               name: `${x.id}_${path.basename(p)}`,
               oldNames: [`${kitName}_${String(i + 1).padStart(2, "0")}.jpg`],
@@ -111,6 +129,15 @@ function writeClassicReels(specials) {
           if (k === -1) return {};
           const again = ["images", "layout"].some((f) => JSON.stringify(sp[k][f]) !== JSON.stringify(x[f]));
           sp[k] = { ...sp[k], kitAt: new Date().toISOString(), kitDir: path.basename(kitDir), rebuild: again, ...(lrIds ? { lrIds } : {}) };
+          if (swapped && !again) {
+            const rels = items.map((it) => it.rel);
+            sp[k].images = rels;
+            sp[k].cands = (x.cands || []).filter((p) => !rels.includes(p)).concat(x.images.filter((p) => !rels.includes(p)));
+            sp[k].shots = items.map((it) => it.shot || null);
+            sp[k].places = items.map((it) => it.place || null);
+            sp[k].sources = items.map((it) => it.source || null);
+            sp[k].cutSwaps = kit.swaps.length;
+          }
           return { "specials.json": sp };
         });
         fs.rmSync(tmp, { recursive: true, force: true });
