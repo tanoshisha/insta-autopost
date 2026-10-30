@@ -24,7 +24,7 @@ const DRY = process.argv.includes("--dry");
 const RESELECT = process.argv.includes("--reselect");
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf8"));
 const INBOX = path.join(ROOT, "inbox");
-const WORK = path.join(ROOT, ".work");
+const WORK = path.join(ROOT, ".work", "plan"); // 選定専用（毎回中身を消すので、.work の他のものと分ける。前は .work ごと消していた）
 const QDIR = DRY ? path.join(WORK, "preview") : path.join(ROOT, "queue");
 const BATCH = 30;
 const readJson = (f, d) => {
