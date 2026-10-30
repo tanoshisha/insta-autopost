@@ -16,6 +16,11 @@ const remote = (f, d) => {
   }
 };
 const LOCK = path.join(ROOT, ".work", "reel-pc.lock");
+// iPhone の「ファイル」→ iCloud Drive →「リール」に、各回の写真と完成動画を置く（Edits で自分で組む用）
+const KIT_ROOT = path.join(require("os").homedir(), "iCloudDrive", "リール");
+try {
+  fs.mkdirSync(KIT_ROOT, { recursive: true });
+} catch {}
 
 (async () => {
   if (!available()) return;
@@ -37,7 +42,10 @@ const LOCK = path.join(ROOT, ".work", "reel-pc.lock");
       const n = (x.rev || 0) + 1;
       const video = `specials/${x.id}/reel-${n}.mp4`;
       fs.mkdirSync(path.join(ROOT, path.dirname(video)), { recursive: true });
-      const r = await makeReelAE(items, path.join(ROOT, video), ROOT, { durations: x.durations || null, style: x.style || "oto", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats, layout: x.layout || null, rhythm: x.rhythm || undefined });
+      const label = String(x.title || "").replace(/^リール[（(]?/, "").replace(/[）)]$/, "").replace(/[\\/:*?"<>|]/g, "").slice(0, 40) || x.id;
+      const kitDir = fs.existsSync(KIT_ROOT) ? path.join(KIT_ROOT, `${x.postAt.slice(5, 7)}${x.postAt.slice(8, 10)}_${label}`) : null;
+      if (kitDir) for (const d of fs.readdirSync(KIT_ROOT)) if (d.startsWith(x.postAt.slice(5, 7) + x.postAt.slice(8, 10) + "_") && path.join(KIT_ROOT, d) !== kitDir) fs.rmSync(path.join(KIT_ROOT, d), { recursive: true, force: true }); // 同じ日の古いフォルダ（中身が変わった時）
+      const r = await makeReelAE(items, path.join(ROOT, video), ROOT, { kitDir, durations: x.durations || null, style: x.style || "oto", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats, layout: x.layout || null, rhythm: x.rhythm || undefined });
       const cover = video.replace(/\.mp4$/, "-cover.jpg");
       const old = [x.video, x.cover].filter(Boolean);
       makeSync(ROOT)(`reel video ${x.id} (${r.engine || "ffmpeg"} ${r.bpm}bpm)`, [video, cover], (rm) => {
