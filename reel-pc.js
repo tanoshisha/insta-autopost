@@ -109,6 +109,11 @@ function writeClassicReels(specials) {
               assetId: cloud[p] || null,
               captureDate: x.sourceDate ? `${x.sourceDate}T19:00:${String(i).padStart(2, "0")}` : undefined,
             }));
+            // 予備の写真も（入れ替える時用。名前の最後が「予備」）
+            for (const [j, e] of kit.extras.entries()) {
+              const it = bySrc.get(e.src);
+              its.push({ file: e.src, name: `${x.id}_予備${j + 1}_${path.basename(it.rel)}`, assetId: cloud[it.rel] || null, captureDate: x.sourceDate ? `${x.sourceDate}T20:00:${String(j).padStart(2, "0")}` : undefined });
+            }
             const albumName = kitName.replace("_", " ");
             const c = await require("./lib/lr-cloud").putIntoAlbum(cfgL.configPath, "リール", its);
             console.log(`  クラウド版 Lightroom「リール」：${albumName} ${c.assets.length}枚（新しくアップロード${c.uploaded}枚・アルバムに追加${c.added}枚）`);
