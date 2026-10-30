@@ -302,7 +302,7 @@
       "specials/reel-2026-11-02/2.jpg",
       "specials/reel-2026-11-02/3.jpg",
       "specials/reel-2026-11-02/4.jpg",
-      "specials/reel-2026-11-02/5.jpg",
+      "specials/reel-2026-11-02/c5.jpg",
       "specials/reel-2026-11-02/6.jpg",
       "specials/reel-2026-11-02/7.jpg",
       "specials/reel-2026-11-02/8.jpg"
@@ -316,15 +316,15 @@
       "specials/reel-2026-11-02/c2.jpg",
       "specials/reel-2026-11-02/c3.jpg",
       "specials/reel-2026-11-02/c4.jpg",
-      "specials/reel-2026-11-02/c5.jpg",
-      "specials/reel-2026-11-02/c6.jpg"
+      "specials/reel-2026-11-02/c6.jpg",
+      "specials/reel-2026-11-02/5.jpg"
     ],
     "shots": [
       "47mm／f4／1/60秒／ISO12800",
       "111mm／f4／1/250秒／ISO6400",
       "81mm／f4／1/160秒／ISO2500",
       "200mm／f4／1/125秒／ISO12800",
-      "155mm／f4／1/320秒／ISO4000",
+      null,
       "176mm／f4／1/400秒／ISO6400",
       "127mm／f4.5／1/250秒／ISO6400",
       "78mm／f4／1/160秒／ISO3200"
@@ -334,7 +334,7 @@
       "明治神宮",
       "明治神宮",
       "明治神宮",
-      "明治神宮",
+      null,
       "神社",
       null,
       "明治神宮"
@@ -344,7 +344,7 @@
       "lr:70077",
       "lr:69741",
       "lr:67233",
-      "lr:176869",
+      null,
       "lr:73965",
       "lr:71585",
       "lr:79217"
@@ -379,7 +379,7 @@
       }
     ],
     "bpm": 96,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-02/reel-3.mp4",
     "cover": "specials/reel-2026-11-02/reel-3-cover.jpg",
@@ -400,7 +400,7 @@
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T13:48:43.880Z",
+    "kitAt": "2026-10-30T16:21:54.353Z",
     "kitDir": "1102_明治神宮の初詣・夜の灯り",
     "lrIds": [
       73257,
@@ -411,7 +411,8 @@
       73965,
       71585,
       79217
-    ]
+    ],
+    "cutSwaps": 1
   },
   {
     "id": "reel-2026-11-03",
