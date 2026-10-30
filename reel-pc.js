@@ -174,6 +174,16 @@ function writeClassicReels(specials) {
     }
     git(["fetch", "-q", "origin", "main"]);
     writeClassicReels(remote("specials.json", []));
+    // 投稿が終わって2週間たった写真を、クラウドの「消してOK」へ（1日1回）
+    try {
+      const cfgL = remote("config.json", {}).lightroom;
+      if (cfgL?.configPath && fs.existsSync(cfgL.configPath)) {
+        const t = await require("./lib/cloud-trash").trashOld({ configPath: cfgL.configPath, specials: remote("specials.json", []), posted: remote("posted.json", []) });
+        if (t?.added) console.log(`クラウドの「消してOK」に ${t.added}枚入れました`);
+      }
+    } catch (e) {
+      console.log("「消してOK」に入れられませんでした：" + e.message.slice(0, 120));
+    }
   } catch (e) {
     console.error("リールの動画づくりに失敗: " + e.message);
   } finally {
