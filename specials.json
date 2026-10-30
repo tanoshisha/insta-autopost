@@ -253,7 +253,7 @@
       }
     ],
     "bpm": 96,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T12:38:00.105Z",
     "video": "specials/reel-2026-11-01/reel-6.mp4",
     "cover": "specials/reel-2026-11-01/reel-6-cover.jpg",
@@ -275,7 +275,7 @@
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T12:30:39.293Z",
+    "kitAt": "2026-10-30T12:38:28.003Z",
     "kitDir": "1101_鎌倉 神社と庭さんぽ",
     "lrIds": [
       2841503,
