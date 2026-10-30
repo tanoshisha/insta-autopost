@@ -15,7 +15,9 @@ sharp.cache(false);
 const ROOT = __dirname;
 const DIR = path.join(ROOT, ".work", "lrpick");
 const COUNT = +process.argv.find((a) => /^[0-9]+$/.test(a)) || 5;
-const REPLACE = process.argv.includes("--replace"); // Lightroom から作ったまだ投稿していないリールを作り直す
+const REPLACE = process.argv.includes("--replace");
+const REPLACE_MIXED = process.argv.includes("--replace-mixed"); // 日付が混ざった予約だけ作り直す
+const MIN = 8; // 1本に使う最少の枚数 // Lightroom から作ったまだ投稿していないリールを作り直す
 const { spawn } = require("child_process");
 
 // AI（いちばん賢いモデル）がテーマごとに選び直す：人がまったく写っていない・テーマに合う・似た写真は1枚・流れのある順番
@@ -25,7 +27,7 @@ function curate(theme, cands, session = false) {
 
 ${lines}
 
-次の条件で 14〜18枚を選び、見せる順番に並べてください（曲に合わせて1枚0.5秒ほどで切り替える写真まとめの動画です）:
+次の条件で 8〜18枚を選び、見せる順番に並べてください（曲に合わせて1枚0.5秒ほどで切り替える写真まとめの動画です）:
 - 人が1人でも写っている写真は入れない（小さな人影・後ろ姿・お面やコスプレの人も含めて、人の姿が分かるものは全部なし）
 - ${session ? "同じ日・同じ場所で撮った写真です。時間の流れ（夕方→夜など）や歩いた順に、ストーリーのある並びにする" : "テーマに合わない写真は入れない（迷ったら入れない）"}
 - 色味・雰囲気がそろうこと（1本の作品に見えるように）。色味や雰囲気が浮く写真は入れない
@@ -83,7 +85,10 @@ const THEME = {
   const judged = Object.values(JSON.parse(fs.readFileSync(path.join(DIR, "judged.json"), "utf8")));
   const all0 = remote("specials.json", []);
   const mine = (x) => x.kind === "reel" && (x.sources || [])[0]?.startsWith("lr:");
-  const dropped = REPLACE ? all0.filter(mine) : [];
+  const dayOf = Object.fromEntries(judged.map((x) => [`lr:${x.id}`, String(x.t).slice(0, 10)]));
+  const mixed = (x) => new Set((x.sources || []).map((k) => dayOf[k]).filter(Boolean)).size > 1;
+  const dropped = REPLACE ? all0.filter(mine) : REPLACE_MIXED ? all0.filter((x) => mine(x) && mixed(x) && x.postAt > new Date().toISOString()) : [];
+  if (dropped.length) console.log("日付が混ざった予約を外して作り直します：" + dropped.map((x) => x.id).join("・"));
   const specials = all0.filter((x) => !dropped.includes(x));
   const posted = remote("posted.json", []);
   const used = new Set([...specials, ...posted].filter((x) => x.kind === "reel").flatMap((x) => x.sources || []));
@@ -96,7 +101,7 @@ const THEME = {
   const byDay = {};
   for (const x of judged.filter((x) => !x.people && x.score >= 6 && !used.has(`lr:${x.id}`))) (byDay[String(x.t).slice(0, 10)] = byDay[String(x.t).slice(0, 10)] || []).push(x);
   const sessions = Object.entries(byDay)
-    .filter(([d, g]) => g.length >= 12 && !usedDays.has(d))
+    .filter(([d, g]) => g.length >= MIN + 1 && !usedDays.has(d))
     .map(([d, g]) => [d, g.sort((a, b) => String(a.t).localeCompare(String(b.t)))])
     .sort((a, b) => b[1].reduce((s, x) => s + x.score, 0) / b[1].length - a[1].reduce((s, x) => s + x.score, 0) / a[1].length);
   console.log("同じ日の撮影：" + sessions.map(([d, g]) => `${d}（${g.length}枚）`).join("・"));
@@ -116,24 +121,24 @@ const THEME = {
   const plans = [];
   const usedIds = new Set();
   for (const [d, g] of sessions) {
-    if (plans.length >= COUNT - 1) break;
+    if (plans.length >= COUNT) break;
     try {
       const cands = g.slice(0, 40);
       const top = (k) => Object.entries(cands.reduce((m, x) => ((m[x[k]] = (m[x[k]] || 0) + 1), m), {})).sort((a, b) => b[1] - a[1])[0]?.[0];
       const r = await curate(`${d} の撮影（${top("place") || top("theme")}）`, cands, true);
       const items = r.ids.map((id) => cands.find((x) => String(x.id) === String(id))).filter(Boolean);
-      if (items.length < 12) {
+      if (items.length < MIN) {
         console.log(`  （${d}：条件に合う写真が${items.length}枚だけなので見送り）`);
         continue;
       }
       for (const x of items) usedIds.add(x.id);
-      plans.push({ format: "dump", theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, pool: cands, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
+      plans.push({ format: "dump", day: d, theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, pool: cands, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
       console.log(`  AI：${d} → ${items.length}枚（${r.theme}）`);
     } catch (e) {
       console.log("  ⚠ " + e.message);
     }
   }
-  for (const [t, g0] of themes) {
+  for (const [t, g0] of []) { // 日付が混ざるのでやめた（2026-10-30）
     const g = g0.filter((x) => !usedIds.has(x.id));
     if (plans.length >= COUNT - 1) break;
     try {
@@ -150,7 +155,7 @@ const THEME = {
     }
   }
   // 色味でまとめる：テーマや場所が違っても、夜は夜・昼は昼で色がそろう写真を1本に（「夜の東京まとめ」「昼の東京まとめ」）
-  for (const [tone, label, theme] of [["dark", "夜の東京まとめ", "夜景・ビル"], ["bright", "昼の東京まとめ", "建物・建築"], ["mid", "東京スナップまとめ", "建物・建築"]]) {
+  for (const [tone, label, theme] of []) { // 日付が混ざるのでやめた（2026-10-30）
     if (plans.length >= COUNT - 1) break;
     const taken2 = new Set(plans.flatMap((p) => p.items.map((x) => x.id)));
     const pool = ok.filter((x) => x.tone === tone && !taken2.has(x.id));
@@ -169,7 +174,7 @@ const THEME = {
     }
   }
   const shotCands = ok.filter((x) => x.shot && x.tone === "dark" && !plans.some((p) => p.items.includes(x))).slice(0, 24);
-  if (shotCands.length >= 8 && plans.length < COUNT) {
+  if (false && shotCands.length >= 8 && plans.length < COUNT) { // 日付が混ざるのでやめた
     try {
       const r = await curate("夜の写真（撮影データを1枚ずつ見せる回）", shotCands);
       const items = r.ids.map((id) => shotCands.find((x) => String(x.id) === String(id))).filter(Boolean);
@@ -203,6 +208,15 @@ const THEME = {
     fs.copyFileSync(path.join(ROOT, images[0]), path.join(ROOT, dir, "thumb.jpg"));
     files.push(...images, `${dir}/thumb.jpg`);
     const th = THEME[plan.theme];
+    // 型：hisato（ふつう）→ 額縁 → 横向き …を日替わりで。横向きは横位置が8枚以上の時だけ（その時は横位置の写真だけ使う）
+    const wide = [];
+    for (const [i, x] of items.entries()) {
+      const m = await sharp(path.join(DIR, `${x.id}.jpg`)).metadata();
+      if (m.width > m.height * 1.15) wide.push(i);
+    }
+    const turn = ["hisato", "frame", "side"][(Date.parse(day) / 864e5) % 3];
+    const layout = turn === "side" && wide.length >= MIN ? "side" : turn === "side" ? "hisato" : turn;
+    const keep = layout === "side" ? wide : items.map((_, i) => i);
     const songs = pickSongs({ moods: th.mood, measured: cfg.reelBpm || {} });
     const place = plan.items.map((x) => x.place).filter(Boolean)[0] || null;
     add.push({
@@ -212,12 +226,15 @@ const THEME = {
       style: plan.format === "dump" ? "oto" : "mv",
       title: `リール（${plan.format === "settings" ? "撮影データ" : plan.label || plan.theme}）`,
       postAt: `${day}T19:00:00+09:00`,
-      images,
+      images: keep.map((i) => images[i]),
       thumb: `${dir}/thumb.jpg`,
+      layout: layout === "hisato" ? null : layout,
+      rhythm: layout === "frame" ? "even" : "hisato",
+      sourceDate: plan.day || null,
       cands,
-      shots: items.map((x) => x.shot || null),
-      places: items.map((x) => x.place || null),
-      sources: items.map((x) => `lr:${x.id}`),
+      shots: keep.map((i) => items[i].shot || null),
+      places: keep.map((i) => items[i].place || null),
+      sources: keep.map((i) => `lr:${items[i].id}`),
       hook: plan.hook || th.hook,
       reelSub: "HAYATO NAOE",
       answer: null,
@@ -232,7 +249,7 @@ const THEME = {
       rebuild: true,
       rebuildAt: new Date().toISOString(),
     });
-    console.log(`  ✓ ${day} 19:00  ${plan.format === "settings" ? "撮影データ" : plan.theme}（${images.length}枚）「${add[add.length - 1].hook}」 曲: ${songs.map((s) => s.t).join(" / ")}`);
+    console.log(`  ✓ ${day} 19:00  ${plan.day || ""} ${plan.label || plan.theme}・${layout}（${keep.length}枚）「${add[add.length - 1].hook}」 曲: ${songs.map((s) => s.t).join(" / ")}`);
   }
   if (!add.length) return console.log("作れるテーマがありませんでした");
   makeSync(ROOT)(`リール：Lightroom の写真からテーマ別に +${add.length}`, files, (rm) => {
