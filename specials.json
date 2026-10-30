@@ -806,7 +806,6 @@
     "title": "リール（表参道 建築散歩）",
     "postAt": "2026-11-06T19:00:00+09:00",
     "images": [
-      "specials/reel-2026-11-06/1.jpg",
       "specials/reel-2026-11-06/2.jpg",
       "specials/reel-2026-11-06/3.jpg",
       "specials/reel-2026-11-06/4.jpg",
@@ -831,10 +830,10 @@
       "specials/reel-2026-11-06/c5.jpg",
       "specials/reel-2026-11-06/c6.jpg",
       "specials/reel-2026-11-06/c7.jpg",
-      "specials/reel-2026-11-06/c8.jpg"
+      "specials/reel-2026-11-06/c8.jpg",
+      "specials/reel-2026-11-06/1.jpg"
     ],
     "shots": [
-      "116mm／f4／1/400秒／ISO100",
       "89mm／f4／1/125秒／ISO125",
       "200mm／f4／1/250秒／ISO250",
       "93mm／f4／1/125秒／ISO1000",
@@ -846,7 +845,6 @@
       "200mm／f4／1/250秒／ISO4000"
     ],
     "places": [
-      null,
       "表参道",
       null,
       null,
@@ -858,7 +856,6 @@
       null
     ],
     "sources": [
-      "lr:3030324",
       "lr:3030052",
       "lr:3029633",
       "lr:2879528",
@@ -899,7 +896,7 @@
       }
     ],
     "bpm": 119,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-06/reel-3.mp4",
     "cover": "specials/reel-2026-11-06/reel-3-cover.jpg",
@@ -920,7 +917,7 @@
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T13:49:11.882Z",
+    "kitAt": "2026-10-30T16:36:08.538Z",
     "kitDir": "1106_表参道 建築散歩",
     "lrIds": [
       3030324,
@@ -933,6 +930,7 @@
       2879522,
       2879409,
       2879500
-    ]
+    ],
+    "cutSwaps": 1
   }
 ]
