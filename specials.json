@@ -49,7 +49,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "video": "specials/reel-2026-10-31/reel-17.mp4",
     "cover": "specials/reel-2026-10-31/reel-17-cover.jpg",
     "rev": 17,
@@ -58,7 +58,7 @@
     "builtAt": "2026-10-30T12:15:12.393Z",
     "format": "dump",
     "hook": "ハロウィンの夜、何枚目が好き？",
-    "rebuildAt": "2026-10-30T12:13:58.451Z",
+    "rebuildAt": "2026-10-30T12:19:46.481Z",
     "engine": "ae",
     "style": "oto",
     "rhythm": "slow",
