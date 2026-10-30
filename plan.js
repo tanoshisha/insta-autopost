@@ -95,12 +95,22 @@ async function collect(state) {
 }
 
 // ---- AI選定（このPCの claude コマンドを使う） ----
+// 点数の基準の参考：本人が自分で選んで載せた投稿（2025/1/23〜2026/10/10）の一覧（make-own-ref.js → .work/own-ref/ref-N.jpg。ref-1 ほど反応が大きかった）
+function ownRef() {
+  const dir = path.join(ROOT, ".work", "own-ref");
+  const sheets = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /^ref-\d+\.jpg$/.test(f)).sort((a, b) => parseInt(a.slice(4)) - parseInt(b.slice(4))) : [];
+  if (!sheets.length) return "";
+  return `【点数の基準の参考】まず次の一覧画像を Read で見てください（この写真家が自分で選んでインスタに載せた投稿。ref-1 ほど反応が大きかった）:
+${sheets.map((f) => `- ${path.join(dir, f)}`).join("\n")}
+この一覧が「この写真家が載せる価値があると判断した写真」の水準です。perfect（満点評価）は、この一覧の上位（ref-1 の中でも特に強い写真）と並べても見劣りしない、むしろ上回る写真だけが95以上。一覧の平均くらいなら85〜90。
+`;
+}
 function aiSelect(batch) {
   const lines = batch.map((it) => `- ${it.thumb}（撮影 ${it.takenLabel}${it.event ? `・${it.event.title}` : ""}）`).join("\n");
   const minScore = cfg.minScore ?? 8;
   const prompt = `あなたは写真家のInstagramアカウントの編集者で、大きな写真コンテストの審査員も務めるプロです。カレントフォルダにある次の候補写真を Read ツールで全部見てください。
 このアカウントはフォロワー1万人を目指していて、「お金を払ってもらえる作品／フォトコンテストで入賞するレベル」の写真だけを載せます。
-
+${ownRef()}
 ${lines}
 
 各写真について判断:

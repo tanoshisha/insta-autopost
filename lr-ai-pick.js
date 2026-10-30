@@ -29,9 +29,21 @@ function shotOf(id) {
   return parts.length >= 3 ? parts.join("／") : null;
 }
 
+// 点数の基準の参考：本人が自分で選んで載せた投稿の一覧（make-own-ref.js → .work/own-ref/ref-N.jpg。上の一覧ほど反応が大きかった）
+function ownRef() {
+  const dir = path.join(__dirname, ".work", "own-ref");
+  const sheets = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /^ref-\d+\.jpg$/.test(f)).sort((a, b) => parseInt(a.slice(4)) - parseInt(b.slice(4))) : [];
+  if (!sheets.length) return "";
+  return `【点数の基準の参考】まず次の一覧画像を Read で見てください（この写真家が自分で選んでインスタに載せた投稿。ref-1 ほど反応が大きかった）:
+${sheets.map((f) => `- ${path.join(dir, f)}`).join("\n")}
+この一覧に載っている写真が「この写真家にとって載せる価値がある写真」の水準です。候補の写真が、この一覧の上位（ref-1）と並べて見劣りしないなら8以上、一覧の平均くらいなら7、一覧に入らない出来なら6以下。
+
+`;
+}
+
 function ask(batch) {
   const lines = batch.map((x) => `- thumbs/${x.id}.jpg（${String(x.t).slice(0, 10)}・フォルダ ${x.dir}）`).join("\n");
-  const prompt = `カレントフォルダの次の写真を Read ツールで全部見てください。写真家のリール（インスタの縦動画）に使う写真を選びます。
+  const prompt = `${ownRef()}カレントフォルダの次の写真を Read ツールで全部見てください。写真家のリール（インスタの縦動画）に使う写真を選びます。
 
 ${lines}
 
