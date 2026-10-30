@@ -423,7 +423,6 @@
     "postAt": "2026-11-03T19:00:00+09:00",
     "images": [
       "specials/reel-2026-11-03/1.jpg",
-      "specials/reel-2026-11-03/2.jpg",
       "specials/reel-2026-11-03/4.jpg",
       "specials/reel-2026-11-03/5.jpg",
       "specials/reel-2026-11-03/6.jpg",
@@ -447,11 +446,10 @@
       "specials/reel-2026-11-03/c7.jpg",
       "specials/reel-2026-11-03/c8.jpg",
       "specials/reel-2026-11-03/c9.jpg",
-      "specials/reel-2026-11-03/3.jpg"
+      "specials/reel-2026-11-03/3.jpg",
+      "specials/reel-2026-11-03/2.jpg"
     ],
     "shots": [
-      null,
-      null,
       null,
       null,
       null,
@@ -469,21 +467,17 @@
       "東京タワー",
       "東京タワー",
       "東京タワー",
-      "東京タワー",
-      "東京タワー",
       "東京タワー"
     ],
     "sources": [
       "lr:2508",
-      "lr:2507",
       "lr:2505",
       "lr:2511",
       "lr:2516",
       "lr:2518",
       "lr:2530",
       "lr:2539",
-      "lr:2524",
-      "lr:2538"
+      "lr:2524"
     ],
     "hook": "東京タワー、見上げる派？見下ろす派？",
     "reelSub": "HAYATO NAOE",
@@ -515,7 +509,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-03/reel-8.mp4",
     "cover": "specials/reel-2026-11-03/reel-8-cover.jpg",
@@ -537,7 +531,7 @@
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T13:48:50.817Z",
+    "kitAt": "2026-10-30T16:25:23.242Z",
     "kitDir": "1103_東京タワーの夜",
     "lrIds": [
       2508,
@@ -549,7 +543,8 @@
       2539,
       2524,
       2538
-    ]
+    ],
+    "cutSwaps": 1
   },
   {
     "id": "reel-2026-11-04",
