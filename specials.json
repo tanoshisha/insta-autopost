@@ -157,7 +157,7 @@
     "kind": "reel",
     "format": "dump",
     "style": "oto",
-    "title": "リール（鎌倉 神社と庭さんぽ）",
+    "title": "リール（夏の水族館）",
     "postAt": "2026-11-01T19:00:00+09:00",
     "images": [
       "specials/reel-2026-11-01/1.jpg",
@@ -172,9 +172,10 @@
       "specials/reel-2026-11-01/10.jpg"
     ],
     "thumb": "specials/reel-2026-11-01/thumb.jpg",
+    "layout": "frame",
+    "rhythm": "slow",
+    "sourceDate": "2026-08-29",
     "cands": [
-      "specials/reel-2026-11-01/11.jpg",
-      "specials/reel-2026-11-01/12.jpg",
       "specials/reel-2026-11-01/c1.jpg",
       "specials/reel-2026-11-01/c2.jpg",
       "specials/reel-2026-11-01/c3.jpg",
@@ -185,177 +186,62 @@
       "specials/reel-2026-11-01/c8.jpg",
       "specials/reel-2026-11-01/c9.jpg",
       "specials/reel-2026-11-01/c10.jpg",
-      "specials/reel-2026-11-01/c11.jpg"
+      "specials/reel-2026-11-01/c11.jpg",
+      "specials/reel-2026-11-01/c12.jpg"
     ],
     "shots": [
-      "176mm／f5.6／1/200秒／ISO200",
-      "200mm／f4／1/200秒／ISO400",
-      "89mm／f4／1/100秒／ISO320",
-      "200mm／f4／1/250秒／ISO160",
-      "106mm／f4／1/160秒／ISO500",
-      "155mm／f4／1/160秒／ISO1000",
-      "200mm／f4／1/250秒／ISO1250",
-      "200mm／f4／1/250秒／ISO1250",
-      "200mm／f4／1/250秒／ISO2500",
-      "200mm／f4／1/250秒／ISO800"
+      "85mm／f1.8／1/3200秒／ISO6400",
+      "85mm／f2／1/500秒／ISO1000",
+      "85mm／f2／1/1000秒／ISO4000",
+      "85mm／f1.8／1/20秒／ISO6400",
+      "85mm／f1.8／1/100秒／ISO6400",
+      "85mm／f2／1/1000秒／ISO3200",
+      "85mm／f1.8／1/125秒／ISO3200",
+      "85mm／f2／1/125秒／ISO6400",
+      "85mm／f1.8／1/2500秒／ISO6400",
+      "85mm／f1.8／1/100秒／ISO6400"
     ],
     "places": [
-      "鎌倉",
       null,
       null,
       null,
       null,
+      "水族館",
+      "水族館",
       null,
-      null,
-      null,
-      null,
+      "水族館",
+      "水族館",
       null
     ],
     "sources": [
-      "lr:2841503",
-      "lr:2838558",
-      "lr:2843317",
-      "lr:2842216",
-      "lr:2841585",
-      "lr:2841137",
-      "lr:2841626",
-      "lr:2841096",
-      "lr:2841865",
-      "lr:2842830"
+      "lr:1984295",
+      "lr:1984205",
+      "lr:1984256",
+      "lr:1985163",
+      "lr:1984714",
+      "lr:1985032",
+      "lr:1985079",
+      "lr:1984650",
+      "lr:1984625",
+      "lr:1985188"
     ],
-    "hook": "鎌倉、何枚目が好き？",
+    "hook": "水族館、何枚目が好き？",
     "reelSub": "HAYATO NAOE",
     "answer": null,
-    "caption": "鎌倉さんぽ\nお寺も庭も、気づいたらほぼ200mmで撮ってた笑\n\n📍鎌倉\n\n#鎌倉 #鎌倉散歩 #望遠レンズ #kamakura #東京カメラ部",
-    "head": "",
-    "portrait": false,
-    "locationName": "鎌倉",
-    "skipped": false,
-    "manual": true,
-    "songs": [
-      {
-        "t": "Just the Two of Us",
-        "a": "Grover Washington, Jr.",
-        "bpm": 96,
-        "why": "流行っている曲"
-      },
-      {
-        "t": "マリブコーク",
-        "a": "踊ってばかりの国",
-        "bpm": null,
-        "why": "お気に入り・雰囲気に合う"
-      },
-      {
-        "t": "LOVEずっきゅん",
-        "a": "相対性理論",
-        "bpm": null,
-        "why": "お気に入り"
-      }
-    ],
-    "bpm": 96,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T13:48:19.898Z",
-    "video": "specials/reel-2026-11-01/reel-6.mp4",
-    "cover": "specials/reel-2026-11-01/reel-6-cover.jpg",
-    "rev": 6,
-    "seconds": 27.03,
-    "beatsUsed": 1,
-    "engine": "ae",
-    "builtAt": "2026-10-30T10:27:28.202Z",
-    "rhythm": "slow",
     "cap": {
-      "title": "鎌倉さんぽ",
-      "fact": "お寺も庭も、気づいたらほぼ200mmで撮ってた笑",
-      "place": "鎌倉",
+      "title": "夏の水族館",
+      "fact": "8月、全部85mmで撮影",
+      "place": "水族館",
       "tags": [
-        "#鎌倉",
-        "#鎌倉散歩",
-        "#望遠レンズ",
-        "#kamakura",
+        "#水族館",
+        "#tokyonight",
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T13:48:36.600Z",
-    "kitDir": "1101_鎌倉 神社と庭さんぽ",
-    "lrIds": [
-      2841503,
-      2838558,
-      2843317,
-      2842216,
-      2841585,
-      2841137,
-      2841626,
-      2841096,
-      2841865,
-      2842830
-    ]
-  },
-  {
-    "id": "reel-2026-11-02",
-    "kind": "reel",
-    "format": "dump",
-    "style": "oto",
-    "title": "リール（明治神宮の初詣・夜の灯り）",
-    "postAt": "2026-11-02T19:00:00+09:00",
-    "images": [
-      "specials/reel-2026-11-02/1.jpg",
-      "specials/reel-2026-11-02/2.jpg",
-      "specials/reel-2026-11-02/3.jpg",
-      "specials/reel-2026-11-02/4.jpg",
-      "specials/reel-2026-11-02/c5.jpg",
-      "specials/reel-2026-11-02/6.jpg",
-      "specials/reel-2026-11-02/7.jpg",
-      "specials/reel-2026-11-02/8.jpg"
-    ],
-    "thumb": "specials/reel-2026-11-02/thumb.jpg",
-    "layout": "side",
-    "rhythm": "slow",
-    "sourceDate": "2025-01-01",
-    "cands": [
-      "specials/reel-2026-11-02/c1.jpg",
-      "specials/reel-2026-11-02/c2.jpg",
-      "specials/reel-2026-11-02/c3.jpg",
-      "specials/reel-2026-11-02/c4.jpg",
-      "specials/reel-2026-11-02/c6.jpg",
-      "specials/reel-2026-11-02/5.jpg"
-    ],
-    "shots": [
-      "47mm／f4／1/60秒／ISO12800",
-      "111mm／f4／1/250秒／ISO6400",
-      "81mm／f4／1/160秒／ISO2500",
-      "200mm／f4／1/125秒／ISO12800",
-      null,
-      "176mm／f4／1/400秒／ISO6400",
-      "127mm／f4.5／1/250秒／ISO6400",
-      "78mm／f4／1/160秒／ISO3200"
-    ],
-    "places": [
-      "明治神宮",
-      "明治神宮",
-      "明治神宮",
-      "明治神宮",
-      null,
-      "神社",
-      null,
-      "明治神宮"
-    ],
-    "sources": [
-      "lr:73257",
-      "lr:70077",
-      "lr:69741",
-      "lr:67233",
-      null,
-      "lr:73965",
-      "lr:71585",
-      "lr:79217"
-    ],
-    "hook": "初詣の夜、何枚目が好き？",
-    "reelSub": "HAYATO NAOE",
-    "answer": null,
-    "caption": "去年の元日、夜の明治神宮\nISO12800でもちゃんと撮れるの、ありがたい時代\n\n📍明治神宮\n\n#明治神宮 #初詣 #夜の神社 #tokyonight #東京カメラ部",
+    "caption": "夏の水族館\n8月、全部85mmで撮影\n\n📍水族館\n\n#水族館 #tokyonight #東京カメラ部",
     "head": "",
     "portrait": false,
-    "locationName": "明治神宮",
+    "locationName": "水族館",
     "skipped": false,
     "manual": true,
     "songs": [
@@ -379,50 +265,129 @@
       }
     ],
     "bpm": 96,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T13:48:19.898Z",
-    "video": "specials/reel-2026-11-02/reel-3.mp4",
-    "cover": "specials/reel-2026-11-02/reel-3-cover.jpg",
-    "rev": 3,
-    "seconds": 22.03,
-    "beatsUsed": 1,
-    "engine": "ae",
-    "builtAt": "2026-10-30T10:28:25.400Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:50.026Z"
+  },
+  {
+    "id": "reel-2026-11-02",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（水族館）",
+    "postAt": "2026-11-02T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-02/1.jpg",
+      "specials/reel-2026-11-02/2.jpg",
+      "specials/reel-2026-11-02/3.jpg",
+      "specials/reel-2026-11-02/4.jpg",
+      "specials/reel-2026-11-02/5.jpg",
+      "specials/reel-2026-11-02/6.jpg",
+      "specials/reel-2026-11-02/7.jpg",
+      "specials/reel-2026-11-02/8.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-02/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-10-03",
+    "cands": [
+      "specials/reel-2026-11-02/c1.jpg",
+      "specials/reel-2026-11-02/c2.jpg",
+      "specials/reel-2026-11-02/c3.jpg",
+      "specials/reel-2026-11-02/c4.jpg",
+      "specials/reel-2026-11-02/c5.jpg",
+      "specials/reel-2026-11-02/c6.jpg",
+      "specials/reel-2026-11-02/c7.jpg",
+      "specials/reel-2026-11-02/c8.jpg",
+      "specials/reel-2026-11-02/c9.jpg",
+      "specials/reel-2026-11-02/c10.jpg",
+      "specials/reel-2026-11-02/c11.jpg",
+      "specials/reel-2026-11-02/c12.jpg"
+    ],
+    "shots": [
+      "70mm／f4／1/2000秒／ISO6400",
+      "116mm／f4／1/125秒／ISO5000",
+      "200mm／f4／1/250秒／ISO5000",
+      "78mm／f4／1/80秒／ISO12800",
+      "200mm／f4／1/125秒／ISO12800",
+      "200mm／f4／1/250秒／ISO400",
+      "155mm／f4／1/2000秒／ISO12800",
+      "200mm／f4／1/250秒／ISO400"
+    ],
+    "places": [
+      "品川水族館",
+      "水族館",
+      "水族館",
+      "水族館",
+      "水族館",
+      "水族館",
+      "品川水族館",
+      "水族館"
+    ],
+    "sources": [
+      "lr:2683377",
+      "lr:2681599",
+      "lr:2680682",
+      "lr:2620559",
+      "lr:2680811",
+      "lr:2619951",
+      "lr:2620044",
+      "lr:2619783"
+    ],
+    "hook": "水族館、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
     "cap": {
-      "title": "去年の元日、夜の明治神宮",
-      "fact": "ISO12800でもちゃんと撮れるの、ありがたい時代",
-      "place": "明治神宮",
+      "title": "水族館さんぽ",
+      "fact": "ほぼ望遠で撮影",
+      "place": "品川水族館",
       "tags": [
-        "#明治神宮",
-        "#初詣",
-        "#夜の神社",
+        "#品川水族館",
+        "#水族館",
         "#tokyonight",
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T16:21:54.353Z",
-    "kitDir": "1102_明治神宮の初詣・夜の灯り",
-    "lrIds": [
-      73257,
-      70077,
-      69741,
-      67233,
-      176869,
-      73965,
-      71585,
-      79217
+    "caption": "水族館さんぽ\nほぼ望遠で撮影\n\n📍品川水族館\n\n#品川水族館 #水族館 #tokyonight #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "品川水族館",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Just the Two of Us",
+        "a": "Grover Washington, Jr.",
+        "bpm": 96,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Feather",
+        "a": "Nujabes",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "Got to Be Real",
+        "a": "Cheryl Lynn",
+        "bpm": 117,
+        "why": "お気に入り"
+      }
     ],
-    "cutSwaps": 1
+    "bpm": 96,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:51.029Z"
   },
   {
     "id": "reel-2026-11-03",
     "kind": "reel",
     "format": "dump",
     "style": "oto",
-    "title": "リール（東京タワーの夜）",
+    "title": "リール（雨の六本木（反射））",
     "postAt": "2026-11-03T19:00:00+09:00",
     "images": [
       "specials/reel-2026-11-03/1.jpg",
+      "specials/reel-2026-11-03/2.jpg",
+      "specials/reel-2026-11-03/3.jpg",
       "specials/reel-2026-11-03/4.jpg",
       "specials/reel-2026-11-03/5.jpg",
       "specials/reel-2026-11-03/6.jpg",
@@ -432,12 +397,11 @@
       "specials/reel-2026-11-03/10.jpg"
     ],
     "thumb": "specials/reel-2026-11-03/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-08-22",
     "cands": [
       "specials/reel-2026-11-03/c1.jpg",
-      "specials/reel-2026-11-03/11.jpg",
-      "specials/reel-2026-11-03/12.jpg",
-      "specials/reel-2026-11-03/13.jpg",
-      "specials/reel-2026-11-03/14.jpg",
       "specials/reel-2026-11-03/c2.jpg",
       "specials/reel-2026-11-03/c3.jpg",
       "specials/reel-2026-11-03/c4.jpg",
@@ -446,43 +410,403 @@
       "specials/reel-2026-11-03/c7.jpg",
       "specials/reel-2026-11-03/c8.jpg",
       "specials/reel-2026-11-03/c9.jpg",
-      "specials/reel-2026-11-03/3.jpg",
-      "specials/reel-2026-11-03/2.jpg"
+      "specials/reel-2026-11-03/c10.jpg",
+      "specials/reel-2026-11-03/c11.jpg",
+      "specials/reel-2026-11-03/c12.jpg"
     ],
     "shots": [
+      "85mm／f1.8／1/1000秒／ISO12800",
+      "85mm／f2／1/1000秒／ISO2000",
+      "85mm／f2／1/1000秒／ISO500",
+      "85mm／f1.8／1/1000秒／ISO12800",
+      "85mm／f1.8／1/1000秒／ISO12800",
+      "85mm／f2／1/1000秒／ISO8000",
+      "85mm／f1.8／1/1000秒／ISO1600",
+      "85mm／f1.8／1/1000秒／ISO12800",
+      "85mm／f2／1/1000秒／ISO1600",
+      "85mm／f2／1/1000秒／ISO100"
+    ],
+    "places": [
+      "東京タワー",
+      "麻布十番",
       null,
       null,
-      null,
+      "麻布十番",
       null,
       null,
       null,
       null,
       null
     ],
-    "places": [
-      "東京タワー",
-      "東京タワー",
-      "東京タワー",
-      "東京タワー",
-      "東京タワー",
-      "東京タワー",
-      "東京タワー",
-      "東京タワー"
-    ],
     "sources": [
-      "lr:2508",
-      "lr:2505",
-      "lr:2511",
-      "lr:2516",
-      "lr:2518",
-      "lr:2530",
-      "lr:2539",
-      "lr:2524"
+      "lr:1803032",
+      "lr:1802917",
+      "lr:1826044",
+      "lr:1802862",
+      "lr:1802937",
+      "lr:1826441",
+      "lr:1826482",
+      "lr:1802881",
+      "lr:1803014",
+      "lr:1802984"
     ],
-    "hook": "東京タワー、見上げる派？見下ろす派？",
+    "hook": "雨の夜、何枚目が好き？",
     "reelSub": "HAYATO NAOE",
     "answer": null,
-    "caption": "東京タワー 夜ver.\n近くから見上げるのがいちばん好き\nみんなは東京タワー派？スカイツリー派？\n\n📍東京タワー\n\n#東京タワー #東京夜景 #夜景写真 #tokyotower #東京カメラ部",
+    "cap": {
+      "title": "雨の六本木",
+      "fact": "8月、全部85mmで撮影",
+      "place": "東京タワー",
+      "tags": [
+        "#東京タワー",
+        "#雨の日写真部",
+        "#tokyotower",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "雨の六本木\n8月、全部85mmで撮影\n\n📍東京タワー\n\n#東京タワー #雨の日写真部 #tokyotower #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "東京タワー",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Just the Two of Us",
+        "a": "Grover Washington, Jr.",
+        "bpm": 96,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Feather",
+        "a": "Nujabes",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "MELODY",
+        "a": "Fishmans（アルバム『ORANGE』）",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 96,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:51.981Z"
+  },
+  {
+    "id": "reel-2026-11-04",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（鎌倉さんぽ）",
+    "postAt": "2026-11-04T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-04/1.jpg",
+      "specials/reel-2026-11-04/2.jpg",
+      "specials/reel-2026-11-04/3.jpg",
+      "specials/reel-2026-11-04/4.jpg",
+      "specials/reel-2026-11-04/5.jpg",
+      "specials/reel-2026-11-04/6.jpg",
+      "specials/reel-2026-11-04/7.jpg",
+      "specials/reel-2026-11-04/8.jpg",
+      "specials/reel-2026-11-04/9.jpg",
+      "specials/reel-2026-11-04/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-04/thumb.jpg",
+    "layout": "frame",
+    "rhythm": "slow",
+    "sourceDate": "2026-10-04",
+    "cands": [
+      "specials/reel-2026-11-04/c1.jpg",
+      "specials/reel-2026-11-04/c2.jpg",
+      "specials/reel-2026-11-04/c3.jpg",
+      "specials/reel-2026-11-04/c4.jpg",
+      "specials/reel-2026-11-04/c5.jpg",
+      "specials/reel-2026-11-04/c6.jpg",
+      "specials/reel-2026-11-04/c7.jpg",
+      "specials/reel-2026-11-04/c8.jpg",
+      "specials/reel-2026-11-04/c9.jpg",
+      "specials/reel-2026-11-04/c10.jpg",
+      "specials/reel-2026-11-04/c11.jpg",
+      "specials/reel-2026-11-04/c12.jpg"
+    ],
+    "shots": [
+      "280mm／f5.6／1/320秒／ISO320",
+      "200mm／f4／1/200秒／ISO500",
+      "116mm／f4／1/250秒／ISO100",
+      "200mm／f4／1/250秒／ISO400",
+      "280mm／f5.6／1/320秒／ISO640",
+      "35mm／f2／1/125秒／ISO100",
+      "200mm／f4／1/200秒／ISO1000",
+      "200mm／f4／1/250秒／ISO1600",
+      "200mm／f4／1/250秒／ISO800",
+      "200mm／f4／1/200秒／ISO2000"
+    ],
+    "places": [
+      "高徳院",
+      "鶴岡八幡宮",
+      "鶴岡八幡宮",
+      "鶴岡八幡宮",
+      "鎌倉",
+      "鎌倉",
+      "長谷寺",
+      "長谷寺",
+      "長谷寺",
+      "長谷寺"
+    ],
+    "sources": [
+      "lr:2745147",
+      "lr:2745233",
+      "lr:2745548",
+      "lr:2745394",
+      "lr:2745168",
+      "lr:2745227",
+      "lr:2745289",
+      "lr:2745219",
+      "lr:2745664",
+      "lr:2745291"
+    ],
+    "hook": "鎌倉、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "鎌倉さんぽ",
+      "fact": "ほぼ200mmで撮影",
+      "place": "高徳院",
+      "tags": [
+        "#高徳院",
+        "#鎌倉",
+        "#tokyosnap",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "鎌倉さんぽ\nほぼ200mmで撮影\n\n📍高徳院\n\n#高徳院 #鎌倉 #tokyosnap #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "高徳院",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Just the Two of Us",
+        "a": "Grover Washington, Jr.",
+        "bpm": 96,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Feather",
+        "a": "Nujabes",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "Got to Be Real",
+        "a": "Cheryl Lynn",
+        "bpm": 117,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 96,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:53.074Z"
+  },
+  {
+    "id": "reel-2026-11-05",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（表参道の建築）",
+    "postAt": "2026-11-05T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-05/1.jpg",
+      "specials/reel-2026-11-05/2.jpg",
+      "specials/reel-2026-11-05/3.jpg",
+      "specials/reel-2026-11-05/4.jpg",
+      "specials/reel-2026-11-05/5.jpg",
+      "specials/reel-2026-11-05/6.jpg",
+      "specials/reel-2026-11-05/7.jpg",
+      "specials/reel-2026-11-05/8.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-05/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-10-17",
+    "cands": [
+      "specials/reel-2026-11-05/c1.jpg",
+      "specials/reel-2026-11-05/c2.jpg",
+      "specials/reel-2026-11-05/c3.jpg",
+      "specials/reel-2026-11-05/c4.jpg",
+      "specials/reel-2026-11-05/c5.jpg",
+      "specials/reel-2026-11-05/c6.jpg",
+      "specials/reel-2026-11-05/c7.jpg",
+      "specials/reel-2026-11-05/c8.jpg",
+      "specials/reel-2026-11-05/c9.jpg",
+      "specials/reel-2026-11-05/c10.jpg",
+      "specials/reel-2026-11-05/c11.jpg",
+      "specials/reel-2026-11-05/c12.jpg"
+    ],
+    "shots": [
+      "106mm／f4／1/400秒／ISO100",
+      "150mm／f4／1/200秒／ISO100",
+      "169mm／f4／1/1250秒／ISO100",
+      "200mm／f4／1/200秒／ISO200",
+      "150mm／f4／1/500秒／ISO100",
+      "200mm／f4／1/200秒／ISO125",
+      "127mm／f4／1/640秒／ISO100",
+      "93mm／f4／1/125秒／ISO1000"
+    ],
+    "places": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "南青山",
+      "青山",
+      null
+    ],
+    "sources": [
+      "lr:2879078",
+      "lr:2879265",
+      "lr:2879626",
+      "lr:2878837",
+      "lr:2930046",
+      "lr:2879125",
+      "lr:2879716",
+      "lr:2879528"
+    ],
+    "hook": "表参道の建築、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "表参道 建築さんぽ",
+      "fact": "ほぼ望遠で撮影",
+      "place": "南青山",
+      "tags": [
+        "#南青山",
+        "#建築写真",
+        "#tokyosnap",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "表参道 建築さんぽ\nほぼ望遠で撮影\n\n📍南青山\n\n#南青山 #建築写真 #tokyosnap #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "南青山",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Isn't She Lovely",
+        "a": "Stevie Wonder",
+        "bpm": 119,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "LOVEずっきゅん",
+        "a": "相対性理論",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "私の好きなもの",
+        "a": "Lovely Summer Chan",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 119,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:53.911Z"
+  },
+  {
+    "id": "reel-2026-11-06",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（夜の東京タワー）",
+    "postAt": "2026-11-06T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-06/1.jpg",
+      "specials/reel-2026-11-06/2.jpg",
+      "specials/reel-2026-11-06/3.jpg",
+      "specials/reel-2026-11-06/4.jpg",
+      "specials/reel-2026-11-06/5.jpg",
+      "specials/reel-2026-11-06/6.jpg",
+      "specials/reel-2026-11-06/7.jpg",
+      "specials/reel-2026-11-06/8.jpg",
+      "specials/reel-2026-11-06/9.jpg",
+      "specials/reel-2026-11-06/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-06/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-08-14",
+    "cands": [
+      "specials/reel-2026-11-06/c1.jpg",
+      "specials/reel-2026-11-06/c2.jpg",
+      "specials/reel-2026-11-06/c3.jpg",
+      "specials/reel-2026-11-06/c4.jpg",
+      "specials/reel-2026-11-06/c5.jpg",
+      "specials/reel-2026-11-06/c6.jpg",
+      "specials/reel-2026-11-06/c7.jpg",
+      "specials/reel-2026-11-06/c8.jpg",
+      "specials/reel-2026-11-06/c9.jpg",
+      "specials/reel-2026-11-06/c10.jpg",
+      "specials/reel-2026-11-06/c11.jpg",
+      "specials/reel-2026-11-06/c12.jpg"
+    ],
+    "shots": [
+      "70mm／f4／1/100秒／ISO1600",
+      "70mm／f4／1/60秒／ISO12800",
+      "70mm／f4／1/80秒／ISO6400",
+      "35mm／f2.8／1/60秒／ISO8000",
+      "200mm／f4／1/200秒／ISO3200",
+      "200mm／f4／1/125秒／ISO12800",
+      "200mm／f4／1/200秒／ISO2500",
+      "200mm／f4／1/80秒／ISO12800",
+      "81mm／f4／1/60秒／ISO12800",
+      "35mm／f8／1/25秒／ISO12800"
+    ],
+    "places": [
+      "東京タワー",
+      null,
+      "東京タワー",
+      "増上寺",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      null,
+      "東京タワー周辺"
+    ],
+    "sources": [
+      "lr:1746456",
+      "lr:1638275",
+      "lr:1655883",
+      "lr:1638389",
+      "lr:1638222",
+      "lr:1638264",
+      "lr:1638219",
+      "lr:1638383",
+      "lr:1638142",
+      "lr:1638209"
+    ],
+    "hook": "東京タワー、何枚目で止まった？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "東京タワー 夜さんぽ",
+      "fact": "8月に撮った写真",
+      "place": "東京タワー",
+      "tags": [
+        "#東京タワー",
+        "#tokyotower",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "東京タワー 夜さんぽ\n8月に撮った写真\n\n📍東京タワー\n\n#東京タワー #tokyotower #東京カメラ部",
     "head": "",
     "portrait": false,
     "locationName": "東京タワー",
@@ -509,80 +833,45 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T13:48:19.898Z",
-    "video": "specials/reel-2026-11-03/reel-8.mp4",
-    "cover": "specials/reel-2026-11-03/reel-8-cover.jpg",
-    "rev": 8,
-    "seconds": 23.47,
-    "beatsUsed": 1,
-    "engine": "ae",
-    "builtAt": "2026-10-30T12:16:20.392Z",
-    "rhythm": "slow",
-    "cap": {
-      "title": "東京タワー 夜ver.",
-      "fact": "近くから見上げるのがいちばん好き\nみんなは東京タワー派？スカイツリー派？",
-      "place": "東京タワー",
-      "tags": [
-        "#東京タワー",
-        "#東京夜景",
-        "#夜景写真",
-        "#tokyotower",
-        "#東京カメラ部"
-      ]
-    },
-    "kitAt": "2026-10-30T16:25:23.242Z",
-    "kitDir": "1103_東京タワーの夜",
-    "lrIds": [
-      2508,
-      2507,
-      2511,
-      2516,
-      2518,
-      2530,
-      2539,
-      2524,
-      2538
-    ],
-    "cutSwaps": 1
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:54.760Z"
   },
   {
-    "id": "reel-2026-11-04",
+    "id": "reel-2026-11-07",
     "kind": "reel",
     "format": "dump",
     "style": "oto",
-    "title": "リール（雨の夜の反射）",
-    "postAt": "2026-11-04T19:00:00+09:00",
+    "title": "リール（猫カフェ）",
+    "postAt": "2026-11-07T19:00:00+09:00",
     "images": [
-      "specials/reel-2026-11-04/1.jpg",
-      "specials/reel-2026-11-04/2.jpg",
-      "specials/reel-2026-11-04/3.jpg",
-      "specials/reel-2026-11-04/4.jpg",
-      "specials/reel-2026-11-04/5.jpg",
-      "specials/reel-2026-11-04/6.jpg",
-      "specials/reel-2026-11-04/7.jpg",
-      "specials/reel-2026-11-04/8.jpg"
+      "specials/reel-2026-11-07/1.jpg",
+      "specials/reel-2026-11-07/2.jpg",
+      "specials/reel-2026-11-07/3.jpg",
+      "specials/reel-2026-11-07/4.jpg",
+      "specials/reel-2026-11-07/5.jpg",
+      "specials/reel-2026-11-07/6.jpg",
+      "specials/reel-2026-11-07/7.jpg",
+      "specials/reel-2026-11-07/8.jpg"
     ],
-    "thumb": "specials/reel-2026-11-04/thumb.jpg",
+    "thumb": "specials/reel-2026-11-07/thumb.jpg",
     "layout": "frame",
     "rhythm": "slow",
-    "sourceDate": "2026-08-22",
+    "sourceDate": "2025-02-22",
     "cands": [
-      "specials/reel-2026-11-04/c1.jpg",
-      "specials/reel-2026-11-04/c2.jpg",
-      "specials/reel-2026-11-04/c3.jpg",
-      "specials/reel-2026-11-04/c4.jpg",
-      "specials/reel-2026-11-04/c5.jpg"
+      "specials/reel-2026-11-07/c1.jpg",
+      "specials/reel-2026-11-07/c2.jpg",
+      "specials/reel-2026-11-07/c3.jpg",
+      "specials/reel-2026-11-07/c4.jpg"
     ],
     "shots": [
-      "85mm／f2／1/1000秒／ISO8000",
-      "85mm／f2／1/1000秒／ISO10000",
-      "85mm／f2／1/1000秒／ISO5000",
-      "85mm／f2／1/1000秒／ISO500",
-      "85mm／f1.8／1/1000秒／ISO12800",
-      "85mm／f1.8／1/1000秒／ISO12800",
-      "85mm／f1.8／1/1000秒／ISO12800",
-      "85mm／f2／1/1000秒／ISO12800"
+      "97mm／f4／1/60秒／ISO1600",
+      "116mm／f4／1/60秒／ISO1600",
+      "191mm／f8／1/60秒／ISO1600",
+      "97mm／f4／1/60秒／ISO1600",
+      "165mm／f4／1/60秒／ISO1600",
+      "135mm／f5／1/60秒／ISO1600",
+      "138mm／f4／1/60秒／ISO1600",
+      "106mm／f4／1/60秒／ISO1600"
     ],
     "places": [
       null,
@@ -595,19 +884,828 @@
       null
     ],
     "sources": [
-      "lr:1826441",
-      "lr:1826128",
-      "lr:1825847",
-      "lr:1826044",
-      "lr:1826359",
-      "lr:1825804",
-      "lr:1826318",
-      "lr:1825890"
+      "lr:181139",
+      "lr:181111",
+      "lr:181029",
+      "lr:181068",
+      "lr:181060",
+      "lr:181125",
+      "lr:181041",
+      "lr:181129"
+    ],
+    "hook": "猫カフェ、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "猫カフェ日和",
+      "fact": "去年の冬に撮った写真",
+      "place": "",
+      "tags": [
+        "#猫カフェ",
+        "#tokyosnap",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "猫カフェ日和\n去年の冬に撮った写真\n\n#猫カフェ #tokyosnap #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": null,
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Englishman In New York",
+        "a": "Sting",
+        "bpm": 102,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "マリブコーク",
+        "a": "踊ってばかりの国",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:55.729Z"
+  },
+  {
+    "id": "reel-2026-11-08",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（東京駅の夜）",
+    "postAt": "2026-11-08T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-08/1.jpg",
+      "specials/reel-2026-11-08/2.jpg",
+      "specials/reel-2026-11-08/3.jpg",
+      "specials/reel-2026-11-08/4.jpg",
+      "specials/reel-2026-11-08/5.jpg",
+      "specials/reel-2026-11-08/6.jpg",
+      "specials/reel-2026-11-08/7.jpg",
+      "specials/reel-2026-11-08/8.jpg",
+      "specials/reel-2026-11-08/9.jpg",
+      "specials/reel-2026-11-08/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-08/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-09-13",
+    "cands": [
+      "specials/reel-2026-11-08/c1.jpg",
+      "specials/reel-2026-11-08/c2.jpg",
+      "specials/reel-2026-11-08/c3.jpg",
+      "specials/reel-2026-11-08/c4.jpg",
+      "specials/reel-2026-11-08/c5.jpg",
+      "specials/reel-2026-11-08/c6.jpg",
+      "specials/reel-2026-11-08/c7.jpg",
+      "specials/reel-2026-11-08/c8.jpg",
+      "specials/reel-2026-11-08/c9.jpg",
+      "specials/reel-2026-11-08/c10.jpg",
+      "specials/reel-2026-11-08/c11.jpg",
+      "specials/reel-2026-11-08/c12.jpg"
+    ],
+    "shots": [
+      "16mm／f2.8／1/50秒／ISO1600",
+      null,
+      "85mm／f1.8／1/60秒／ISO2500",
+      "16mm／f2.8／1/50秒／ISO1600",
+      "85mm／f1.8／1/500秒／ISO6400",
+      "85mm／f1.8／1/100秒／ISO3200",
+      null,
+      "85mm／f2.8／1/100秒／ISO1000",
+      "85mm／f1.8／1/60秒／ISO1000",
+      "85mm／f1.8／1/160秒／ISO1000"
+    ],
+    "places": [
+      "東京駅",
+      "東京駅",
+      "東京駅",
+      "東京駅",
+      "東京駅八重洲",
+      "東京",
+      "東京駅",
+      "東京駅",
+      "丸の内",
+      "丸の内"
+    ],
+    "sources": [
+      "lr:2500926",
+      "lr:2500918",
+      "lr:2500934",
+      "lr:2500928",
+      "lr:2501135",
+      "lr:2501046",
+      "lr:2501075",
+      "lr:2501172",
+      "lr:2501212",
+      "lr:2501253"
+    ],
+    "hook": "東京駅、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "東京駅 夜ver.",
+      "fact": "9月、ほぼ85mmで撮影",
+      "place": "東京駅",
+      "tags": [
+        "#東京駅",
+        "#tokyostation",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "東京駅 夜ver.\n9月、ほぼ85mmで撮影\n\n📍東京駅\n\n#東京駅 #tokyostation #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "東京駅",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Isn't She Lovely",
+        "a": "Stevie Wonder",
+        "bpm": 119,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "LOVEずっきゅん",
+        "a": "相対性理論",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "私の好きなもの",
+        "a": "Lovely Summer Chan",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 119,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:56.505Z"
+  },
+  {
+    "id": "reel-2026-11-09",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（新宿中央公園の花園）",
+    "postAt": "2026-11-09T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-09/1.jpg",
+      "specials/reel-2026-11-09/2.jpg",
+      "specials/reel-2026-11-09/3.jpg",
+      "specials/reel-2026-11-09/4.jpg",
+      "specials/reel-2026-11-09/5.jpg",
+      "specials/reel-2026-11-09/6.jpg",
+      "specials/reel-2026-11-09/7.jpg",
+      "specials/reel-2026-11-09/8.jpg",
+      "specials/reel-2026-11-09/9.jpg",
+      "specials/reel-2026-11-09/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-09/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-07-27",
+    "cands": [
+      "specials/reel-2026-11-09/c1.jpg",
+      "specials/reel-2026-11-09/c2.jpg",
+      "specials/reel-2026-11-09/c3.jpg",
+      "specials/reel-2026-11-09/c4.jpg",
+      "specials/reel-2026-11-09/c5.jpg",
+      "specials/reel-2026-11-09/c6.jpg",
+      "specials/reel-2026-11-09/c7.jpg",
+      "specials/reel-2026-11-09/c8.jpg",
+      "specials/reel-2026-11-09/c9.jpg",
+      "specials/reel-2026-11-09/c10.jpg",
+      "specials/reel-2026-11-09/c11.jpg",
+      "specials/reel-2026-11-09/c12.jpg"
+    ],
+    "shots": [
+      "200mm／f4／1/250秒／ISO250",
+      "176mm／f4／1/250秒／ISO320",
+      "200mm／f4／1/200秒／ISO100",
+      "200mm／f4／1/250秒／ISO200",
+      "200mm／f4／1/250秒／ISO250",
+      "200mm／f4／1/250秒／ISO100",
+      "200mm／f4／1/250秒／ISO160",
+      "192mm／f4／1/200秒／ISO320",
+      "200mm／f4／1/200秒／ISO500",
+      "200mm／f4／1/200秒／ISO400"
+    ],
+    "places": [
+      "新宿中央公園",
+      "新宿中央公園",
+      "新宿中央公園",
+      "新宿中央公園",
+      "新宿中央公園",
+      "新宿中央公園",
+      "新宿中央公園",
+      "新宿中央公園",
+      "新宿中央公園",
+      "新宿中央公園"
+    ],
+    "sources": [
+      "lr:1549159",
+      "lr:1549148",
+      "lr:1549152",
+      "lr:1549167",
+      "lr:1549171",
+      "lr:1549157",
+      "lr:1549165",
+      "lr:1549183",
+      "lr:1549186",
+      "lr:1549177"
+    ],
+    "hook": "何枚目の花が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "新宿中央公園 花さんぽ",
+      "fact": "7月、ほぼ200mmで撮影",
+      "place": "新宿中央公園",
+      "tags": [
+        "#新宿中央公園",
+        "#はなまっぷ",
+        "#shinjuku",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "新宿中央公園 花さんぽ\n7月、ほぼ200mmで撮影\n\n📍新宿中央公園\n\n#新宿中央公園 #はなまっぷ #shinjuku #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "新宿中央公園",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Isn't She Lovely",
+        "a": "Stevie Wonder",
+        "bpm": 119,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "LOVEずっきゅん",
+        "a": "相対性理論",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "お別れの歌",
+        "a": "never young beach",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 119,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:57.289Z"
+  },
+  {
+    "id": "reel-2026-11-10",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（浅草の夜）",
+    "postAt": "2026-11-10T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-10/1.jpg",
+      "specials/reel-2026-11-10/2.jpg",
+      "specials/reel-2026-11-10/3.jpg",
+      "specials/reel-2026-11-10/4.jpg",
+      "specials/reel-2026-11-10/5.jpg",
+      "specials/reel-2026-11-10/6.jpg",
+      "specials/reel-2026-11-10/7.jpg",
+      "specials/reel-2026-11-10/8.jpg",
+      "specials/reel-2026-11-10/9.jpg",
+      "specials/reel-2026-11-10/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-10/thumb.jpg",
+    "layout": "frame",
+    "rhythm": "slow",
+    "sourceDate": "2026-10-10",
+    "cands": [
+      "specials/reel-2026-11-10/c1.jpg",
+      "specials/reel-2026-11-10/c2.jpg",
+      "specials/reel-2026-11-10/c3.jpg",
+      "specials/reel-2026-11-10/c4.jpg",
+      "specials/reel-2026-11-10/c5.jpg",
+      "specials/reel-2026-11-10/c6.jpg",
+      "specials/reel-2026-11-10/c7.jpg",
+      "specials/reel-2026-11-10/c8.jpg",
+      "specials/reel-2026-11-10/c9.jpg",
+      "specials/reel-2026-11-10/c10.jpg",
+      "specials/reel-2026-11-10/c11.jpg",
+      "specials/reel-2026-11-10/c12.jpg"
+    ],
+    "shots": [
+      "70mm／f4／1/30秒／ISO12800",
+      "116mm／f4.5／1/320秒／ISO1600",
+      "200mm／f4／1/80秒／ISO1000",
+      "70mm／f4／1/80秒／ISO1000",
+      "200mm／f4.5／1/200秒／ISO3200",
+      "200mm／f4／1/30秒／ISO12800",
+      "200mm／f4／1/40秒／ISO6400",
+      "200mm／f4／1/30秒／ISO5000",
+      "200mm／f4／1/30秒／ISO12800",
+      "70mm／f4／1/40秒／ISO12800"
+    ],
+    "places": [
+      "浅草",
+      "浅草",
+      "浅草",
+      "浅草",
+      "浅草",
+      "隅田川",
+      "隅田川",
+      "隅田川",
+      "隅田川",
+      "隅田川"
+    ],
+    "sources": [
+      "lr:2807270",
+      "lr:2807154",
+      "lr:2807214",
+      "lr:2807231",
+      "lr:2807118",
+      "lr:2807305",
+      "lr:2807320",
+      "lr:2807368",
+      "lr:2807389",
+      "lr:2844590"
+    ],
+    "hook": "浅草の夜、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "浅草 夜さんぽ",
+      "fact": "ほぼ200mmで撮影",
+      "place": "浅草",
+      "tags": [
+        "#浅草",
+        "#asakusa",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "浅草 夜さんぽ\nほぼ200mmで撮影\n\n📍浅草\n\n#浅草 #asakusa #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "浅草",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Isn't She Lovely",
+        "a": "Stevie Wonder",
+        "bpm": 119,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "LOVEずっきゅん",
+        "a": "相対性理論",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "私の好きなもの",
+        "a": "Lovely Summer Chan",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 119,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:58.089Z"
+  },
+  {
+    "id": "reel-2026-11-11",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（ネオンの夜）",
+    "postAt": "2026-11-11T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-11/1.jpg",
+      "specials/reel-2026-11-11/2.jpg",
+      "specials/reel-2026-11-11/3.jpg",
+      "specials/reel-2026-11-11/4.jpg",
+      "specials/reel-2026-11-11/5.jpg",
+      "specials/reel-2026-11-11/6.jpg",
+      "specials/reel-2026-11-11/7.jpg",
+      "specials/reel-2026-11-11/8.jpg",
+      "specials/reel-2026-11-11/9.jpg",
+      "specials/reel-2026-11-11/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-11/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-10-17",
+    "cands": [
+      "specials/reel-2026-11-11/c1.jpg",
+      "specials/reel-2026-11-11/c2.jpg",
+      "specials/reel-2026-11-11/c3.jpg",
+      "specials/reel-2026-11-11/c4.jpg",
+      "specials/reel-2026-11-11/c5.jpg",
+      "specials/reel-2026-11-11/c6.jpg",
+      "specials/reel-2026-11-11/c7.jpg",
+      "specials/reel-2026-11-11/c8.jpg",
+      "specials/reel-2026-11-11/c9.jpg",
+      "specials/reel-2026-11-11/c10.jpg",
+      "specials/reel-2026-11-11/c11.jpg",
+      "specials/reel-2026-11-11/c12.jpg"
+    ],
+    "shots": [
+      "200mm／f4／1/200秒／ISO10000",
+      "200mm／f4／1/250秒／ISO4000",
+      "89mm／f4／1/50秒／ISO12800",
+      "116mm／f4／1/160秒／ISO640",
+      "144mm／f4／1/200秒／ISO3200",
+      "200mm／f4／1/200秒／ISO320",
+      "200mm／f4／1/250秒／ISO5000",
+      "200mm／f4／1/200秒／ISO5000",
+      "200mm／f4／1/60秒／ISO12800",
+      "200mm／f4／1/30秒／ISO12800"
+    ],
+    "places": [
+      "原宿",
+      null,
+      null,
+      null,
+      null,
+      "原宿",
+      "原宿",
+      "原宿",
+      null,
+      "東京タワー"
+    ],
+    "sources": [
+      "lr:2879522",
+      "lr:2879500",
+      "lr:2879203",
+      "lr:2878923",
+      "lr:2878862",
+      "lr:2878746",
+      "lr:2879409",
+      "lr:2879525",
+      "lr:2879529",
+      "lr:2879184"
+    ],
+    "hook": "夜のネオン、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "東京 ネオンの夜",
+      "fact": "ほぼ200mmで撮影",
+      "place": "原宿",
+      "tags": [
+        "#原宿",
+        "#東京夜景",
+        "#harajuku",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "東京 ネオンの夜\nほぼ200mmで撮影\n\n📍原宿\n\n#原宿 #東京夜景 #harajuku #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "原宿",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Englishman In New York",
+        "a": "Sting",
+        "bpm": 102,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "SUMMER SUSPICION",
+        "a": "杉山清貴&オメガトライブ",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:31:59.140Z"
+  },
+  {
+    "id": "reel-2026-11-12",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（丸の内イルミ）",
+    "postAt": "2026-11-12T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-12/1.jpg",
+      "specials/reel-2026-11-12/2.jpg",
+      "specials/reel-2026-11-12/3.jpg",
+      "specials/reel-2026-11-12/4.jpg",
+      "specials/reel-2026-11-12/5.jpg",
+      "specials/reel-2026-11-12/6.jpg",
+      "specials/reel-2026-11-12/7.jpg",
+      "specials/reel-2026-11-12/8.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-12/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2024-12-25",
+    "cands": [
+      "specials/reel-2026-11-12/c1.jpg",
+      "specials/reel-2026-11-12/c2.jpg",
+      "specials/reel-2026-11-12/c3.jpg",
+      "specials/reel-2026-11-12/c4.jpg",
+      "specials/reel-2026-11-12/c5.jpg",
+      "specials/reel-2026-11-12/c6.jpg",
+      "specials/reel-2026-11-12/c7.jpg",
+      "specials/reel-2026-11-12/c8.jpg",
+      "specials/reel-2026-11-12/c9.jpg",
+      "specials/reel-2026-11-12/c10.jpg",
+      "specials/reel-2026-11-12/c11.jpg",
+      "specials/reel-2026-11-12/c12.jpg"
+    ],
+    "shots": [
+      "121mm／f4／1/250秒／ISO1000",
+      "70mm／f4／1/50秒／ISO12800",
+      "70mm／f4／1/100秒／ISO12800",
+      "70mm／f4／1/125秒／ISO12800",
+      "70mm／f4／1/40秒／ISO12800",
+      "138mm／f4／1/320秒／ISO2500",
+      "165mm／f4／1/400秒／ISO6400",
+      "200mm／f4.5／1/400秒／ISO5000"
+    ],
+    "places": [
+      "丸の内",
+      "丸の内",
+      "丸の内",
+      "東京駅",
+      "丸の内",
+      "丸の内",
+      "丸の内",
+      "丸の内"
+    ],
+    "sources": [
+      "lr:176322",
+      "lr:106107",
+      "lr:140449",
+      "lr:140285",
+      "lr:116209",
+      "lr:176412",
+      "lr:123743",
+      "lr:123251"
+    ],
+    "hook": "丸の内のイルミ、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "丸の内イルミさんぽ",
+      "fact": "2年前の冬に撮った写真",
+      "place": "丸の内",
+      "tags": [
+        "#丸の内",
+        "#丸の内イルミネーション",
+        "#marunouchi",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "丸の内イルミさんぽ\n2年前の冬に撮った写真\n\n📍丸の内\n\n#丸の内 #丸の内イルミネーション #marunouchi #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "丸の内",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Englishman In New York",
+        "a": "Sting",
+        "bpm": 102,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "マリブコーク",
+        "a": "踊ってばかりの国",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:32:01.307Z"
+  },
+  {
+    "id": "reel-2026-11-13",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（高円寺の夜）",
+    "postAt": "2026-11-13T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-13/1.jpg",
+      "specials/reel-2026-11-13/2.jpg",
+      "specials/reel-2026-11-13/3.jpg",
+      "specials/reel-2026-11-13/4.jpg",
+      "specials/reel-2026-11-13/5.jpg",
+      "specials/reel-2026-11-13/6.jpg",
+      "specials/reel-2026-11-13/7.jpg",
+      "specials/reel-2026-11-13/8.jpg",
+      "specials/reel-2026-11-13/9.jpg",
+      "specials/reel-2026-11-13/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-13/thumb.jpg",
+    "layout": "frame",
+    "rhythm": "slow",
+    "sourceDate": "2026-07-11",
+    "cands": [
+      "specials/reel-2026-11-13/c1.jpg",
+      "specials/reel-2026-11-13/c2.jpg",
+      "specials/reel-2026-11-13/c3.jpg",
+      "specials/reel-2026-11-13/c4.jpg",
+      "specials/reel-2026-11-13/c5.jpg",
+      "specials/reel-2026-11-13/c6.jpg",
+      "specials/reel-2026-11-13/c7.jpg",
+      "specials/reel-2026-11-13/c8.jpg",
+      "specials/reel-2026-11-13/c9.jpg",
+      "specials/reel-2026-11-13/c10.jpg",
+      "specials/reel-2026-11-13/c11.jpg",
+      "specials/reel-2026-11-13/c12.jpg"
+    ],
+    "shots": [
+      "85mm／f1.8／1/160秒／ISO100",
+      "85mm／f1.8／1/125秒／ISO400",
+      "85mm／f1.8／1/125秒／ISO200",
+      "85mm／f1.8／1/125秒／ISO1250",
+      "85mm／f1.8／1/100秒／ISO1600",
+      "85mm／f1.8／1/100秒／ISO320",
+      "85mm／f1.8／1/125秒／ISO320",
+      "85mm／f1.8／1/125秒／ISO1600",
+      "85mm／f1.8／1/100秒／ISO320",
+      "85mm／f1.8／1/100秒／ISO640"
+    ],
+    "places": [
+      "高円寺",
+      "高円寺",
+      "高円寺",
+      "高円寺",
+      null,
+      "高円寺",
+      null,
+      "高円寺",
+      "高円寺",
+      "高円寺"
+    ],
+    "sources": [
+      "lr:1480987",
+      "lr:1481033",
+      "lr:1505022",
+      "lr:1504188",
+      "lr:1481091",
+      "lr:1505403",
+      "lr:1481112",
+      "lr:1502197",
+      "lr:1500715",
+      "lr:1481009"
+    ],
+    "hook": "高円寺の夜、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "高円寺 夜さんぽ",
+      "fact": "7月、全部85mmで撮影",
+      "place": "高円寺",
+      "tags": [
+        "#高円寺",
+        "#koenji",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "高円寺 夜さんぽ\n7月、全部85mmで撮影\n\n📍高円寺\n\n#高円寺 #koenji #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "高円寺",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Englishman In New York",
+        "a": "Sting",
+        "bpm": 102,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "SUMMER SUSPICION",
+        "a": "杉山清貴&オメガトライブ",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:32:02.510Z"
+  },
+  {
+    "id": "reel-2026-11-14",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（雨の夜の反射）",
+    "postAt": "2026-11-14T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-14/1.jpg",
+      "specials/reel-2026-11-14/2.jpg",
+      "specials/reel-2026-11-14/3.jpg",
+      "specials/reel-2026-11-14/4.jpg",
+      "specials/reel-2026-11-14/5.jpg",
+      "specials/reel-2026-11-14/6.jpg",
+      "specials/reel-2026-11-14/7.jpg",
+      "specials/reel-2026-11-14/8.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-14/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-09-11",
+    "cands": [
+      "specials/reel-2026-11-14/c1.jpg",
+      "specials/reel-2026-11-14/c2.jpg",
+      "specials/reel-2026-11-14/c3.jpg",
+      "specials/reel-2026-11-14/c4.jpg",
+      "specials/reel-2026-11-14/c5.jpg",
+      "specials/reel-2026-11-14/c6.jpg",
+      "specials/reel-2026-11-14/c7.jpg",
+      "specials/reel-2026-11-14/c8.jpg",
+      "specials/reel-2026-11-14/c9.jpg",
+      "specials/reel-2026-11-14/c10.jpg",
+      "specials/reel-2026-11-14/c11.jpg",
+      "specials/reel-2026-11-14/c12.jpg"
+    ],
+    "shots": [
+      "85mm／f1.8／1/1000秒／ISO8000",
+      "85mm／f1.8／1/1000秒／ISO4000",
+      "85mm／f1.8／1/100秒／ISO320",
+      "85mm／f1.8／1/1000秒／ISO4000",
+      "85mm／f2.8／1/100秒／ISO400",
+      "85mm／f1.8／1/100秒／ISO200",
+      "85mm／f1.8／1/1000秒／ISO8000",
+      "85mm／f1.8／1/1000秒／ISO8000"
+    ],
+    "places": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "sources": [
+      "lr:2347490",
+      "lr:2347468",
+      "lr:2347445",
+      "lr:2347462",
+      "lr:2347429",
+      "lr:2347438",
+      "lr:2347511",
+      "lr:2347494"
     ],
     "hook": "雨の夜、何枚目が好き？",
     "reelSub": "HAYATO NAOE",
     "answer": null,
-    "caption": "雨の夜\n全部85mm f2。雨の日は反射がずるい\n\n#雨の日 #雨の日写真部 #夜散歩 #tokyorain #東京カメラ部",
+    "cap": {
+      "title": "雨の夜道",
+      "fact": "9月、全部85mmで撮影",
+      "place": "",
+      "tags": [
+        "#雨の日カメラ部",
+        "#tokyonight",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "雨の夜道\n9月、全部85mmで撮影\n\n#雨の日カメラ部 #tokyonight #東京カメラ部",
     "head": "",
     "portrait": false,
     "locationName": null,
@@ -634,303 +1732,7 @@
       }
     ],
     "bpm": 96,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T13:48:19.898Z",
-    "video": "specials/reel-2026-11-04/reel-4.mp4",
-    "cover": "specials/reel-2026-11-04/reel-4-cover.jpg",
-    "rev": 4,
-    "seconds": 22.03,
-    "beatsUsed": 1,
-    "engine": "ae",
-    "builtAt": "2026-10-30T12:09:46.224Z",
-    "cap": {
-      "title": "雨の夜",
-      "fact": "全部85mm f2。雨の日は反射がずるい",
-      "place": "",
-      "tags": [
-        "#雨の日",
-        "#雨の日写真部",
-        "#夜散歩",
-        "#tokyorain",
-        "#東京カメラ部"
-      ]
-    },
-    "kitAt": "2026-10-30T16:25:33.059Z",
-    "kitDir": "1104_雨の夜の反射",
-    "lrIds": [
-      1826441,
-      1826128,
-      1825847,
-      1826044,
-      1826359,
-      1825804,
-      1826318,
-      1825890
-    ]
-  },
-  {
-    "id": "reel-2026-11-05",
-    "kind": "reel",
-    "format": "dump",
-    "style": "oto",
-    "title": "リール（新宿の夜）",
-    "postAt": "2026-11-05T19:00:00+09:00",
-    "images": [
-      "specials/reel-2026-11-05/1.jpg",
-      "specials/reel-2026-11-05/2.jpg",
-      "specials/reel-2026-11-05/3.jpg",
-      "specials/reel-2026-11-05/c3.jpg",
-      "specials/reel-2026-11-05/5.jpg",
-      "specials/reel-2026-11-05/6.jpg",
-      "specials/reel-2026-11-05/7.jpg",
-      "specials/reel-2026-11-05/8.jpg"
-    ],
-    "thumb": "specials/reel-2026-11-05/thumb.jpg",
-    "layout": null,
-    "rhythm": "slow",
-    "sourceDate": "2024-12-16",
-    "cands": [
-      "specials/reel-2026-11-05/c1.jpg",
-      "specials/reel-2026-11-05/c2.jpg",
-      "specials/reel-2026-11-05/c4.jpg",
-      "specials/reel-2026-11-05/c5.jpg",
-      "specials/reel-2026-11-05/c6.jpg",
-      "specials/reel-2026-11-05/c7.jpg",
-      "specials/reel-2026-11-05/c8.jpg",
-      "specials/reel-2026-11-05/c9.jpg",
-      "specials/reel-2026-11-05/c10.jpg",
-      "specials/reel-2026-11-05/c11.jpg",
-      "specials/reel-2026-11-05/c12.jpg",
-      "specials/reel-2026-11-05/4.jpg"
-    ],
-    "shots": [
-      "200mm／f4／1/400秒／ISO2500",
-      "70mm／f4／1/160秒／ISO3200",
-      "81mm／f4／1/160秒／ISO200",
-      null,
-      "200mm／f4／1/400秒／ISO640",
-      "70mm／f4／1/160秒／ISO400",
-      "100mm／f4／1/200秒／ISO800",
-      "187mm／f4／1/400秒／ISO12800"
-    ],
-    "places": [
-      "新宿",
-      "新宿",
-      "新宿",
-      null,
-      "歌舞伎町",
-      "新宿",
-      "新宿",
-      "新宿"
-    ],
-    "sources": [
-      "lr:120117",
-      "lr:101635",
-      "lr:82259",
-      null,
-      "lr:108611",
-      "lr:90581",
-      "lr:107621",
-      "lr:91247"
-    ],
-    "hook": "新宿の夜、何枚目が好き？",
-    "reelSub": "HAYATO NAOE",
-    "answer": null,
-    "caption": "2年前の冬の新宿\nネオンは望遠でぎゅっと詰めるのが好き\n\n📍新宿\n\n#新宿 #新宿夜景 #ネオン #tokyonight #東京カメラ部",
-    "head": "",
-    "portrait": false,
-    "locationName": "新宿",
-    "skipped": false,
-    "manual": true,
-    "songs": [
-      {
-        "t": "i like the way you kiss me",
-        "a": "Artemas",
-        "bpm": 151,
-        "why": "流行っている曲"
-      },
-      {
-        "t": "Englishman In New York",
-        "a": "Sting",
-        "bpm": 102,
-        "why": "お気に入り・雰囲気に合う"
-      },
-      {
-        "t": "SUMMER SUSPICION",
-        "a": "杉山清貴&オメガトライブ",
-        "bpm": null,
-        "why": "お気に入り"
-      }
-    ],
-    "bpm": 151,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T13:48:19.898Z",
-    "video": "specials/reel-2026-11-05/reel-3.mp4",
-    "cover": "specials/reel-2026-11-05/reel-3-cover.jpg",
-    "rev": 3,
-    "seconds": 21.07,
-    "beatsUsed": 1,
-    "engine": "ae",
-    "builtAt": "2026-10-30T10:31:17.134Z",
-    "cap": {
-      "title": "2年前の冬の新宿",
-      "fact": "ネオンは望遠でぎゅっと詰めるのが好き",
-      "place": "新宿",
-      "tags": [
-        "#新宿",
-        "#新宿夜景",
-        "#ネオン",
-        "#tokyonight",
-        "#東京カメラ部"
-      ]
-    },
-    "kitAt": "2026-10-30T16:30:48.071Z",
-    "kitDir": "1105_新宿の夜",
-    "lrIds": [
-      120117,
-      101635,
-      82259,
-      104947,
-      108611,
-      90581,
-      107621,
-      91247
-    ],
-    "cutSwaps": 1
-  },
-  {
-    "id": "reel-2026-11-06",
-    "kind": "reel",
-    "format": "dump",
-    "style": "oto",
-    "title": "リール（表参道 建築散歩）",
-    "postAt": "2026-11-06T19:00:00+09:00",
-    "images": [
-      "specials/reel-2026-11-06/2.jpg",
-      "specials/reel-2026-11-06/3.jpg",
-      "specials/reel-2026-11-06/4.jpg",
-      "specials/reel-2026-11-06/5.jpg",
-      "specials/reel-2026-11-06/6.jpg",
-      "specials/reel-2026-11-06/7.jpg",
-      "specials/reel-2026-11-06/8.jpg",
-      "specials/reel-2026-11-06/9.jpg",
-      "specials/reel-2026-11-06/10.jpg"
-    ],
-    "thumb": "specials/reel-2026-11-06/thumb.jpg",
-    "layout": null,
-    "rhythm": "slow",
-    "sourceDate": "2026-10-17",
-    "cands": [
-      "specials/reel-2026-11-06/11.jpg",
-      "specials/reel-2026-11-06/12.jpg",
-      "specials/reel-2026-11-06/c1.jpg",
-      "specials/reel-2026-11-06/c2.jpg",
-      "specials/reel-2026-11-06/c3.jpg",
-      "specials/reel-2026-11-06/c4.jpg",
-      "specials/reel-2026-11-06/c5.jpg",
-      "specials/reel-2026-11-06/c6.jpg",
-      "specials/reel-2026-11-06/c7.jpg",
-      "specials/reel-2026-11-06/c8.jpg",
-      "specials/reel-2026-11-06/1.jpg"
-    ],
-    "shots": [
-      "89mm／f4／1/125秒／ISO125",
-      "200mm／f4／1/250秒／ISO250",
-      "93mm／f4／1/125秒／ISO1000",
-      "70mm／f4／1/30秒／ISO12800",
-      "200mm／f4／1/200秒／ISO5000",
-      "116mm／f4／1/160秒／ISO2000",
-      "200mm／f4／1/200秒／ISO10000",
-      "200mm／f4／1/250秒／ISO5000",
-      "200mm／f4／1/250秒／ISO4000"
-    ],
-    "places": [
-      "表参道",
-      null,
-      null,
-      "表参道",
-      "原宿",
-      "原宿",
-      "原宿",
-      "原宿",
-      null
-    ],
-    "sources": [
-      "lr:3030052",
-      "lr:3029633",
-      "lr:2879528",
-      "lr:2879510",
-      "lr:2879532",
-      "lr:2879520",
-      "lr:2879522",
-      "lr:2879409",
-      "lr:2879500"
-    ],
-    "hook": "表参道、何枚目が好き？",
-    "reelSub": "HAYATO NAOE",
-    "answer": null,
-    "caption": "表参道 建築さんぽ\n見上げてばっかりで首が痛い笑\n\n📍表参道\n\n#表参道 #建築写真 #建築巡り #tokyoarchitecture #東京カメラ部",
-    "head": "",
-    "portrait": false,
-    "locationName": "表参道",
-    "skipped": false,
-    "manual": true,
-    "songs": [
-      {
-        "t": "Isn't She Lovely",
-        "a": "Stevie Wonder",
-        "bpm": 119,
-        "why": "流行っている曲"
-      },
-      {
-        "t": "LOVEずっきゅん",
-        "a": "相対性理論",
-        "bpm": null,
-        "why": "お気に入り・雰囲気に合う"
-      },
-      {
-        "t": "私の好きなもの",
-        "a": "Lovely Summer Chan",
-        "bpm": null,
-        "why": "お気に入り"
-      }
-    ],
-    "bpm": 119,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T13:48:19.898Z",
-    "video": "specials/reel-2026-11-06/reel-3.mp4",
-    "cover": "specials/reel-2026-11-06/reel-3-cover.jpg",
-    "rev": 3,
-    "seconds": 32.73,
-    "beatsUsed": 1,
-    "engine": "ae",
-    "builtAt": "2026-10-30T10:32:27.321Z",
-    "cap": {
-      "title": "表参道 建築さんぽ",
-      "fact": "見上げてばっかりで首が痛い笑",
-      "place": "表参道",
-      "tags": [
-        "#表参道",
-        "#建築写真",
-        "#建築巡り",
-        "#tokyoarchitecture",
-        "#東京カメラ部"
-      ]
-    },
-    "kitAt": "2026-10-30T16:36:08.538Z",
-    "kitDir": "1106_表参道 建築散歩",
-    "lrIds": [
-      3030324,
-      3030052,
-      3029633,
-      2879528,
-      2879510,
-      2879532,
-      2879520,
-      2879522,
-      2879409,
-      2879500
-    ],
-    "cutSwaps": 1
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T17:32:03.210Z"
   }
 ]
