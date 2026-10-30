@@ -2,6 +2,7 @@
 //   撮影データ（85mm／f1.8／1/125秒／ISO3200）は Lightroom のカタログから
 const fs = require("fs");
 const path = require("path");
+const cfg = JSON.parse(fs.readFileSync(path.join(__dirname, "config.json"), "utf8"));
 const { spawn } = require("child_process");
 const { DatabaseSync } = require("node:sqlite");
 
@@ -44,7 +45,7 @@ ${lines}
 出力は次のJSONだけ（説明不要）:
 {"photos":[{"id":"12345","people":false,"score":8,"theme":"ネオン・看板","tone":"dark","place":"新宿"}]}`;
   return new Promise((resolve, reject) => {
-    const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", "sonnet"], { cwd: DIR, shell: true });
+    const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "claude-fable-5-1"], { cwd: DIR, shell: true });
     let out = "";
     let err = "";
     p.stdout.on("data", (d) => (out += d));

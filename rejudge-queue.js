@@ -31,7 +31,7 @@ ${names.map((n) => `- ${n}`).join("\n")}
 同じ場面・似た構図の写真が複数あれば、一番良い1枚以外は95未満にする。
 出力は次のJSONだけ：{"photos":[{"file":"1.jpg","perfect":90,"note":"一言（足りない所）"}]}`;
   return new Promise((ok) => {
-    const p = spawn(fs.existsSync(CL) ? CL : "claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.selectModel || "opus"], { cwd: dir });
+    const p = spawn(fs.existsSync(CL) ? CL : "claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.selectModel || cfg.aiModel || "claude-fable-5-1"], { cwd: dir });
     let out = "";
     const t = setTimeout(() => p.kill(), 15 * 60e3);
     p.stdout.on("data", (d) => (out += d));

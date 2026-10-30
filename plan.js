@@ -136,7 +136,7 @@ ${CAPTION_RULES}
 出力は次のJSONだけ（説明文やコードブロック不要）:
 {"photos":[{"file":"t001.jpg","score":8,"perfect":90,"tone":"dark","use":true,"extra":false,"portrait":false,"crop":{"cx":0.5,"cy":0.5,"zoom":1},"remove":[],"hdr":false,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
   return new Promise((resolve, reject) => {
-    const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.selectModel || "opus"], { cwd: WORK }); // 選定はいちばん賢いモデル（100点満点の写真だけ）
+    const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.selectModel || cfg.aiModel || "claude-fable-5-1"], { cwd: WORK }); // 選定はいちばん賢いモデル（100点満点の写真だけ）
     let out = "";
     let err = "";
     const timer = setTimeout(() => p.kill(), 30 * 60e3);
@@ -251,7 +251,7 @@ ${CAPTION_RULES}
 出力は次のJSONだけ: {"tags":["#…"]}`;
   return new Promise((resolve, reject) => {
     const CL = path.join(process.env.USERPROFILE || "", ".local", "bin", "claude.exe");
-    const pr = spawn(fs.existsSync(CL) ? CL : "claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd });
+    const pr = spawn(fs.existsSync(CL) ? CL : "claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "claude-fable-5-1"], { cwd });
     let out = "";
     pr.stdout.on("data", (d) => (out += d));
     pr.on("error", reject);

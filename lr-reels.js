@@ -48,7 +48,7 @@ title はインスタのキャプションの1行目（題名）。この写真�
 - 8〜14字くらい。場所＋一語、または場所＋時間。例「東京タワー 夜ver.」「鎌倉さんぽ」「雨の夜」「表参道 建築さんぽ」「マジックアワー」
 - 説明しない・気持ちを書かない・格言っぽくしない・絵文字なし・「〜の世界」「〜な時間」のような決まり文句なし`;
   return new Promise((resolve, reject) => {
-    const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", "opus"], { cwd: DIR, shell: true });
+    const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "claude-fable-5-1"], { cwd: DIR, shell: true });
     let out = "";
     p.stdout.on("data", (d) => (out += d));
     p.on("close", () => {

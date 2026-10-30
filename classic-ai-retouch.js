@@ -244,8 +244,8 @@ ${KEYS}
 {"photos":[{"file":"123.jpg","note":"何を直したか一言","settings":{"Highlights2012":-80}}]}`;
 }
 
-const MODEL_PRO = cfg.retouchModel || "opus"; // 仕上げはポートレートもスナップもいちばん賢いモデル
-const MODEL_SNAP = cfg.retouchModelSnap || "sonnet"; // 最初の振り分けだけ速いモデル
+const MODEL_PRO = cfg.retouchModel || cfg.aiModel || "claude-fable-5-1"; // 仕上げはポートレートもスナップもいちばん賢いモデル
+const MODEL_SNAP = cfg.retouchModelSnap || cfg.aiModel || "claude-fable-5-1"; // 最初の振り分けだけ速いモデル
 
 function ask(kind, files, info, model, portrait) {
   return new Promise((resolve, reject) => {

@@ -13,9 +13,9 @@
     "width": 1440,
     "quality": 95
   },
-  "aiModel": "opus",
-  "retouchModel": "opus",
-  "retouchModelSnap": "opus",
+  "aiModel": "claude-fable-5-1",
+  "retouchModel": "claude-fable-5-1",
+  "retouchModelSnap": "claude-fable-5-1",
   "stories": {
     "newPost": true,
     "memory": true
@@ -27,5 +27,5 @@
   "reelSource": "lr",
   "reelVideo": false,
   "minPerfect": 95,
-  "selectModel": "opus"
+  "selectModel": "claude-fable-5-1"
 }
