@@ -6,6 +6,7 @@
 const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
+const { capParts, compose } = require("./lib/reel-caption");
 const { execFileSync } = require("child_process");
 const { makeSync } = require("./lib/sync");
 const { buildCaption } = require("./lib/caption");
@@ -40,7 +41,11 @@ ${lines}
 ハッシュタグを1つ（このテーマで人気のもの）。
 
 出力は次のJSONだけ:
-{"ids":["123","456"],"hook":"…","tag":"#…","theme":"短いテーマ名"}`;
+{"ids":["123","456"],"hook":"…","tag":"#…","theme":"短いテーマ名","title":"…"}
+
+title はインスタのキャプションの1行目（題名）。この写真家のふだんの書き方に合わせる：
+- 8〜14字くらい。場所＋一語、または場所＋時間。例「東京タワー 夜ver.」「鎌倉さんぽ」「雨の夜」「表参道 建築さんぽ」「マジックアワー」
+- 説明しない・気持ちを書かない・格言っぽくしない・絵文字なし・「〜の世界」「〜な時間」のような決まり文句なし`;
   return new Promise((resolve, reject) => {
     const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", "opus"], { cwd: DIR, shell: true });
     let out = "";
@@ -132,7 +137,7 @@ const THEME = {
         continue;
       }
       for (const x of items) usedIds.add(x.id);
-      plans.push({ format: "dump", day: d, theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, pool: cands, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
+      plans.push({ format: "dump", title: r.title, day: d, theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, pool: cands, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
       console.log(`  AI：${d} → ${items.length}枚（${r.theme}）`);
     } catch (e) {
       console.log("  ⚠ " + e.message);
@@ -217,6 +222,8 @@ const THEME = {
     const turn = ["hisato", "frame", "side"][(Date.parse(day) / 864e5) % 3];
     const layout = turn === "side" && wide.length >= MIN ? "side" : turn === "side" ? "hisato" : turn;
     const keep = (layout === "side" ? wide : items.map((_, i) => i)).slice(0, 10); // じっくり型は8〜10枚（約22〜27秒）
+    // キャプションの材料（アプリで「ひとことメモ」を入れると、2行目がメモに替わる）
+    const cap = capParts({ title: plan.title || plan.label, place: plan.items.map((x) => x.place).filter(Boolean)[0] || "", shots: keep.map((i) => items[i].shot), shotDay: plan.day, postDay: day, tags: [plan.tag || th.tag].filter(Boolean), dark: plan.items.filter((x) => x.tone === "dark").length >= plan.items.length / 2 });
     const songs = pickSongs({ moods: th.mood, measured: cfg.reelBpm || {} });
     const place = plan.items.map((x) => x.place).filter(Boolean)[0] || null;
     add.push({
@@ -238,7 +245,8 @@ const THEME = {
       hook: plan.hook || th.hook,
       reelSub: "HAYATO NAOE",
       answer: null,
-      caption: `${plan.format === "settings" ? "保存して、撮るときの参考にどうぞ📷" : "何枚目が好きか、コメントで教えてください📷"}\n\n${buildCaption({ head: "", base: cfg.hashtags.default, extra: [plan.tag || th.tag] })}`,
+      cap,
+      caption: compose(cap),
       head: "",
       portrait: false,
       locationName: place,
