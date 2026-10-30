@@ -69,6 +69,12 @@ try {
         return out;
       });
       fs.rmSync(tmp, { recursive: true, force: true });
+      // iPhone のショートカットが読む受け箱（アルバムに保存したら、ショートカットが消す）
+      if (kitDir && fs.existsSync(kitDir)) {
+        const inbox = path.join(KIT_ROOT, "_iPhoneへ", path.basename(kitDir));
+        fs.rmSync(inbox, { recursive: true, force: true });
+        fs.cpSync(kitDir, inbox, { recursive: true });
+      }
       console.log(`リールの動画を作りました ${x.id}（${r.engine || "ffmpeg"}・${r.seconds}秒・${r.bpm}bpm）`);
     }
   } catch (e) {
