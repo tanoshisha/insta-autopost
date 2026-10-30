@@ -379,7 +379,7 @@
       }
     ],
     "bpm": 96,
-    "rebuild": false,
+    "rebuild": true,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-02/reel-3.mp4",
     "cover": "specials/reel-2026-11-02/reel-3-cover.jpg",
@@ -514,7 +514,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-03/reel-8.mp4",
     "cover": "specials/reel-2026-11-03/reel-8-cover.jpg",
@@ -638,7 +638,7 @@
       }
     ],
     "bpm": 96,
-    "rebuild": false,
+    "rebuild": true,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-04/reel-4.mp4",
     "cover": "specials/reel-2026-11-04/reel-4-cover.jpg",
@@ -767,7 +767,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-05/reel-3.mp4",
     "cover": "specials/reel-2026-11-05/reel-3-cover.jpg",
@@ -902,7 +902,7 @@
       }
     ],
     "bpm": 119,
-    "rebuild": false,
+    "rebuild": true,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-06/reel-3.mp4",
     "cover": "specials/reel-2026-11-06/reel-3-cover.jpg",
