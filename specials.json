@@ -11,7 +11,7 @@
       "specials/reel-2026-10-31/3.jpg",
       "specials/reel-2026-10-31/4.jpg",
       "specials/reel-2026-10-31/5.jpg",
-      "specials/reel-2026-10-31/6.jpg",
+      "queue/2026-10-23_fb6adc38800e.jpg",
       "specials/reel-2026-10-31/7.jpg",
       "specials/reel-2026-10-31/8.jpg",
       "specials/reel-2026-10-31/9.jpg",
@@ -20,7 +20,7 @@
     "thumb": "specials/reel-2026-10-31/thumb.jpg",
     "caption": "何枚目が好きか、コメントで教えてください📷\n\n#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #ハロウィン #ジャックオランタン",
     "head": "",
-    "portrait": false,
+    "portrait": true,
     "locationName": "横浜イングリッシュガーデン",
     "skipped": false,
     "manual": true,
@@ -47,7 +47,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "video": "specials/reel-2026-10-31/reel-11.mp4",
     "cover": "specials/reel-2026-10-31/reel-11-cover.jpg",
     "rev": 11,
@@ -56,10 +56,14 @@
     "builtAt": "2026-10-30T10:26:22.711Z",
     "format": "dump",
     "hook": "ハロウィンの夜、何枚目が好き？",
-    "rebuildAt": "2026-10-30T10:25:12.947Z",
+    "rebuildAt": "2026-10-30T10:27:20.543Z",
     "engine": "ae",
     "style": "oto",
-    "rhythm": "slow"
+    "rhythm": "slow",
+    "cands": [
+      "specials/reel-2026-10-31/6.jpg",
+      "queue/2026-10-23_221ec7ec954f.jpg"
+    ]
   },
   {
     "id": "story-2026-11-07-7",
