@@ -59,6 +59,8 @@ async function collect(state) {
         doneIds: RESELECT ? new Set() : new Set(state.lrDone),
       });
       for (const g of got) items.push({ ...g, source: "lightroom" });
+      // ログインできたので、前の「再ログインして」通知は消す
+      fs.rmSync(path.join(ROOT, "要対応_Lightroom再ログイン.txt"), { force: true });
     } catch (e) {
       console.log("  ⚠ " + e.message);
       if (e.code === "LR_AUTH") fs.writeFileSync(path.join(ROOT, "要対応_Lightroom再ログイン.txt"), e.message + "\n");
