@@ -107,7 +107,10 @@ ${lines}
 - score: 1〜10点。フォトコンの審査と同じ目で、構図・光・瞬間（決定的瞬間/表情）・技術（ピント・ブレ・露出）・物語性・独自性を総合して厳しく採点。
   10=大きなコンテストでグランプリ級 / 9=入賞級 / 8=作品として販売できる・依頼が来るレベル / 7=上手いが普通 / 6以下=記録写真・スナップの域。
   「よく撮れている」だけでは7点。見た人が指を止めて保存したくなる強さがあって初めて8点以上。
-- use: score が ${minScore} 以上なら true、それ未満は false。さらに:
+- perfect: 0〜100点の「満点評価」。この写真家は「100点満点の写真しか載せたくない」（2026-10-31）。
+  100=直す所が1つもなく、このアカウントの代表作として一番上に固定できる1枚 / 95=ほぼ完璧で、プロの写真家が見ても文句がない / 90=とても良いが、構図・光・瞬間・技術・色のどこかに小さな弱さがある / 80以下=良い写真だが代表作ではない。
+  少しでも「惜しい」「もう少し○○なら」と思う所があれば95未満。迷ったら低い方。
+- use: perfect が ${cfg.minPerfect ?? 95} 以上、かつ score が ${minScore} 以上なら true、それ未満は false。さらに:
   ・同じ場所・同じ被写体・似た構図が続く時は一番良い1枚だけ（はっきり別の魅力がある時だけ2枚まで）
   ・ピンボケ・ブレ・露出の失敗・何を撮ったか伝わりにくい写真は点数に関係なく false
   ・残る枚数が少なくなっても基準は下げない
@@ -131,9 +134,9 @@ use=true の写真だけ、投稿用に次も書く:
 ${CAPTION_RULES}
 
 出力は次のJSONだけ（説明文やコードブロック不要）:
-{"photos":[{"file":"t001.jpg","score":8,"tone":"dark","use":true,"extra":false,"portrait":false,"crop":{"cx":0.5,"cy":0.5,"zoom":1},"remove":[],"hdr":false,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
+{"photos":[{"file":"t001.jpg","score":8,"perfect":90,"tone":"dark","use":true,"extra":false,"portrait":false,"crop":{"cx":0.5,"cy":0.5,"zoom":1},"remove":[],"hdr":false,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
   return new Promise((resolve, reject) => {
-    const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd: WORK });
+    const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.selectModel || "opus"], { cwd: WORK }); // 選定はいちばん賢いモデル（100点満点の写真だけ）
     let out = "";
     let err = "";
     const timer = setTimeout(() => p.kill(), 30 * 60e3);
@@ -398,6 +401,7 @@ async function main() {
     for (const it of batch) {
       it.ai = info[it.thumb] || { use: true, note: "（AIの判定なし）" };
       if (typeof it.ai.score === "number" && it.ai.score < (cfg.minScore ?? 8)) it.ai.use = false; // 点数が足りない写真は載せない
+      if (cfg.minPerfect && !(Number(it.ai.perfect) >= cfg.minPerfect)) it.ai.use = false; // 100点満点の写真だけ（満点評価が足りない・ない写真は載せない）
     }
   }
 
@@ -406,7 +410,7 @@ async function main() {
   const newFiles = [];
   for (const it of targets) {
     const use = it.ai.use !== false;
-    if (typeof it.ai.score === "number") it.ai.note = `[${it.ai.score}点] ${it.ai.note || ""}`;
+    if (typeof it.ai.score === "number") it.ai.note = `[${it.ai.perfect != null ? `${it.ai.perfect}/100` : `${it.ai.score}点`}] ${it.ai.note || ""}`;
     console.log(`  ${use ? "✓" : "✗"} ${it.id} ${it.ai.portrait ? "[ポートレート]" : ""} ${it.ai.note || ""}`);
     if (known.has(it.id)) continue;
     const portrait = !!it.ai.portrait;
@@ -431,6 +435,7 @@ async function main() {
       locationId,
       note: it.ai.note || "",
       score: it.ai.score ?? null,
+      perfect: it.ai.perfect ?? null,
       shot: it.shot || null,
       crop: it.ai.crop || null,
       remove: it.ai.remove?.length ? it.ai.remove : undefined,
@@ -451,7 +456,7 @@ async function main() {
       .filter((x) => x.id !== cover.id && !absorbed.has(x.id) && near(cover, x))
       .filter((x) => {
         const a = aiOf.get(x.id);
-        return a?.use === false && a.extra === true && (a.score ?? 0) >= 6;
+        return a?.use === false && a.extra === true && (a.score ?? 0) >= 6 && !cfg.minPerfect; // 満点の写真だけにする時は、点数の低い写真を添えない
       })
       .sort((a, b) => (aiOf.get(b.id).score ?? 0) - (aiOf.get(a.id).score ?? 0))
       .slice(0, 4);

@@ -25,5 +25,7 @@
   "threadsAutoRefresh": true,
   "minScore": 8,
   "reelSource": "lr",
-  "reelVideo": false
+  "reelVideo": false,
+  "minPerfect": 95,
+  "selectModel": "opus"
 }
