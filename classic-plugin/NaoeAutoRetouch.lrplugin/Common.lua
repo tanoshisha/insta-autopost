@@ -173,11 +173,11 @@ local function askAI(mode, dir)
   if not f then return nil, "AIの結果がありません（終了コード " .. tostring(code) .. "）。.work\\classic\\retouch.log を確認" end
   local out = {}
   for line in f:lines() do
-    local id, kind, rest = line:match("^(%S+)\t([PS])\t?(.*)$")
+    local id, kind, lift, rest = line:match("^(%S+)\t([PS])(%d?)\t?(.*)$")
     if id then
       local kv = {}
       for k, v in (rest or ""):gmatch("([%w]+)=([%-%d%.]+)") do kv[k] = tonumber(v) end
-      out[id] = { portrait = kind == "P", kv = kv }
+      out[id] = { portrait = kind == "P", lift = tonumber(lift), kv = kv } -- lift：人物を明るくする強さ（1〜3。ポートレートで人物が暗い時）
     end
   end
   f:close()
@@ -281,6 +281,8 @@ function M.run(targets, progress)
       local r = res[tostring(p.localIdentifier)]
       if r then
         local preset = r.portrait and pp or ps
+        -- 人物が暗い時は「人物全体のマスクで明るくする」入りのプリセット（NAOE ポートレート 人物+1〜3）
+        if r.portrait and r.lift and r.lift > 0 then preset = findPreset(M.PRESET_PORTRAIT .. " 人物+" .. r.lift) or pp end
         if preset then p:applyDevelopPreset(preset, _PLUGIN) end
         applyKV(p, r.kv)
         done[#done + 1] = p
