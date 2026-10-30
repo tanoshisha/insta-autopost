@@ -60,6 +60,27 @@ try {
       if (!VIDEO) {
         if (!kitDir) throw new Error("iCloud Drive のフォルダがありません");
         await require("./lib/reel-kit").makeKit(items, kitDir, { layout: x.layout || null });
+        // クラウド版 Lightroom の「リール」フォルダにも（iPhone の Lightroom で直してから Edits へ）
+        try {
+          const cfgL = remote("config.json", {}).lightroom;
+          if (cfgL?.configPath && fs.existsSync(cfgL.configPath)) {
+            const arr = (j) => (Array.isArray(j) ? j : Object.values(j || {}));
+            const cloud = Object.fromEntries([...arr(remote("pool.json", [])), ...arr(remote("queue.json", []))].filter((p) => p.image && /^[0-9a-f]{32}$/.test(String(p.lrId))).map((p) => [p.image, p.lrId]));
+            const kitName = path.basename(kitDir);
+            const its = x.images.map((p, i) => ({
+              file: items[i].src,
+              name: `${x.id}_${path.basename(p)}`,
+              oldNames: [`${kitName}_${String(i + 1).padStart(2, "0")}.jpg`],
+              assetId: cloud[p] || null,
+              captureDate: x.sourceDate ? `${x.sourceDate}T19:00:${String(i).padStart(2, "0")}` : undefined,
+            }));
+            const albumName = kitName.replace("_", " ");
+            const c = await require("./lib/lr-cloud").putReelAlbum(cfgL.configPath, albumName, its);
+            console.log(`  クラウド版 Lightroom「リール/${albumName}」：${c.assets.length}枚（新しくアップロード${c.uploaded}枚）`);
+          }
+        } catch (e) {
+          console.log("  クラウド版 Lightroom に入れられませんでした：" + e.message.slice(0, 160));
+        }
         makeSync(ROOT)(`reel photos ${x.id}`, [], (rm) => {
           const sp = rm("specials.json", []);
           const k = sp.findIndex((y) => y.id === x.id);
