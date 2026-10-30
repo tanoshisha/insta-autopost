@@ -263,6 +263,8 @@ const THEME = {
       rhythm: "slow", // 本人が Edits で作ったリールの切り方（2026-10-30）
       sourceDate: plan.day || null,
       cands,
+      // 選ばれなかった候補（同じ撮影の写真）全部：クラウド版 Lightroom の「リール」に入れる（本人が入れ替えに使う。クラウドは枚数多くてよい）
+      candIds: (plan.pool || []).filter((y) => !keep.some((i) => items[i].id === y.id)).map((y) => y.id),
       shots: keep.map((i) => items[i].shot || null),
       places: keep.map((i) => items[i].place || null),
       sources: keep.map((i) => `lr:${items[i].id}`),

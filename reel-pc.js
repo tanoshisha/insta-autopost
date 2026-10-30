@@ -114,6 +114,13 @@ function writeClassicReels(specials) {
               const it = bySrc.get(e.src);
               its.push({ file: e.src, name: `${x.id}_予備${j + 1}_${path.basename(it.rel)}`, assetId: cloud[it.rel] || null, captureDate: x.sourceDate ? `${x.sourceDate}T20:00:${String(j).padStart(2, "0")}` : undefined });
             }
+            // 選ばれなかった候補も全部（このPCの .work/lrpick にある写真。名前に「候補」）
+            const inKit = new Set([...items, ...kit.extras.map((e) => bySrc.get(e.src))].map((it) => it.source).filter(Boolean));
+            for (const id of x.candIds || []) {
+              const file = path.join(ROOT, ".work", "lrpick", `${id}.jpg`);
+              if (inKit.has(`lr:${id}`) || !fs.existsSync(file)) continue;
+              its.push({ file, name: `${x.id}_候補_${id}.jpg`, captureDate: x.sourceDate ? `${x.sourceDate}T21:00:00` : undefined });
+            }
             const albumName = kitName.replace("_", " ");
             const c = await require("./lib/lr-cloud").putIntoAlbum(cfgL.configPath, "リール", its);
             console.log(`  クラウド版 Lightroom「リール」：${albumName} ${c.assets.length}枚（新しくアップロード${c.uploaded}枚・アルバムに追加${c.added}枚）`);
