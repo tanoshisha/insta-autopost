@@ -47,7 +47,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "video": "specials/reel-2026-10-31/reel-10.mp4",
     "cover": "specials/reel-2026-10-31/reel-10-cover.jpg",
     "rev": 10,
@@ -56,9 +56,10 @@
     "builtAt": "2026-10-30T09:58:02.743Z",
     "format": "dump",
     "hook": "ハロウィンの夜、何枚目が好き？",
-    "rebuildAt": "2026-10-30T09:57:11.994Z",
+    "rebuildAt": "2026-10-30T10:25:12.947Z",
     "engine": "ae",
-    "style": "oto"
+    "style": "oto",
+    "rhythm": "slow"
   },
   {
     "id": "story-2026-11-07-7",
@@ -128,12 +129,12 @@
       "specials/reel-2026-11-01/7.jpg",
       "specials/reel-2026-11-01/8.jpg",
       "specials/reel-2026-11-01/9.jpg",
-      "specials/reel-2026-11-01/10.jpg",
-      "specials/reel-2026-11-01/11.jpg",
-      "specials/reel-2026-11-01/12.jpg"
+      "specials/reel-2026-11-01/10.jpg"
     ],
     "thumb": "specials/reel-2026-11-01/thumb.jpg",
     "cands": [
+      "specials/reel-2026-11-01/11.jpg",
+      "specials/reel-2026-11-01/12.jpg",
       "specials/reel-2026-11-01/c1.jpg",
       "specials/reel-2026-11-01/c2.jpg",
       "specials/reel-2026-11-01/c3.jpg",
@@ -156,14 +157,10 @@
       "200mm／f4／1/250秒／ISO1250",
       "200mm／f4／1/250秒／ISO1250",
       "200mm／f4／1/250秒／ISO2500",
-      "200mm／f4／1/250秒／ISO800",
-      "200mm／f4／1/200秒／ISO400",
-      "35mm／f2／1/200秒／ISO100"
+      "200mm／f4／1/250秒／ISO800"
     ],
     "places": [
       "鎌倉",
-      null,
-      null,
       null,
       null,
       null,
@@ -184,9 +181,7 @@
       "lr:2841626",
       "lr:2841096",
       "lr:2841865",
-      "lr:2842830",
-      "lr:2842134",
-      "lr:2841380"
+      "lr:2842830"
     ],
     "hook": "鎌倉、何枚目が好き？",
     "reelSub": "HAYATO NAOE",
@@ -218,15 +213,16 @@
       }
     ],
     "bpm": 96,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T09:57:11.995Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T10:25:12.947Z",
     "video": "specials/reel-2026-11-01/reel-5.mp4",
     "cover": "specials/reel-2026-11-01/reel-5-cover.jpg",
     "rev": 5,
     "seconds": 8.83,
     "beatsUsed": 1,
     "engine": "ae",
-    "builtAt": "2026-10-30T09:58:44.853Z"
+    "builtAt": "2026-10-30T09:58:44.853Z",
+    "rhythm": "slow"
   },
   {
     "id": "reel-2026-11-02",
@@ -247,7 +243,7 @@
     ],
     "thumb": "specials/reel-2026-11-02/thumb.jpg",
     "layout": "side",
-    "rhythm": "hisato",
+    "rhythm": "slow",
     "sourceDate": "2025-01-01",
     "cands": [
       "specials/reel-2026-11-02/c1.jpg",
@@ -317,8 +313,8 @@
       }
     ],
     "bpm": 96,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T09:57:11.995Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T10:25:12.947Z",
     "video": "specials/reel-2026-11-02/reel-2.mp4",
     "cover": "specials/reel-2026-11-02/reel-2-cover.jpg",
     "rev": 2,
@@ -344,14 +340,14 @@
       "specials/reel-2026-11-03/7.jpg",
       "specials/reel-2026-11-03/8.jpg",
       "specials/reel-2026-11-03/9.jpg",
-      "specials/reel-2026-11-03/10.jpg",
-      "specials/reel-2026-11-03/11.jpg",
-      "specials/reel-2026-11-03/12.jpg",
-      "specials/reel-2026-11-03/13.jpg",
-      "specials/reel-2026-11-03/14.jpg"
+      "specials/reel-2026-11-03/10.jpg"
     ],
     "thumb": "specials/reel-2026-11-03/thumb.jpg",
     "cands": [
+      "specials/reel-2026-11-03/11.jpg",
+      "specials/reel-2026-11-03/12.jpg",
+      "specials/reel-2026-11-03/13.jpg",
+      "specials/reel-2026-11-03/14.jpg",
       "specials/reel-2026-11-03/c1.jpg",
       "specials/reel-2026-11-03/c2.jpg",
       "specials/reel-2026-11-03/c3.jpg",
@@ -363,10 +359,6 @@
       "specials/reel-2026-11-03/c9.jpg"
     ],
     "shots": [
-      null,
-      null,
-      null,
-      null,
       null,
       null,
       null,
@@ -388,11 +380,7 @@
       "東京タワー",
       "東京タワー",
       "東京タワー",
-      "東京タワー",
-      "東京タワー",
-      "レインボーブリッジ",
-      "東京",
-      "東京"
+      "東京タワー"
     ],
     "sources": [
       "lr:2508",
@@ -404,11 +392,7 @@
       "lr:2530",
       "lr:2539",
       "lr:2524",
-      "lr:2538",
-      "lr:2537",
-      "lr:2541",
-      "lr:1262718",
-      "lr:2578"
+      "lr:2538"
     ],
     "hook": "東京タワー、見上げる派？見下ろす派？",
     "reelSub": "HAYATO NAOE",
@@ -440,15 +424,16 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T09:57:11.995Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T10:25:12.947Z",
     "video": "specials/reel-2026-11-03/reel-5.mp4",
     "cover": "specials/reel-2026-11-03/reel-5-cover.jpg",
     "rev": 5,
     "seconds": 12,
     "beatsUsed": 1,
     "engine": "ae",
-    "builtAt": "2026-10-30T10:01:36.423Z"
+    "builtAt": "2026-10-30T10:01:36.423Z",
+    "rhythm": "slow"
   },
   {
     "id": "reel-2026-11-04",
@@ -469,7 +454,7 @@
     ],
     "thumb": "specials/reel-2026-11-04/thumb.jpg",
     "layout": "frame",
-    "rhythm": "even",
+    "rhythm": "slow",
     "sourceDate": "2026-08-22",
     "cands": [
       "specials/reel-2026-11-04/c1.jpg",
@@ -538,8 +523,8 @@
       }
     ],
     "bpm": 96,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T09:57:11.995Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T10:25:12.947Z",
     "video": "specials/reel-2026-11-04/reel-2.mp4",
     "cover": "specials/reel-2026-11-04/reel-2-cover.jpg",
     "rev": 2,
@@ -567,7 +552,7 @@
     ],
     "thumb": "specials/reel-2026-11-05/thumb.jpg",
     "layout": null,
-    "rhythm": "hisato",
+    "rhythm": "slow",
     "sourceDate": "2024-12-16",
     "cands": [
       "specials/reel-2026-11-05/c1.jpg",
@@ -643,8 +628,8 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T09:57:11.995Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T10:25:12.947Z",
     "video": "specials/reel-2026-11-05/reel-2.mp4",
     "cover": "specials/reel-2026-11-05/reel-2-cover.jpg",
     "rev": 2,
@@ -670,15 +655,15 @@
       "specials/reel-2026-11-06/7.jpg",
       "specials/reel-2026-11-06/8.jpg",
       "specials/reel-2026-11-06/9.jpg",
-      "specials/reel-2026-11-06/10.jpg",
-      "specials/reel-2026-11-06/11.jpg",
-      "specials/reel-2026-11-06/12.jpg"
+      "specials/reel-2026-11-06/10.jpg"
     ],
     "thumb": "specials/reel-2026-11-06/thumb.jpg",
     "layout": null,
-    "rhythm": "hisato",
+    "rhythm": "slow",
     "sourceDate": "2026-10-17",
     "cands": [
+      "specials/reel-2026-11-06/11.jpg",
+      "specials/reel-2026-11-06/12.jpg",
       "specials/reel-2026-11-06/c1.jpg",
       "specials/reel-2026-11-06/c2.jpg",
       "specials/reel-2026-11-06/c3.jpg",
@@ -698,9 +683,7 @@
       "116mm／f4／1/160秒／ISO2000",
       "200mm／f4／1/200秒／ISO10000",
       "200mm／f4／1/250秒／ISO5000",
-      "200mm／f4／1/250秒／ISO4000",
-      "116mm／f4／1/125秒／ISO6400",
-      "200mm／f4／1/160秒／ISO12800"
+      "200mm／f4／1/250秒／ISO4000"
     ],
     "places": [
       null,
@@ -712,8 +695,6 @@
       "原宿",
       "原宿",
       "原宿",
-      null,
-      "銀座",
       null
     ],
     "sources": [
@@ -726,9 +707,7 @@
       "lr:2879520",
       "lr:2879522",
       "lr:2879409",
-      "lr:2879500",
-      "lr:2879429",
-      "lr:2879417"
+      "lr:2879500"
     ],
     "hook": "表参道、何枚目が好き？",
     "reelSub": "HAYATO NAOE",
@@ -760,8 +739,8 @@
       }
     ],
     "bpm": 119,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T09:57:11.995Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T10:25:12.947Z",
     "video": "specials/reel-2026-11-06/reel-2.mp4",
     "cover": "specials/reel-2026-11-06/reel-2-cover.jpg",
     "rev": 2,
