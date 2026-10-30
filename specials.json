@@ -514,7 +514,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-03/reel-8.mp4",
     "cover": "specials/reel-2026-11-03/reel-8-cover.jpg",
@@ -536,7 +536,7 @@
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T12:39:05.310Z",
+    "kitAt": "2026-10-30T13:48:50.817Z",
     "kitDir": "1103_東京タワーの夜",
     "lrIds": [
       2508,
