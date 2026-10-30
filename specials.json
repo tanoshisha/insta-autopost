@@ -634,7 +634,7 @@
       }
     ],
     "bpm": 96,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-04/reel-4.mp4",
     "cover": "specials/reel-2026-11-04/reel-4-cover.jpg",
@@ -655,7 +655,7 @@
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T13:48:57.280Z",
+    "kitAt": "2026-10-30T16:25:33.059Z",
     "kitDir": "1104_雨の夜の反射",
     "lrIds": [
       1826441,
