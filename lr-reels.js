@@ -32,7 +32,7 @@ ${lines}
 - 人が1人でも写っている写真は入れない（小さな人影・後ろ姿・お面やコスプレの人も含めて、人の姿が分かるものは全部なし）
 - ${session ? "同じ日・同じ場所で撮った写真です。時間の流れ（夕方→夜など）や歩いた順に、ストーリーのある並びにする" : "テーマに合わない写真は入れない（迷ったら入れない）"}
 - 色味・雰囲気がそろうこと（1本の作品に見えるように）。色味や雰囲気が浮く写真は入れない
-- ほぼ同じ構図・同じ場面の写真は1枚だけ
+- ほぼ同じ構図・同じ場面の写真は1枚だけ。同じ被写体（同じかぼちゃ・同じ看板・同じ建物）を別の角度や距離で撮った写真も1枚だけ
 - 1枚目は、いちばん指が止まる強い写真
 - 並びは、明るさ・色・寄り引きに流れがあるように（似た写真が続かない）
 条件に合う写真が14枚に満たなければ、ある分だけ。
@@ -135,6 +135,14 @@ const THEME = {
       if (items.length < MIN) {
         console.log(`  （${d}：条件に合う写真が${items.length}枚だけなので見送り）`);
         continue;
+      }
+      // 中身が似ている写真（同じ被写体の別カットなど）を外して、似ていない写真で埋める
+      try {
+        const dv = require("./lib/similar").diversify(items.map((x) => ({ ...x, src: path.join(DIR, `${x.id}.jpg`) })), cands.filter((c) => !items.includes(c)).map((x) => ({ ...x, src: path.join(DIR, `${x.id}.jpg`) })));
+        if (dv.removed.length) console.log(`  似た写真を${dv.removed.length}枚入れ替え`);
+        items.splice(0, items.length, ...dv.items.map((y) => cands.find((c) => c.id === y.id)));
+      } catch (e) {
+        console.log("  （似た写真の判定に失敗：" + e.message.slice(0, 80) + "）");
       }
       for (const x of items) usedIds.add(x.id);
       plans.push({ format: "dump", title: r.title, day: d, theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, pool: cands, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
