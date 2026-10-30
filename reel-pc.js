@@ -38,7 +38,9 @@ try {
   fs.writeFileSync(LOCK, String(process.pid));
   try {
     git(["fetch", "-q", "origin", "main"]);
-    const list = remote("specials.json", []).filter((s) => s.kind === "reel" && !s.skipped && (s.rebuild || !s.video) && s.images?.length);
+    // 動画は作らない（本人が Edits で組む）。写真セットだけを iCloud Drive「リール」へ。config.reelVideo: true で動画も
+    const VIDEO = remote("config.json", {}).reelVideo === true;
+    const list = remote("specials.json", []).filter((s) => s.kind === "reel" && !s.skipped && s.postAt > new Date().toISOString() && (s.rebuild || (VIDEO ? !s.video : !s.kitAt)) && s.images?.length);
     for (const x of list) {
       fs.writeFileSync(LOCK, String(process.pid)); // 動いている印を新しく
       const tmp = path.join(ROOT, ".work", "reel-src", x.id);
@@ -55,6 +57,21 @@ try {
       const label = String(x.title || "").replace(/^リール[：:（(]?/, "").replace(/[（(]\d+枚[）)]?$/, "").replace(/[）)]$/, "").replace(/^\d+\/\d+の/, "").replace(/[\\/:*?"<>|]/g, "").slice(0, 40) || x.id;
       const kitDir = fs.existsSync(KIT_ROOT) ? path.join(KIT_ROOT, `${x.postAt.slice(5, 7)}${x.postAt.slice(8, 10)}_${label}`) : null;
       if (kitDir) for (const d of fs.readdirSync(KIT_ROOT)) if (d.startsWith(x.postAt.slice(5, 7) + x.postAt.slice(8, 10) + "_") && path.join(KIT_ROOT, d) !== kitDir) fs.rmSync(path.join(KIT_ROOT, d), { recursive: true, force: true }); // 同じ日の古いフォルダ（中身が変わった時）
+      if (!VIDEO) {
+        if (!kitDir) throw new Error("iCloud Drive のフォルダがありません");
+        await require("./lib/reel-kit").makeKit(items, kitDir, { layout: x.layout || null });
+        makeSync(ROOT)(`reel photos ${x.id}`, [], (rm) => {
+          const sp = rm("specials.json", []);
+          const k = sp.findIndex((y) => y.id === x.id);
+          if (k === -1) return {};
+          const again = ["images", "layout"].some((f) => JSON.stringify(sp[k][f]) !== JSON.stringify(x[f]));
+          sp[k] = { ...sp[k], kitAt: new Date().toISOString(), kitDir: path.basename(kitDir), rebuild: again };
+          return { "specials.json": sp };
+        });
+        fs.rmSync(tmp, { recursive: true, force: true });
+        console.log(`リールの写真を用意しました ${x.id}（${items.length}枚 → ${path.basename(kitDir)}）`);
+        continue;
+      }
       const r = await makeReelAE(items, path.join(ROOT, video), ROOT, { kitDir, durations: x.durations || null, style: x.style || "oto", format: x.format || "dump", hook: x.hook || x.reelTitle || "", sub: x.reelSub || "", answer: x.answer || null, bpm: x.bpm, beats: x.beats, layout: x.layout || null, rhythm: x.rhythm || undefined });
       const cover = video.replace(/\.mp4$/, "-cover.jpg");
       const old = [x.video, x.cover].filter(Boolean);

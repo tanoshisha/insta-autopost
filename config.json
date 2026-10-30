@@ -24,5 +24,6 @@
   "threadsTokenSetAt": null,
   "threadsAutoRefresh": true,
   "minScore": 8,
-  "reelSource": "lr"
+  "reelSource": "lr",
+  "reelVideo": false
 }

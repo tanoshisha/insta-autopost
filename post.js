@@ -153,6 +153,7 @@ const reelOpts = (x) => ({ durations: x.durations || null, style: x.style || "ot
 // ---- リールの動画を前もって作っておく（アプリで再生・保存して、インスタで曲を付けて投稿する） ----
 //   予約されたリール・アプリでテンポやタイトルを変えたリール（rebuild）を作り直す。ファイル名を毎回変えて、古い動画が見えないように
 async function buildReels() {
+  if (read("config.json", {}).reelVideo !== true) return; // 動画は作らない（本人が Edits で組む・2026-10-30）
   // PC（After Effects）が作るのを待つ。3時間たっても作られていなければ、ここ（ffmpeg版）で作る
   const pcWait = (s) => Date.now() - Date.parse(s.rebuildAt || s.builtAt || s.postAt) < 3 * 3600e3 && Date.parse(s.postAt) - Date.now() > 3 * 3600e3;
   const list = read("specials.json", []).filter((s) => s.kind === "reel" && !s.skipped && (s.rebuild || !s.video) && s.images?.length && !pcWait(s));
