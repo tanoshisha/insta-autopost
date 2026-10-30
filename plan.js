@@ -476,6 +476,19 @@ async function main() {
     if (it.lrId && !state.lrDone.includes(it.lrId)) state.lrDone.push(it.lrId);
   }
   if (DRY) return console.log(`\n[お試し] ${targets.length}枚中 ${keepN}枚を採用（何も保存していません）`);
+  // 落選した写真は、クラウド版 Lightroom の「インスタ投稿」アルバムへ（リールは別の「リール」アルバム）
+  //   クラウドから来た写真はもともとアルバムにある。Classic（inbox）から来た写真だけ新しく入れて、選定済みの印（lrDone）を付ける＝もう一度選定にかけない
+  try {
+    const out = targets.filter((it) => it.ai.use === false && !absorbed.has(it.id) && !/^[0-9a-f]{32}$/.test(String(it.lrId)) && it.file && fs.existsSync(it.file));
+    if (out.length && cfg.lightroom?.configPath) {
+      const its = out.map((it) => ({ file: it.file, name: `投稿候補_${it.id}.jpg`, captureDate: it.takenAt ? new Date(it.takenAt).toISOString().slice(0, 19) : undefined }));
+      const c = await require("./lib/lr-cloud").putIntoAlbum(cfg.lightroom.configPath, cfg.postCandAlbum || "インスタ投稿", its);
+      for (const id of c.assets) if (!state.lrDone.includes(id)) state.lrDone.push(id);
+      console.log(`  落選した写真をクラウド版 Lightroom「${cfg.postCandAlbum || "インスタ投稿"}」へ：${c.assets.length}枚（新しくアップロード${c.uploaded}枚）`);
+    }
+  } catch (e) {
+    console.log("  落選した写真をクラウドに入れられませんでした：" + e.message.slice(0, 160));
+  }
   for (const it of items) if (it.source === "inbox") fs.rmSync(it.file, { force: true });
 
   try {
