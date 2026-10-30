@@ -1,5 +1,5 @@
 // cloud-cleanup.js — クラウド版Lightroomを「投稿予定の写真だけ」にするための一覧を作る（クラウドもカタログも変更しない）
-//   残す: クラウドのアルバム「インスタ投稿」「ポートフォリオサイト」に入っている写真 ＋ まだ投稿していない予約・見送りの写真
+//   残す: クラウドのどれかのアルバムに入っている写真（インスタ投稿・ポートフォリオサイト・東京フォトウォークサークル・リール…全部）＋ まだ投稿していない予約・見送りの写真
 //   外す: それ以外の同期写真（Classic側に元の写真ファイルがあるものだけ。無いものは外さない＝消えると困るので）
 //   出力: classic-cloud-remove.tsv（Classicの写真のUUID）→ Classicのプラグイン「クラウド整理の準備」が目印のキーワードを付ける
 //   node cloud-cleanup.js
@@ -11,7 +11,7 @@ const { connect, listAlbum } = require("./lib/lightroom");
 
 const ROOT = __dirname;
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf8"));
-const KEEP_ALBUMS = [cfg.lightroom.albumName, "ポートフォリオサイト"];
+// アルバムに入っている写真は全部残す（2026-10-31：本人が作ったアルバムが増えたので、名前を決め打ちしない）
 const remote = (p, d) => {
   try {
     return JSON.parse(execFileSync("git", ["show", `origin/main:${p}`], { cwd: ROOT, encoding: "utf8" }));
@@ -26,8 +26,9 @@ const remote = (p, d) => {
   for (const x of [...remote("queue.json", []), ...remote("pool.json", [])]) if (x.lrId) keep.add(x.lrId);
   const fromQueue = keep.size;
   const lr = await connect(cfg.lightroom.configPath);
-  for (const name of KEEP_ALBUMS) for (const a of (await listAlbum(lr, name)) || []) keep.add(a.id);
-  console.log(`残す写真: ${keep.size}枚（予約・見送り ${fromQueue}枚＋アルバム ${KEEP_ALBUMS.join("・")}）`);
+  const albums = ((await lr.get(`/v2/catalogs/${lr.catalogId}/albums?limit=500`)).resources || []).filter((a) => a.subtype === "collection").map((a) => a.payload?.name).filter(Boolean);
+  for (const name of albums) for (const a of (await listAlbum(lr, name)) || []) keep.add(a.id);
+  console.log(`残す写真: ${keep.size}枚（予約・見送り ${fromQueue}枚＋アルバム ${albums.join("・")}）`);
 
   const db = new DatabaseSync("C:/Lightroom/Lightroom Catalog.lrcat", { readOnly: true });
   const rows = db
