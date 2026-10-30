@@ -684,8 +684,15 @@
       }
     ],
     "bpm": 151,
-    "rebuild": true,
-    "rebuildAt": "2026-10-30T07:35:41.581Z"
+    "rebuild": false,
+    "rebuildAt": "2026-10-30T07:35:41.581Z",
+    "video": "specials/reel-2026-11-05/reel-1.mp4",
+    "cover": "specials/reel-2026-11-05/reel-1-cover.jpg",
+    "rev": 1,
+    "seconds": 12.32,
+    "beatsUsed": 2,
+    "engine": "ffmpeg",
+    "builtAt": "2026-10-30T07:37:34.649Z"
   },
   {
     "id": "reel-2026-11-06",
