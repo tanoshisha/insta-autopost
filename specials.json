@@ -684,8 +684,8 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T08:11:23.693Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T08:55:44.801Z",
     "video": "specials/reel-2026-11-05/reel-2.mp4",
     "cover": "specials/reel-2026-11-05/reel-2-cover.jpg",
     "rev": 2,
@@ -769,8 +769,8 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T08:11:23.693Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T08:55:44.802Z",
     "video": "specials/reel-2026-11-06/reel-2.mp4",
     "cover": "specials/reel-2026-11-06/reel-2-cover.jpg",
     "rev": 2,
