@@ -949,7 +949,7 @@
       "specials/reel-2026-11-05/2.jpg",
       "specials/reel-2026-11-05/3.jpg",
       "specials/reel-2026-11-05/4.jpg",
-      "specials/reel-2026-11-05/5.jpg",
+      "specials/reel-2026-11-05/c3.jpg",
       "specials/reel-2026-11-05/6.jpg",
       "specials/reel-2026-11-05/7.jpg",
       "specials/reel-2026-11-05/8.jpg"
@@ -961,7 +961,6 @@
     "cands": [
       "specials/reel-2026-11-05/c1.jpg",
       "specials/reel-2026-11-05/c2.jpg",
-      "specials/reel-2026-11-05/c3.jpg",
       "specials/reel-2026-11-05/c4.jpg",
       "specials/reel-2026-11-05/c5.jpg",
       "specials/reel-2026-11-05/c6.jpg",
@@ -970,14 +969,15 @@
       "specials/reel-2026-11-05/c9.jpg",
       "specials/reel-2026-11-05/c10.jpg",
       "specials/reel-2026-11-05/c11.jpg",
-      "specials/reel-2026-11-05/c12.jpg"
+      "specials/reel-2026-11-05/c12.jpg",
+      "specials/reel-2026-11-05/5.jpg"
     ],
     "shots": [
       "106mm／f4／1/400秒／ISO100",
       "150mm／f4／1/200秒／ISO100",
       "169mm／f4／1/1250秒／ISO100",
       "200mm／f4／1/200秒／ISO200",
-      "150mm／f4／1/500秒／ISO100",
+      null,
       "200mm／f4／1/200秒／ISO125",
       "127mm／f4／1/640秒／ISO100",
       "93mm／f4／1/125秒／ISO1000"
@@ -997,7 +997,7 @@
       "lr:2879265",
       "lr:2879626",
       "lr:2878837",
-      "lr:2930046",
+      null,
       "lr:2879125",
       "lr:2879716",
       "lr:2879528"
@@ -1043,7 +1043,7 @@
       }
     ],
     "bpm": 119,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T17:31:53.911Z",
     "candIds": [
       "2878730",
@@ -1185,7 +1185,20 @@
       "3030134",
       "3030213",
       "3030324"
-    ]
+    ],
+    "kitAt": "2026-10-30T18:01:32.219Z",
+    "kitDir": "1105_表参道の建築",
+    "lrIds": [
+      2879078,
+      2879265,
+      2879626,
+      2878837,
+      2930046,
+      2879125,
+      2879716,
+      2879528
+    ],
+    "cutSwaps": 1
   },
   {
     "id": "reel-2026-11-06",
