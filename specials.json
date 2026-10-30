@@ -440,15 +440,15 @@
       }
     ],
     "bpm": 151,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T09:57:11.995Z",
-    "video": "specials/reel-2026-11-03/reel-4.mp4",
-    "cover": "specials/reel-2026-11-03/reel-4-cover.jpg",
-    "rev": 4,
+    "video": "specials/reel-2026-11-03/reel-5.mp4",
+    "cover": "specials/reel-2026-11-03/reel-5-cover.jpg",
+    "rev": 5,
     "seconds": 12,
     "beatsUsed": 1,
     "engine": "ae",
-    "builtAt": "2026-10-30T09:29:41.333Z"
+    "builtAt": "2026-10-30T10:01:36.423Z"
   },
   {
     "id": "reel-2026-11-04",
