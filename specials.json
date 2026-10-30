@@ -767,7 +767,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T12:38:00.105Z",
     "video": "specials/reel-2026-11-05/reel-3.mp4",
     "cover": "specials/reel-2026-11-05/reel-3-cover.jpg",
@@ -788,7 +788,7 @@
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T12:31:07.043Z",
+    "kitAt": "2026-10-30T12:39:41.639Z",
     "kitDir": "1105_新宿の夜",
     "lrIds": [
       120117,
