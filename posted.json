@@ -335,5 +335,16 @@
     "day": "2026-10-30",
     "slot": "10:30",
     "lum": 108
+  },
+  {
+    "id": "newpost-1793323891943",
+    "kind": "story",
+    "title": "新しい投稿のお知らせ",
+    "mediaId": "17999054183993088",
+    "postedAt": "2026-10-30T01:31:31.943Z",
+    "day": "2026-10-30",
+    "slot": "newpost-story",
+    "image": "specials/auto/newpost-2026-10-23_d5b8e6e70a6a.jpg",
+    "of": "2026-10-23_d5b8e6e70a6a"
   }
 ]
