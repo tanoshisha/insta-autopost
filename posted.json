@@ -579,5 +579,30 @@
     "slot": "newpost-story",
     "image": "specials/auto/newpost-2026-10-23_bf3e0282b564.jpg",
     "of": "2026-10-23_bf3e0282b564"
+  },
+  {
+    "id": "2026-10-04_15ab065cfdab",
+    "caption": "#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #鎌倉 #小町通り",
+    "portrait": false,
+    "date": "2026-10-04",
+    "takenAt": "2026-10-04T03:36:48.950Z",
+    "event": null,
+    "locationName": "鎌倉",
+    "locationId": "1025861230",
+    "note": "小町小路の提灯アーケードと人混み、t001と場所は近いが構図が異なる",
+    "lrId": "2e2122d70ef84f5fb13cf92125c50ab8",
+    "lrEdited": "2026-10-29T00:34:08Z",
+    "alt": "「小町小路」と書かれた大きな白い提灯が天井から吊り下がるアーケード内に、多くの人が行き交い、両脇には土産物店が並んでいる。",
+    "shot": "35mm／f2／1/250秒／ISO100",
+    "count": 1,
+    "threads": null,
+    "threadsError": "スレッズの鍵が使えません（Gist も THREADS_TOKEN もダメ）",
+    "mediaId": "18130582906745895",
+    "permalink": "https://www.instagram.com/p/DfHiKWEF9ZD/",
+    "mediaUrl": "https://scontent-ord5-1.cdninstagram.com/v/t51.82787-15/873782708_17951328504314997_9201646853238135636_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=DRP7bvXiHAIQ7kNvwENOxgj&_nc_oc=AdoVL27kNzD7JDliPYMBlYAuA81rf85lDcHyWnum2Q-SQI5coIG8A8uCAVkSwO6UQBo&_nc_zt=23&_nc_ht=scontent-ord5-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=LITguSiI36163l5lm4RNYg&oh=00_AQRWJuVTZo75hTd5jhESw_GdXzber8-e0T6bdPSeNHzUAw&oe=6AEA61A4",
+    "postedAt": "2026-10-30T12:01:27.431Z",
+    "day": "2026-10-30",
+    "slot": "21:00",
+    "lum": 92
   }
 ]
