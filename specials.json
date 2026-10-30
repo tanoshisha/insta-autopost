@@ -902,7 +902,7 @@
       }
     ],
     "bpm": 119,
-    "rebuild": true,
+    "rebuild": false,
     "rebuildAt": "2026-10-30T13:48:19.898Z",
     "video": "specials/reel-2026-11-06/reel-3.mp4",
     "cover": "specials/reel-2026-11-06/reel-3-cover.jpg",
@@ -923,7 +923,7 @@
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T12:40:01.924Z",
+    "kitAt": "2026-10-30T13:49:11.882Z",
     "kitDir": "1106_表参道 建築散歩",
     "lrIds": [
       3030324,
