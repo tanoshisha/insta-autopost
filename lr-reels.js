@@ -138,7 +138,7 @@ const THEME = {
       }
       // 中身が似ている写真（同じ被写体の別カットなど）を外して、似ていない写真で埋める
       try {
-        const dv = require("./lib/similar").diversify(items.map((x) => ({ ...x, src: path.join(DIR, `${x.id}.jpg`) })), cands.filter((c) => !items.includes(c)).map((x) => ({ ...x, src: path.join(DIR, `${x.id}.jpg`) })));
+        const dv = require("./lib/similar").diversify(items.map((x) => ({ ...x, src: path.join(DIR, `${x.id}.jpg`) })), []); // 埋めない（別テーマの写真が入るため。外すだけ）
         if (dv.removed.length) console.log(`  似た写真を${dv.removed.length}枚入れ替え`);
         items.splice(0, items.length, ...dv.items.map((y) => cands.find((c) => c.id === y.id)));
       } catch (e) {
