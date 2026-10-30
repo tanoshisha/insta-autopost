@@ -583,8 +583,8 @@
       }
     ],
     "bpm": 96,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T10:25:12.947Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T12:08:41.208Z",
     "video": "specials/reel-2026-11-04/reel-3.mp4",
     "cover": "specials/reel-2026-11-04/reel-3-cover.jpg",
     "rev": 3,
