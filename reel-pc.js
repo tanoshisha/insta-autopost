@@ -58,4 +58,5 @@ const LOCK = path.join(ROOT, ".work", "reel-pc.lock");
   } finally {
     fs.rmSync(LOCK, { force: true });
   }
+  process.exit(0); // 開いたままの After Effects を待たずに終わる
 })();
