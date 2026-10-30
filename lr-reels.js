@@ -216,7 +216,7 @@ const THEME = {
     }
     const turn = ["hisato", "frame", "side"][(Date.parse(day) / 864e5) % 3];
     const layout = turn === "side" && wide.length >= MIN ? "side" : turn === "side" ? "hisato" : turn;
-    const keep = layout === "side" ? wide : items.map((_, i) => i);
+    const keep = (layout === "side" ? wide : items.map((_, i) => i)).slice(0, 10); // じっくり型は8〜10枚（約22〜27秒）
     const songs = pickSongs({ moods: th.mood, measured: cfg.reelBpm || {} });
     const place = plan.items.map((x) => x.place).filter(Boolean)[0] || null;
     add.push({
@@ -229,7 +229,7 @@ const THEME = {
       images: keep.map((i) => images[i]),
       thumb: `${dir}/thumb.jpg`,
       layout: layout === "hisato" ? null : layout,
-      rhythm: layout === "frame" ? "even" : "hisato",
+      rhythm: "slow", // 本人が Edits で作ったリールの切り方（2026-10-30）
       sourceDate: plan.day || null,
       cands,
       shots: keep.map((i) => items[i].shot || null),
