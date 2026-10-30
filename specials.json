@@ -326,6 +326,122 @@
     "builtAt": "2026-10-29T20:38:36.771Z"
   },
   {
+    "id": "reel-2026-11-03",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（東京タワーの夜）",
+    "postAt": "2026-11-03T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-03/1.jpg",
+      "specials/reel-2026-11-03/2.jpg",
+      "specials/reel-2026-11-03/3.jpg",
+      "specials/reel-2026-11-03/4.jpg",
+      "specials/reel-2026-11-03/5.jpg",
+      "specials/reel-2026-11-03/6.jpg",
+      "specials/reel-2026-11-03/7.jpg",
+      "specials/reel-2026-11-03/8.jpg",
+      "specials/reel-2026-11-03/9.jpg",
+      "specials/reel-2026-11-03/10.jpg",
+      "specials/reel-2026-11-03/11.jpg",
+      "specials/reel-2026-11-03/12.jpg",
+      "specials/reel-2026-11-03/13.jpg",
+      "specials/reel-2026-11-03/14.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-03/thumb.jpg",
+    "cands": [
+      "specials/reel-2026-11-03/c1.jpg",
+      "specials/reel-2026-11-03/c2.jpg",
+      "specials/reel-2026-11-03/c3.jpg",
+      "specials/reel-2026-11-03/c4.jpg",
+      "specials/reel-2026-11-03/c5.jpg",
+      "specials/reel-2026-11-03/c6.jpg",
+      "specials/reel-2026-11-03/c7.jpg",
+      "specials/reel-2026-11-03/c8.jpg",
+      "specials/reel-2026-11-03/c9.jpg"
+    ],
+    "shots": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "places": [
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "レインボーブリッジ",
+      "東京",
+      "東京"
+    ],
+    "sources": [
+      "lr:2508",
+      "lr:2507",
+      "lr:2505",
+      "lr:2511",
+      "lr:2516",
+      "lr:2518",
+      "lr:2530",
+      "lr:2539",
+      "lr:2524",
+      "lr:2538",
+      "lr:2537",
+      "lr:2541",
+      "lr:1262718",
+      "lr:2578"
+    ],
+    "hook": "東京タワー、見上げる派？見下ろす派？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "caption": "何枚目が好きか、コメントで教えてください📷\n\n#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #東京タワー",
+    "head": "",
+    "portrait": false,
+    "locationName": "東京タワー",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Englishman In New York",
+        "a": "Sting",
+        "bpm": 102,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "アイラブ言う",
+        "a": "忘れらんねえよ",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T07:35:39.573Z"
+  },
+  {
     "id": "reel-2026-11-04",
     "kind": "reel",
     "format": "dump",
@@ -444,5 +560,202 @@
     "beatsUsed": 2,
     "engine": "ffmpeg",
     "builtAt": "2026-10-29T20:40:47.303Z"
+  },
+  {
+    "id": "reel-2026-11-05",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（東京ネオンの夜）",
+    "postAt": "2026-11-05T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-05/1.jpg",
+      "specials/reel-2026-11-05/2.jpg",
+      "specials/reel-2026-11-05/3.jpg",
+      "specials/reel-2026-11-05/4.jpg",
+      "specials/reel-2026-11-05/5.jpg",
+      "specials/reel-2026-11-05/6.jpg",
+      "specials/reel-2026-11-05/7.jpg",
+      "specials/reel-2026-11-05/8.jpg",
+      "specials/reel-2026-11-05/9.jpg",
+      "specials/reel-2026-11-05/10.jpg",
+      "specials/reel-2026-11-05/11.jpg",
+      "specials/reel-2026-11-05/12.jpg",
+      "specials/reel-2026-11-05/13.jpg",
+      "specials/reel-2026-11-05/14.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-05/thumb.jpg",
+    "cands": [
+      "specials/reel-2026-11-05/c1.jpg",
+      "specials/reel-2026-11-05/c2.jpg",
+      "specials/reel-2026-11-05/c3.jpg",
+      "specials/reel-2026-11-05/c4.jpg",
+      "specials/reel-2026-11-05/c5.jpg",
+      "specials/reel-2026-11-05/c6.jpg",
+      "specials/reel-2026-11-05/c7.jpg",
+      "specials/reel-2026-11-05/c8.jpg",
+      "specials/reel-2026-11-05/c9.jpg",
+      "specials/reel-2026-11-05/c10.jpg",
+      "specials/reel-2026-11-05/c11.jpg",
+      "specials/reel-2026-11-05/c12.jpg"
+    ],
+    "shots": [
+      "116mm／f4／1/250秒／ISO500",
+      "100mm／f4／1/200秒／ISO400",
+      "81mm／f4／1/160秒／ISO200",
+      "180mm／f4／1/400秒／ISO10000",
+      "127mm／f4／1/250秒／ISO12800",
+      "111mm／f4／1/250秒／ISO500",
+      "200mm／f4／1/200秒／ISO250",
+      "200mm／f4／1/400秒／ISO6400",
+      "100mm／f4／1/200秒／ISO800",
+      "200mm／f4／1/400秒／ISO640",
+      "200mm／f4／1/400秒／ISO2500",
+      "70mm／f4／1/160秒／ISO400",
+      "200mm／f4／1/400秒／ISO2500",
+      "138mm／f4.5／1/320秒／ISO500"
+    ],
+    "places": [
+      "歌舞伎町",
+      "新宿",
+      "新宿",
+      "新宿",
+      "新宿",
+      "新宿",
+      null,
+      "新宿",
+      "新宿",
+      "歌舞伎町",
+      "新宿",
+      "新宿",
+      "新宿",
+      "新宿"
+    ],
+    "sources": [
+      "lr:80729",
+      "lr:80383",
+      "lr:82259",
+      "lr:94711",
+      "lr:82985",
+      "lr:77867",
+      "lr:416301",
+      "lr:96527",
+      "lr:107621",
+      "lr:108611",
+      "lr:113247",
+      "lr:90581",
+      "lr:120117",
+      "lr:79035"
+    ],
+    "hook": "ネオンの夜、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "caption": "何枚目が好きか、コメントで教えてください📷\n\n#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #ネオン街",
+    "head": "",
+    "portrait": false,
+    "locationName": "歌舞伎町",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Englishman In New York",
+        "a": "Sting",
+        "bpm": 102,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "SUMMER SUSPICION",
+        "a": "杉山清貴&オメガトライブ",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T07:35:41.581Z"
+  },
+  {
+    "id": "reel-2026-11-06",
+    "kind": "reel",
+    "format": "settings",
+    "style": "mv",
+    "title": "リール（撮影データ）",
+    "postAt": "2026-11-06T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-06/1.jpg",
+      "specials/reel-2026-11-06/2.jpg",
+      "specials/reel-2026-11-06/3.jpg",
+      "specials/reel-2026-11-06/4.jpg",
+      "specials/reel-2026-11-06/5.jpg",
+      "specials/reel-2026-11-06/6.jpg",
+      "specials/reel-2026-11-06/7.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-06/thumb.jpg",
+    "cands": [],
+    "shots": [
+      "35mm／f8／1/60秒／ISO12800",
+      "200mm／f4／1/125秒／ISO12800",
+      "85mm／f1.8／1/80秒／ISO400",
+      "111mm／f4／1/250秒／ISO6400",
+      "47mm／f4／1/60秒／ISO12800",
+      "81mm／f4／1/160秒／ISO2500",
+      "160mm／f4／1/160秒／ISO12800"
+    ],
+    "places": [
+      "東京駅",
+      "明治神宮",
+      "東京タワー",
+      "明治神宮",
+      "明治神宮",
+      "明治神宮",
+      "丸の内"
+    ],
+    "sources": [
+      "lr:2522817",
+      "lr:67233",
+      "lr:1826257",
+      "lr:70077",
+      "lr:73257",
+      "lr:69741",
+      "lr:78363"
+    ],
+    "hook": "この夜、この設定で撮ってます",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "caption": "保存して、撮るときの参考にどうぞ📷\n\n#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #東京夜景",
+    "head": "",
+    "portrait": false,
+    "locationName": "東京駅",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Englishman In New York",
+        "a": "Sting",
+        "bpm": 102,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "マリブコーク",
+        "a": "踊ってばかりの国",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T07:35:42.246Z"
   }
 ]
