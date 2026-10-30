@@ -80,7 +80,7 @@ function writeClassicReels(specials) {
         // クラウド版 Lightroom の「リール」フォルダにも（iPhone の Lightroom で直してから Edits へ）
         try {
           const cfgL = remote("config.json", {}).lightroom;
-          if (false && cfgL?.configPath && fs.existsSync(cfgL.configPath)) { // 外部アプリのアルバムは Lightroom のアプリに出ないのでやめた（Classic のコレクション経由に）
+          if (cfgL?.configPath && fs.existsSync(cfgL.configPath)) { // クラウドの「リール」アルバム（本人が作った普通のアルバム）へ
             const arr = (j) => (Array.isArray(j) ? j : Object.values(j || {}));
             const cloud = Object.fromEntries([...arr(remote("pool.json", [])), ...arr(remote("queue.json", []))].filter((p) => p.image && /^[0-9a-f]{32}$/.test(String(p.lrId))).map((p) => [p.image, p.lrId]));
             const kitName = path.basename(kitDir);
@@ -92,8 +92,8 @@ function writeClassicReels(specials) {
               captureDate: x.sourceDate ? `${x.sourceDate}T19:00:${String(i).padStart(2, "0")}` : undefined,
             }));
             const albumName = kitName.replace("_", " ");
-            const c = await require("./lib/lr-cloud").putReelAlbum(cfgL.configPath, albumName, its);
-            console.log(`  クラウド版 Lightroom「リール/${albumName}」：${c.assets.length}枚（新しくアップロード${c.uploaded}枚）`);
+            const c = await require("./lib/lr-cloud").putIntoAlbum(cfgL.configPath, "リール", its);
+            console.log(`  クラウド版 Lightroom「リール」：${albumName} ${c.assets.length}枚（新しくアップロード${c.uploaded}枚・アルバムに追加${c.added}枚）`);
           }
         } catch (e) {
           console.log("  クラウド版 Lightroom に入れられませんでした：" + e.message.slice(0, 160));
