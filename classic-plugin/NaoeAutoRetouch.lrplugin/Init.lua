@@ -7,6 +7,7 @@
 local LrTasks = import "LrTasks"
 local Common = require "Common"
 local Tpw = require "Tpw"
+local Reels = require "Reels"
 
 LrTasks.startAsyncTask(function()
   LrTasks.sleep(90) -- 起動直後は待つ
@@ -18,6 +19,9 @@ LrTasks.startAsyncTask(function()
       local okE, errE = LrTasks.pcall(Tpw.ensureCollections)
       if not okE then Common.log("TPWコレクション: " .. tostring(errE)) end
     end
+    -- リールの回ごとのコレクション（classic-reels.tsv の通りに）
+    local okR, errR = LrTasks.pcall(Reels.sync)
+    if not okR then Common.log("リールのコレクション: " .. tostring(errR)) end
     local okT, errT = LrTasks.pcall(Tpw.sync, false)
     if not okT then Common.log("TPWブログ: " .. tostring(errT)) end
     -- スクールフォトは自動レタッチのオン・オフに関係なく、取り込んだら毎回（外部のAIは使わない）

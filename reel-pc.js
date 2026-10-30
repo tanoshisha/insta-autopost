@@ -22,6 +22,23 @@ try {
   fs.mkdirSync(KIT_ROOT, { recursive: true });
 } catch {}
 
+// Lightroom Classic のプラグインが読む一覧：コレクションセット「リール」の中の、回ごとのコレクション
+function writeClassicReels(specials) {
+  try {
+    const { DatabaseSync } = require("node:sqlite");
+    const db = new DatabaseSync("C:/Lightroom/Lightroom Catalog.lrcat", { readOnly: true });
+    const q = db.prepare("select id_global u from Adobe_images where id_local = ?");
+    const lines = [];
+    for (const x of specials.filter((s) => s.kind === "reel" && !s.skipped && s.kitDir && s.lrIds?.length && s.postAt > new Date(Date.now() - 2 * 864e5).toISOString())) {
+      const uu = x.lrIds.filter(Boolean).map((id) => q.get(+id)?.u).filter(Boolean);
+      if (uu.length) lines.push(`${x.kitDir.replace("_", " ")}\t${uu.join(",")}`);
+    }
+    fs.writeFileSync(path.join(ROOT, "classic-reels.tsv"), lines.join("\n") + "\n");
+  } catch (e) {
+    console.log("Classic の一覧を書けませんでした：" + e.message);
+  }
+}
+
 (async () => {
   if (!available()) return;
   fs.mkdirSync(path.dirname(LOCK), { recursive: true });
@@ -63,7 +80,7 @@ try {
         // クラウド版 Lightroom の「リール」フォルダにも（iPhone の Lightroom で直してから Edits へ）
         try {
           const cfgL = remote("config.json", {}).lightroom;
-          if (cfgL?.configPath && fs.existsSync(cfgL.configPath)) {
+          if (false && cfgL?.configPath && fs.existsSync(cfgL.configPath)) { // 外部アプリのアルバムは Lightroom のアプリに出ないのでやめた（Classic のコレクション経由に）
             const arr = (j) => (Array.isArray(j) ? j : Object.values(j || {}));
             const cloud = Object.fromEntries([...arr(remote("pool.json", [])), ...arr(remote("queue.json", []))].filter((p) => p.image && /^[0-9a-f]{32}$/.test(String(p.lrId))).map((p) => [p.image, p.lrId]));
             const kitName = path.basename(kitDir);
@@ -81,12 +98,19 @@ try {
         } catch (e) {
           console.log("  クラウド版 Lightroom に入れられませんでした：" + e.message.slice(0, 160));
         }
+        let lrIds = null;
+        try {
+          const arr = (j) => (Array.isArray(j) ? j : Object.values(j || {}));
+          lrIds = await require("./lib/reel-lrids").resolveLrIds(x, items.map((it) => it.src), [...arr(remote("pool.json", [])), ...arr(remote("queue.json", []))]);
+        } catch (e) {
+          console.log("  Lightroom の写真と対応が取れませんでした：" + e.message.slice(0, 120));
+        }
         makeSync(ROOT)(`reel photos ${x.id}`, [], (rm) => {
           const sp = rm("specials.json", []);
           const k = sp.findIndex((y) => y.id === x.id);
           if (k === -1) return {};
           const again = ["images", "layout"].some((f) => JSON.stringify(sp[k][f]) !== JSON.stringify(x[f]));
-          sp[k] = { ...sp[k], kitAt: new Date().toISOString(), kitDir: path.basename(kitDir), rebuild: again };
+          sp[k] = { ...sp[k], kitAt: new Date().toISOString(), kitDir: path.basename(kitDir), rebuild: again, ...(lrIds ? { lrIds } : {}) };
           return { "specials.json": sp };
         });
         fs.rmSync(tmp, { recursive: true, force: true });
@@ -109,6 +133,8 @@ try {
       fs.rmSync(tmp, { recursive: true, force: true });
       console.log(`リールの動画を作りました ${x.id}（${r.engine || "ffmpeg"}・${r.seconds}秒・${r.bpm}bpm）`);
     }
+    git(["fetch", "-q", "origin", "main"]);
+    writeClassicReels(remote("specials.json", []));
   } catch (e) {
     console.error("リールの動画づくりに失敗: " + e.message);
   } finally {
