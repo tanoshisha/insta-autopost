@@ -9,7 +9,7 @@
       "specials/reel-2026-10-31/1.jpg",
       "specials/reel-2026-10-31/2.jpg",
       "specials/reel-2026-10-31/n_wall.jpg",
-      "specials/reel-2026-10-31/4.jpg",
+      "specials/reel-2026-10-31/n_skelcar.jpg",
       "queue/2026-10-23_b41c313f4446.jpg",
       "specials/reel-2026-10-31/n_teal.jpg",
       "queue/2026-10-23_fb6adc38800e.jpg",
@@ -49,7 +49,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
+    "rebuild": true,
     "video": "specials/reel-2026-10-31/reel-15.mp4",
     "cover": "specials/reel-2026-10-31/reel-15-cover.jpg",
     "rev": 15,
@@ -58,19 +58,19 @@
     "builtAt": "2026-10-30T12:05:36.310Z",
     "format": "dump",
     "hook": "ハロウィンの夜、何枚目が好き？",
-    "rebuildAt": "2026-10-30T12:04:19.315Z",
+    "rebuildAt": "2026-10-30T12:10:53.130Z",
     "engine": "ae",
     "style": "oto",
     "rhythm": "slow",
     "cands": [
-      "specials/reel-2026-10-31/n_skelcar.jpg",
       "specials/reel-2026-10-31/n_witch.jpg",
       "specials/reel-2026-10-31/3.jpg",
       "specials/reel-2026-10-31/5.jpg",
       "queue/2026-10-23_8c69cae6cbf6.jpg",
       "queue/2026-10-23_e6920ca67ca2.jpg",
       "specials/reel-2026-10-31/6.jpg",
-      "queue/2026-10-23_221ec7ec954f.jpg"
+      "queue/2026-10-23_221ec7ec954f.jpg",
+      "specials/reel-2026-10-31/4.jpg"
     ],
     "cap": {
       "title": "横浜イングリッシュガーデンのハロウィン🎃",
@@ -381,7 +381,7 @@
     "images": [
       "specials/reel-2026-11-03/1.jpg",
       "specials/reel-2026-11-03/2.jpg",
-      "specials/reel-2026-11-03/3.jpg",
+      "specials/reel-2026-11-03/c1.jpg",
       "specials/reel-2026-11-03/4.jpg",
       "specials/reel-2026-11-03/5.jpg",
       "specials/reel-2026-11-03/6.jpg",
@@ -396,7 +396,6 @@
       "specials/reel-2026-11-03/12.jpg",
       "specials/reel-2026-11-03/13.jpg",
       "specials/reel-2026-11-03/14.jpg",
-      "specials/reel-2026-11-03/c1.jpg",
       "specials/reel-2026-11-03/c2.jpg",
       "specials/reel-2026-11-03/c3.jpg",
       "specials/reel-2026-11-03/c4.jpg",
@@ -404,7 +403,8 @@
       "specials/reel-2026-11-03/c6.jpg",
       "specials/reel-2026-11-03/c7.jpg",
       "specials/reel-2026-11-03/c8.jpg",
-      "specials/reel-2026-11-03/c9.jpg"
+      "specials/reel-2026-11-03/c9.jpg",
+      "specials/reel-2026-11-03/3.jpg"
     ],
     "shots": [
       null,
@@ -472,8 +472,8 @@
       }
     ],
     "bpm": 151,
-    "rebuild": false,
-    "rebuildAt": "2026-10-30T10:25:12.947Z",
+    "rebuild": true,
+    "rebuildAt": "2026-10-30T12:10:53.131Z",
     "video": "specials/reel-2026-11-03/reel-6.mp4",
     "cover": "specials/reel-2026-11-03/reel-6-cover.jpg",
     "rev": 6,
