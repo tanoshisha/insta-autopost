@@ -25,12 +25,22 @@ try {
 (async () => {
   if (!available()) return;
   fs.mkdirSync(path.dirname(LOCK), { recursive: true });
-  if (fs.existsSync(LOCK) && Date.now() - fs.statSync(LOCK).mtimeMs < 30 * 60e3) return; // 前の分がまだ動いている
+  if (fs.existsSync(LOCK)) {
+    // 前の分がまだ動いているか（プロセスが生きているか）で判断する（時間だけで判断すると、長い作り直しの途中で2つ同時に動いて写真が混ざる）
+    const pid = Number(fs.readFileSync(LOCK, "utf8"));
+    let alive = false;
+    try {
+      process.kill(pid, 0);
+      alive = true;
+    } catch {}
+    if (alive && Date.now() - fs.statSync(LOCK).mtimeMs < 3 * 3600e3) return;
+  }
   fs.writeFileSync(LOCK, String(process.pid));
   try {
     git(["fetch", "-q", "origin", "main"]);
     const list = remote("specials.json", []).filter((s) => s.kind === "reel" && !s.skipped && (s.rebuild || !s.video) && s.images?.length);
     for (const x of list) {
+      fs.writeFileSync(LOCK, String(process.pid)); // 動いている印を新しく
       const tmp = path.join(ROOT, ".work", "reel-src", x.id);
       fs.rmSync(tmp, { recursive: true, force: true });
       fs.mkdirSync(tmp, { recursive: true });
