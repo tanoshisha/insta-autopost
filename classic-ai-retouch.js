@@ -90,6 +90,7 @@ const GOAL = `【目標】Instagramのフィードで指が止まる、作品と
 - 【明るさの順番】主役（被写体）が画面でいちばん目を引く明るさにする。背景が主役より明るくならないこと。
   画面の端や背景に白飛び・明るすぎる所があって、意図しない所に目が行くのはNG（ハイライト・白レベル・周辺減光・かすみの除去などで抑える）。
 - 写真ごとに最適化する（同じ値を機械的に当てない）。
+- 【撮影データを必ず見る】レンズ・設定で露出・色・ノイズ・周辺減光が全部変わる。カメラ（機種で色と高感度の強さが違う）・レンズ（周辺減光・歪み・色収差・フリンジ・逆光のフレア）・焦点距離（広角は縦線の倒れとパース、望遠は圧縮とかすみ）・絞り（開放付近は周辺減光と色にじみが強い、絞るとかすみやすい）・シャッター速度（ブレ・夜の光跡）・ISO（高いほどノイズ処理を強く、シャドウを持ち上げすぎない）を見て決める。
 - 【フィードの統一感】プロフィールのグリッドに並べた時に1つの作品集に見えること。この写真家の世界観は「深い黒・夜の光・シャドウ寒色/ハイライト暖色・彩度は控えめで上品」。
   昼の明るい写真もこの世界観に寄せる（白っぽく軽いトーンにしない・空の青は少し深く落ち着かせる・黒をしっかり締める・彩度は上げすぎない）。ただし不自然に暗くはしない。
 - 基準は「お金を払ってもらえる作品／フォトコンテストで入賞するレベル」。無難な補正で終わらせず、その写真の魅力が最大になる仕上げにする。`;
@@ -144,8 +145,35 @@ const SNAP = `【スナップ・風景・夜景の基準】写真集や広告の
 - 曇天や逆光の眠い素材は、中間調のコントラストとかすみの除去で抜けよく。ただし自然さを保つ。
 - 目指す仕上がり: スマホの小さな画面でも一目で伝わる、見応えのある作品。`;
 
+// 撮影データ（カメラ・レンズ・焦点距離・絞り・シャッター速度・ISO）。レンズや設定で露出・色・ノイズ・周辺減光が全部変わるので、AIに必ず見せる
+let exifDb = null;
+function shotInfo(file) {
+  try {
+    const id = Number(String(file).replace(/\.jpg$/i, ""));
+    if (!Number.isFinite(id)) return null;
+    exifDb ||= new (require("node:sqlite").DatabaseSync)("C:/Lightroom/Lightroom Catalog.lrcat", { readOnly: true });
+    const r = exifDb
+      .prepare(
+        `select e.aperture av, e.shutterSpeed tv, e.isoSpeedRating iso, e.focalLength fl, e.flashFired fl2, c.value cam, l.value lens
+         from AgHarvestedExifMetadata e left join AgInternedExifCameraModel c on c.id_local = e.cameraModelRef left join AgInternedExifLens l on l.id_local = e.lensRef where e.image = ?`
+      )
+      .get(id);
+    if (!r) return null;
+    const fnum = r.av != null ? `f${Math.pow(2, r.av / 2).toFixed(1).replace(/\.0$/, "")}` : null;
+    const t = r.tv != null ? Math.pow(2, -r.tv) : null;
+    const ss = t == null ? null : t >= 0.5 ? `${t.toFixed(1)}秒` : `1/${Math.round(1 / t)}秒`;
+    return [r.cam, r.lens, r.fl ? `${Math.round(r.fl)}mm` : null, fnum, ss, r.iso ? `ISO${Math.round(r.iso)}` : null, r.fl2 ? "フラッシュ" : null].filter(Boolean).join(" / ");
+  } catch {
+    return null;
+  }
+}
 function lines(files, info) {
-  return files.map((f) => `- ${f}  測定値: ${JSON.stringify(info[f].stats)}${info[f].cur ? `\n  今の設定: ${info[f].cur}` : ""}`).join("\n");
+  return files
+    .map((f) => {
+      const sh = shotInfo(f);
+      return `- ${f}  測定値: ${JSON.stringify(info[f].stats)}${sh ? `\n  撮影: ${sh}` : ""}${info[f].cur ? `\n  今の設定: ${info[f].cur}` : ""}`;
+    })
+    .join("\n");
 }
 
 // kind: "plan"（全部をまず判定）| "portrait"（ポートレートを専門に決め直す）| "review"（仕上がりチェック）
