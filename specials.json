@@ -49,7 +49,7 @@
       }
     ],
     "bpm": 151,
-    "rebuild": true,
+    "rebuild": false,
     "video": "specials/reel-2026-10-31/reel-18.mp4",
     "cover": "specials/reel-2026-10-31/reel-18-cover.jpg",
     "rev": 18,
@@ -84,7 +84,7 @@
         "#東京カメラ部"
       ]
     },
-    "kitAt": "2026-10-30T12:38:09.496Z",
+    "kitAt": "2026-10-30T12:40:45.511Z",
     "kitDir": "1031_横浜イングリッシュガーデン",
     "lrIds": [
       3028026,
