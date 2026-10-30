@@ -18,6 +18,7 @@ const DIR = path.join(ROOT, ".work", "lrpick");
 const COUNT = +process.argv.find((a) => /^[0-9]+$/.test(a)) || 5;
 const REPLACE = process.argv.includes("--replace");
 const REPLACE_MIXED = process.argv.includes("--replace-mixed"); // 日付が混ざった予約だけ作り直す
+const REPLACE_FROM = (process.argv.find((a) => a.startsWith("--replace-from=")) || "").split("=")[1] || null; // この日以降の予約（まだ投稿していない）を選び直す
 const MIN = 8; // 1本に使う最少の枚数 // Lightroom から作ったまだ投稿していないリールを作り直す
 const { spawn } = require("child_process");
 
@@ -92,8 +93,8 @@ const THEME = {
   const mine = (x) => x.kind === "reel" && (x.sources || [])[0]?.startsWith("lr:");
   const dayOf = Object.fromEntries(judged.map((x) => [`lr:${x.id}`, String(x.t).slice(0, 10)]));
   const mixed = (x) => new Set((x.sources || []).map((k) => dayOf[k]).filter(Boolean)).size > 1;
-  const dropped = REPLACE ? all0.filter(mine) : REPLACE_MIXED ? all0.filter((x) => mine(x) && mixed(x) && x.postAt > new Date().toISOString()) : [];
-  if (dropped.length) console.log("日付が混ざった予約を外して作り直します：" + dropped.map((x) => x.id).join("・"));
+  const dropped = REPLACE_FROM ? all0.filter((x) => x.kind === "reel" && !x.skipped && x.postAt.slice(0, 10) >= REPLACE_FROM && x.postAt > new Date().toISOString()) : REPLACE ? all0.filter(mine) : REPLACE_MIXED ? all0.filter((x) => mine(x) && mixed(x) && x.postAt > new Date().toISOString()) : [];
+  if (dropped.length) console.log("予約を外して選び直します：" + dropped.map((x) => x.id).join("・"));
   const specials = all0.filter((x) => !dropped.includes(x));
   const posted = remote("posted.json", []);
   const used = new Set([...specials, ...posted].filter((x) => x.kind === "reel").flatMap((x) => x.sources || []));
@@ -105,9 +106,24 @@ const THEME = {
   const usedDays = new Set([...specials, ...posted].filter((x) => x.kind === "reel" && x.sourceDate).map((x) => x.sourceDate)); // ほかのリールで使った日（10/31のハロウィンなど）
   const byDay = {};
   for (const x of judged.filter((x) => !x.people && x.score >= 6 && !used.has(`lr:${x.id}`))) (byDay[String(x.t).slice(0, 10)] = byDay[String(x.t).slice(0, 10)] || []).push(x);
-  const sessions = Object.entries(byDay)
-    .filter(([d, g]) => g.length >= MIN + 1 && !usedDays.has(d))
-    .map(([d, g]) => [d, g.sort((a, b) => String(a.t).localeCompare(String(b.t)))])
+  // 1日に写真が多い日は、時間が90分以上あいた所で別の撮影に分ける（昼と夜・別の場所）。1つの撮影は候補40枚まで（点数の高い順に選んで、撮った順に並べる）
+  const sessions = [];
+  for (const [d, g0] of Object.entries(byDay)) {
+    if (usedDays.has(d) || d.startsWith("0000")) continue; // 撮影日が分からない写真は混ぜない
+    const g = g0.sort((a, b) => String(a.t).localeCompare(String(b.t)));
+    const parts = [[]];
+    for (const x of g) {
+      const last = parts[parts.length - 1].at(-1);
+      if (last && Date.parse(x.t) - Date.parse(last.t) > 90 * 60e3) parts.push([]);
+      parts[parts.length - 1].push(x);
+    }
+    const big = parts.filter((p) => p.length >= MIN + 1);
+    for (const [k, p] of big.entries()) {
+      const top = [...p].sort((a, b) => b.score - a.score).slice(0, 40).sort((a, b) => String(a.t).localeCompare(String(b.t)));
+      sessions.push([big.length > 1 ? `${d}#${k + 1}` : d, top]);
+    }
+  }
+  sessions
     .sort((a, b) => b[1].reduce((s, x) => s + x.score, 0) / b[1].length - a[1].reduce((s, x) => s + x.score, 0) / a[1].length);
   console.log("同じ日の撮影：" + sessions.map(([d, g]) => `${d}（${g.length}枚）`).join("・"));
   const themes = Object.entries(groups)
@@ -130,7 +146,7 @@ const THEME = {
     try {
       const cands = g.slice(0, 40);
       const top = (k) => Object.entries(cands.reduce((m, x) => ((m[x[k]] = (m[x[k]] || 0) + 1), m), {})).sort((a, b) => b[1] - a[1])[0]?.[0];
-      const r = await curate(`${d} の撮影（${top("place") || top("theme")}）`, cands, true);
+      const r = await curate(`${d.slice(0, 10)} の撮影（${top("place") || top("theme")}）`, cands, true);
       const items = r.ids.map((id) => cands.find((x) => String(x.id) === String(id))).filter(Boolean);
       if (items.length < MIN) {
         console.log(`  （${d}：条件に合う写真が${items.length}枚だけなので見送り）`);
@@ -145,7 +161,7 @@ const THEME = {
         console.log("  （似た写真の判定に失敗：" + e.message.slice(0, 80) + "）");
       }
       for (const x of items) usedIds.add(x.id);
-      plans.push({ format: "dump", title: r.title, day: d, theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, pool: cands, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
+      plans.push({ format: "dump", title: r.title, day: d.slice(0, 10), theme: THEME[top("theme")] ? top("theme") : "夜景・ビル", items, pool: cands, hook: r.hook, tag: r.tag, label: r.theme, place: top("place") });
       console.log(`  AI：${d} → ${items.length}枚（${r.theme}）`);
     } catch (e) {
       console.log("  ⚠ " + e.message);
