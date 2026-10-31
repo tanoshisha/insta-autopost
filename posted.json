@@ -948,5 +948,30 @@
     "postedAt": "2026-10-31T12:00:56.666Z",
     "day": "2026-10-31",
     "slot": "special"
+  },
+  {
+    "id": "2026-10-04_dd740045e53a",
+    "caption": "#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #鎌倉 #長谷寺",
+    "portrait": false,
+    "date": "2026-10-04",
+    "takenAt": "2026-10-04T05:05:35.550Z",
+    "event": null,
+    "locationName": "鎌倉",
+    "locationId": "1025861230",
+    "note": "長谷寺山門・松・赤提灯の選択カラーが印象的",
+    "lrId": "e34a62c04aab4cacb6d296faf27314ca",
+    "lrEdited": "2026-10-29T00:33:39Z",
+    "alt": "鎌倉・長谷寺の山門前に大きく枝を広げた老松が立ち、門には「長谷寺」と書かれた赤い提灯がかかっている。参拝者が門をくぐる姿も見える。",
+    "shot": "70mm／f4／1/80秒／ISO200",
+    "count": 1,
+    "threads": null,
+    "threadsError": "スレッズの鍵が使えません（Gist も THREADS_TOKEN もダメ）",
+    "mediaId": "18029682695874830",
+    "permalink": "https://www.instagram.com/p/DfKIMeRlibI/",
+    "mediaUrl": "https://scontent-iad6-1.cdninstagram.com/v/t51.82787-15/857105861_17951503368314997_5196578569333878009_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=N3pnIQ4NZlQQ7kNvwE0jchm&_nc_oc=AdqdlEm0zF9V29JkaI4FMH_xArnIQwxSFgtg32b9mh_ZbdmWA4V5OU2e80WA9k87sTU&_nc_zt=23&_nc_ht=scontent-iad6-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=tsx3jPXPEA8MLsvhQlGj9A&oh=00_AQSsB97z5v9G5Sep1uJsi2UKo5AUncDjM0VvRPwltiE7Kg&oe=6AEBB679",
+    "postedAt": "2026-10-31T12:12:12.319Z",
+    "day": "2026-10-31",
+    "slot": "21:11",
+    "lum": 106
   }
 ]
