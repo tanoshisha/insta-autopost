@@ -842,5 +842,80 @@
     "postedAt": "2026-10-31T11:01:02.874Z",
     "day": "2026-10-31",
     "slot": "special"
+  },
+  {
+    "id": "2026-10-04_39ae96ce079c",
+    "caption": "#写真好きな人と繋がりたい #東京カメラ部 #ファインダー越しの私の世界 #ポートレート #ストリートスナップ",
+    "portrait": true,
+    "date": "2026-10-04",
+    "takenAt": "2026-10-04T05:02:04.380Z",
+    "event": null,
+    "locationName": "鎌倉",
+    "locationId": "1025861230",
+    "note": "2枚の複数枚投稿",
+    "lrId": "f49345340503419fbaadbef6e027328a",
+    "lrEdited": "2026-10-29T00:37:07Z",
+    "alt": "ネイビーのベストと白いシャツを着た女性が、紫色の花の前でNikonのミラーレスカメラを両手で構えて撮影している。肩にはトートバッグをかけている。",
+    "userTags": [
+      {
+        "username": "ayakakacamera",
+        "x": 0.5,
+        "y": 0.5
+      }
+    ],
+    "parts": [
+      {
+        "id": "2026-10-04_39ae96ce079c",
+        "image": "queue/2026-10-04_39ae96ce079c.jpg",
+        "caption": "#写真好きな人と繋がりたい #東京カメラ部 #ファインダー越しの私の世界 #ポートレート #ストリートスナップ",
+        "portrait": true,
+        "date": "2026-10-04",
+        "takenAt": "2026-10-04T05:02:04.380Z",
+        "event": null,
+        "locationName": "鎌倉",
+        "locationId": "1025861230",
+        "note": "サルビアの前でファインダーを覗く表情、紫の花との色彩が美しい",
+        "thumb": "queue/thumbs/2026-10-04_39ae96ce079c.jpg",
+        "lrId": "f49345340503419fbaadbef6e027328a",
+        "lrEdited": "2026-10-29T00:37:07Z",
+        "alt": "ネイビーのベストと白いシャツを着た女性が、紫色の花の前でNikonのミラーレスカメラを両手で構えて撮影している。肩にはトートバッグをかけている。",
+        "userTags": [
+          {
+            "username": "ayakakacamera",
+            "x": 0.5,
+            "y": 0.5
+          }
+        ],
+        "shot": "97mm／f4／1/200秒／ISO100"
+      },
+      {
+        "id": "2026-10-04_cc417e2436af",
+        "image": "queue/2026-10-04_cc417e2436af.jpg",
+        "caption": "#東京カメラ部 #ファインダー越しの私の世界 #写真好きな人と繋がりたい #ストリートスナップ #カメラのある生活 #湘南 #海",
+        "portrait": false,
+        "date": "2026-10-04",
+        "takenAt": "2026-10-04T06:53:41.250Z",
+        "event": null,
+        "locationName": "鎌倉",
+        "locationId": "1025861230",
+        "note": "ローアングル・砂浜・波頭と江ノ島、t046と異なる視点",
+        "thumb": "queue/thumbs/2026-10-04_cc417e2436af.jpg",
+        "lrId": "37bc8b1bd2f8446cbbbcc8033977fe04",
+        "lrEdited": "2026-10-29T00:34:08Z",
+        "alt": "ネイビーのケーブルニットベストを着たポニーテールの女性が、夕暮れ時の海岸に立ち、コンパクトカメラを両手で持って海を撮影している後ろ姿。",
+        "shot": "106mm／f4／1/1000秒／ISO800"
+      }
+    ],
+    "shot": "97mm／f4／1/200秒／ISO100",
+    "count": 2,
+    "threads": null,
+    "threadsError": "スレッズの鍵が使えません（Gist も THREADS_TOKEN もダメ）",
+    "mediaId": "18127035325681334",
+    "permalink": "https://www.instagram.com/p/DfKAMY_DjFd/",
+    "mediaUrl": "https://scontent-iad6-1.cdninstagram.com/v/t51.82787-15/870803264_17951491968314997_6058859295446613176_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=DX8zH8-_uMkQ7kNvwGnKpO5&_nc_oc=Adp-MjK4ADTPb8JRvxOTi7PnGKWIOJMfwywa2qsunMNEBkFf8eZ07zDzBsLKQSnCCuo&_nc_zt=23&_nc_ht=scontent-iad6-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=bw7LOlGcZBxdmGFy3AEHcg&oh=00_AQTerxrdRNdtviiG4vQ1_ukzSpQbKZIg55Zbu4m1raP8Zw&oe=6AEBAD64",
+    "postedAt": "2026-10-31T11:02:22.526Z",
+    "day": "2026-10-31",
+    "slot": "20:00",
+    "lum": 79
   }
 ]
