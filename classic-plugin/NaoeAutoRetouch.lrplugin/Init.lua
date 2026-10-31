@@ -19,9 +19,7 @@ LrTasks.startAsyncTask(function()
       local okE, errE = LrTasks.pcall(Tpw.ensureCollections)
       if not okE then Common.log("TPWコレクション: " .. tostring(errE)) end
     end
-    -- リールの回ごとのコレクション（classic-reels.tsv の通りに）
-    local okR, errR = LrTasks.pcall(Reels.sync)
-    if not okR then Common.log("リールのコレクション: " .. tostring(errR)) end
+    -- リールの回ごとのコレクションは、クラウドの「リール」アルバムに切り替えたのでやめた（2026-11-01。エラーが毎回出ていた）
     local okT, errT = LrTasks.pcall(Tpw.sync, false)
     if not okT then Common.log("TPWブログ: " .. tostring(errT)) end
     -- スクールフォトは自動レタッチのオン・オフに関係なく、取り込んだら毎回（外部のAIは使わない）
