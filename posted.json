@@ -825,5 +825,22 @@
     "slot": "newpost-story",
     "image": "specials/auto/newpost-2026-10-04_0836db679ab0.jpg",
     "of": "2026-10-04_0836db679ab0"
+  },
+  {
+    "id": "story-2026-11-07-7",
+    "kind": "story",
+    "eventDate": "2026-11-07",
+    "title": "根津神社フォトウォーク（7日前）",
+    "postAt": "2026-10-31T20:00:00+09:00",
+    "caption": "",
+    "skipped": false,
+    "seat": "extra",
+    "threads": null,
+    "mediaId": "17980404629914416",
+    "permalink": "https://www.instagram.com/stories/hayato_naoe/4020026192924931090",
+    "mediaUrl": "https://scontent-iad3-1.cdninstagram.com/v/t51.82787-15/877871846_17951491827314997_5674672407593306269_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=110&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiU1RPUlkuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=tnxMe4PsnHgQ7kNvwE3OakP&_nc_oc=AdqIHxXhjEaw93w7i8r8PgKP8CIFUMQIbtnH3A_hr32rQizwmzgD7PuVHxTVoGxMNOw&_nc_zt=23&_nc_ht=scontent-iad3-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=-0H256iRxiJVMvOjKQ-n2A&oh=00_AQTmQq9_9RWYmLbtCIap0KDuyHyyt2iCAP_5Bvp-G29YsA&oe=6AEB9353",
+    "postedAt": "2026-10-31T11:01:02.874Z",
+    "day": "2026-10-31",
+    "slot": "special"
   }
 ]
