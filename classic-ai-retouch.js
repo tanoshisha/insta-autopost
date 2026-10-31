@@ -47,8 +47,40 @@ for (const c of ["Red", "Orange", "Yellow", "Green", "Aqua", "Blue", "Purple", "
   RANGE[`LuminanceAdjustment${c}`] = [-50, 50];
 }
 
-// 白飛び・黒つぶれ・明るさの分布を数字で測る（AIの目だけに頼らない）
+// レタッチの基準（分析結果）と、写真の数値（白飛び・黒つぶれ・彩度・シャープさ・顔の明るさなど。lib/photo-metrics.js）
+const { STANDARDS, genreOf, check } = require("./lib/retouch-standards");
+const { measure } = require("./lib/photo-metrics");
+const GENRE_FILE = path.join(dir, "..", "genre.json"); // plan で決めたジャンルを review でも使う
+const loadGenres = () => {
+  try {
+    return JSON.parse(fs.readFileSync(GENRE_FILE, "utf8"));
+  } catch {
+    return {};
+  }
+};
+// 載せた写真（トリミング・ジオメトリを変えない）：crop-lock.json の Lightroom の写真ID
+const LOCKED = new Set(
+  (() => {
+    try {
+      return JSON.parse(fs.readFileSync(path.join(__dirname, "crop-lock.json"), "utf8")).filter((r) => r.lr?.crop).map((r) => String(r.lr.id));
+    } catch {
+      return [];
+    }
+  })()
+);
+const GEOM_KEYS = /^(PerspectiveUpright|PerspectiveVertical|PerspectiveHorizontal|PerspectiveRotate|PerspectiveScale|PerspectiveAspect|PerspectiveX|PerspectiveY|CropAngle|CropConstrainToWarp|LensManualDistortionAmount)$/;
+// 数値を短い日本語に（AI に渡す）
+function statsText(m) {
+  const p = [];
+  p.push(`白飛び${m.clip}%`, `1ch飛び${m.clipAny}%`, `黒つぶれ${m.crush}%`, `平均Y${m.meanY}`, `黒点${m.p02}/白点${m.p98}`, `彩度${m.sat}`, `R−B${m.rb}`, `シャドウR−B${m.shRb}/ハイライトR−B${m.hiRb}`, `周辺−中央${m.ringMinusCenter}`);
+  if (m.lapVar != null) p.push(`シャープさ${m.lapVar}`);
+  if (m.nFaces) p.push(`顔${m.nFaces}（顔の肌L*${m.faceSkinL ?? m.faceL}・背景−顔${m.bgMinusFace}・体の肌−顔${m.bodyMinusFace ?? "-"}・顔以外で顔+10より明るい${m.brighterThanFace10}%・肌の色相${m.faceHue}°彩度${m.faceSat}・明るい1%L*${m.p99L}）`);
+  return p.join(" ");
+}
 async function stats(file) {
+  return measure(file);
+}
+async function statsOld(file) {
   const { data, info } = await sharp(file).resize({ width: 600, withoutEnlargement: true }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const n = info.width * info.height;
   const lum = new Uint32Array(256);
@@ -170,10 +202,15 @@ function shotInfo(file) {
   }
 }
 function lines(files, info) {
+  const genres = loadGenres();
   return files
     .map((f) => {
       const sh = shotInfo(f);
-      return `- ${f}  測定値: ${JSON.stringify(info[f].stats)}${sh ? `\n  撮影: ${sh}` : ""}${info[f].cur ? `\n  今の設定: ${info[f].cur}` : ""}`;
+      const m = info[f].stats || {};
+      const id = String(f).replace(/\.jpg$/i, "");
+      const g = genreOf(m, genres[id] || (info[f].portrait ? "portrait" : null));
+      const ng = mode === "review" ? check(m, g) : [];
+      return `- ${f}  数値: ${statsText(m)}${sh ? `\n  撮影: ${sh}` : ""}${LOCKED.has(id) ? "\n  ※載せた写真：トリミング・角度・ジオメトリは変えない（CropAngle/Perspective系は出さない）" : ""}${info[f].cur ? `\n  今の設定: ${info[f].cur}` : ""}${mode === "review" ? `\n  ジャンル: ${g}${ng.length ? `\n  基準から外れている所（必ず直す）:\n    ${ng.join("\n    ")}` : "\n  基準の数値はすべて範囲内"}` : ""}`;
     })
     .join("\n");
 }
@@ -183,25 +220,26 @@ function prompt(kind, files, info, portrait) {
   if (kind === "plan")
     return `${GOAL}
 
-${STYLE}
+${STANDARDS}
 
 カレントフォルダの次の写真を Read ツールで1枚ずつじっくり見てください（まだレタッチ前のRAWの見た目。露光量は撮影時のまま）:
 ${lines(files, info)}
 
 各写真について:
 1. portrait（人物が主役なら true。街並みの小さな人影・後ろ姿のスナップは false）
+   genre（night＝街・夜景／day＝昼の街スナップ・旅／landscape＝風景・自然／architecture＝建築・構造物／portrait）
 2. その写真に最適な現像設定を決める（Exposure2012 は「最終的な露光量」。今は0付近）
 
 ${KEYS}
 
 出力は次のJSONだけ（説明やコードブロック不要）:
-{"photos":[{"file":"123.jpg","portrait":false,"note":"何をどう狙ったか一言","settings":{"Exposure2012":0.6,"Contrast2012":20}}]}`;
+{"photos":[{"file":"123.jpg","portrait":false,"genre":"night","note":"何をどう狙ったか一言","settings":{"Exposure2012":0.6,"Contrast2012":20}}]}`;
   if (kind === "portrait")
     return `${GOAL}
 
 ${PORTRAIT}
 
-${STYLE}
+${STANDARDS}
 
 カレントフォルダの次のポートレートを Read ツールで1枚ずつ、プロの目でじっくり見てください（レタッチ前のRAWの見た目。露光量は撮影時のまま）:
 ${lines(files, info)}
@@ -217,7 +255,7 @@ ${KEYS}
 
 ${SNAP}
 
-${STYLE}
+${STANDARDS}
 
 カレントフォルダの次の写真（スナップ・風景・夜景）を Read ツールで1枚ずつ、プロの目でじっくり見てください（レタッチ前のRAWの見た目。露光量は撮影時のまま）:
 ${lines(files, info)}
@@ -270,9 +308,10 @@ function ask(kind, files, info, model, portrait) {
   });
 }
 
-function clean(settings) {
+function clean(settings, locked) {
   const out = [];
   for (const [k, v] of Object.entries(settings || {})) {
+    if (locked && GEOM_KEYS.test(k)) continue; // 載せた写真：トリミング・角度・ジオメトリは変えない
     const r = RANGE[k];
     const x = Number(v);
     if (!r || !isFinite(x)) continue;
@@ -312,6 +351,11 @@ async function runAll(kind, files, info, model, portrait, size) {
   if (mode === "plan") {
     // ① まず全部を見て、ポートレートかどうかとスナップの設定を決める
     for (const r of await runAll("plan", files, info, MODEL_SNAP, false, BATCH)) result.set(r.file, r);
+    try {
+      const g = loadGenres();
+      for (const r of result.values()) if (r.genre) g[String(r.file).replace(/.jpg$/i, "")] = r.portrait ? "portrait" : r.genre;
+      fs.writeFileSync(GENRE_FILE, JSON.stringify(g));
+    } catch {}
     // ② ポートレートは専門の基準で、いちばん賢いモデルが決め直す
     // ② ポートレートもスナップも、それぞれ専門の基準でいちばん賢いモデルが決め直す
     const ps = files.filter((f) => result.get(f)?.portrait);
@@ -332,8 +376,8 @@ async function runAll(kind, files, info, model, portrait, size) {
     // ポートレートは P のあとに「人物を明るくする強さ」（P1〜P3。0なら P だけ）。仕上げチェック（review）では付けない（プリセットは最初だけ当てる）
     const lift = p && mode === "plan" ? Math.max(0, Math.min(3, Math.round(Number(r.personLift) || 0))) : 0;
     const hb = p && mode === "plan" ? (r.hand ? "h" : "") + (r.bg ? "b" : "") : ""; // h：手・腕を抑える／b：背景を抑える
-    rows.push(`${id}\t${p ? "P" + (lift || "") + hb : "S"}\t${clean(r.settings)}`);
-    notes.push(`${mode} ${id} ${p ? `[P${lift ? " 人物+" + lift : ""}]` : ""} ${r.note || ""} | ${clean(r.settings)}`);
+    rows.push(`${id}\t${p ? "P" + (lift || "") + hb : "S"}\t${clean(r.settings, LOCKED.has(id))}`);
+    notes.push(`${mode} ${id} ${p ? `[P${lift ? " 人物+" + lift : ""}]` : ""} ${r.note || ""} | ${clean(r.settings, LOCKED.has(id))}`);
   }
   fs.writeFileSync(path.join(dir, "result.tsv"), rows.join("\n") + "\n");
   fs.appendFileSync(path.join(dir, "..", "retouch.log"), `${new Date().toISOString()} ${mode} ${files.length}枚\n${notes.join("\n")}\n`);

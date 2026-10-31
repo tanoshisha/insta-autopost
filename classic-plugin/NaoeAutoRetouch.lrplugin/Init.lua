@@ -31,6 +31,8 @@ LrTasks.startAsyncTask(function()
     if Common.autoOn() then
       ok, n = LrTasks.pcall(Common.run, nil, nil)
       if ok then ok, n = LrTasks.pcall(Common.runImported, nil) end
+      -- 過去の写真のレタッチし直し（一覧の順に少しずつ。一覧が空なら何もしない）
+      if ok and (type(n) ~= "number" or n == 0) then ok, n = LrTasks.pcall(Common.runList, 6, nil) end
     end
     if not ok then
       fails = fails + 1

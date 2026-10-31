@@ -253,7 +253,7 @@ function M.moveProcessed()
 end
 
 -- 本体。targets を省くと「インスタ投稿」の未レタッチ写真。progress は LrProgressScope（無くてもよい）
-function M.run(targets, progress)
+function M.run(targets, progress, locks)
   local catalog = LrApplication.activeCatalog()
   if not targets then
     local col = M.findCollection(catalog)
@@ -326,6 +326,8 @@ function M.run(targets, progress)
     log("仕上げ " .. i .. "回目: " .. changed .. "枚を修正")
     if changed == 0 then break end
   end
+  -- 載せた写真はトリミング・ジオメトリを記録どおりに戻す
+  if locks then M.applyLocks(catalog, done, locks) end
 
   local msg = #done .. "枚をAIレタッチしました（ポートレート " .. np .. "枚 / スナップ " .. (#done - np) .. "枚）"
   log(msg)
@@ -482,5 +484,88 @@ end
 
 M.AUTO_FLAG = M.WORK .. "\\auto.on"
 function M.autoOn() return LrFileUtils.exists(M.AUTO_FLAG) end
+
+-- ---- 過去の写真のレタッチし直し（一覧 classic-retouch-list.tsv の順に。PC の make-retouch-list.js が作る） ----
+--   列：uuid \t 優先 \t CropLeft \t CropTop \t CropRight \t CropBottom \t CropAngle \t ジオメトリ(k=v;k=v)
+--   載せた写真はトリミング・ジオメトリを変えない（AIの設定を当てた後に、記録どおりの値を当て直す）
+--   済んだ写真は classic-retouch-done.txt に uuid を書く（一覧を作り直しても繰り返さない）
+M.LIST = M.ROOT .. "\\classic-retouch-list.tsv"
+M.DONE = M.ROOT .. "\\classic-retouch-done.txt"
+local function loadDone()
+  local d = {}
+  local f = io.open(M.DONE, "r")
+  if f then
+    for line in f:lines() do if line ~= "" then d[line] = true end end
+    f:close()
+  end
+  return d
+end
+local function addDone(uuids)
+  local f = io.open(M.DONE, "a")
+  if not f then return end
+  for _, u in ipairs(uuids) do f:write(u, "\n") end
+  f:close()
+end
+function M.readList(limit)
+  local done = loadDone()
+  local f = io.open(M.LIST, "r")
+  if not f then return {}, {} end
+  local catalog = LrApplication.activeCatalog()
+  local photos, locks, missing = {}, {}, {}
+  for line in f:lines() do
+    local c = {}
+    for v in (line .. "\t"):gmatch("([^\t]*)\t") do c[#c + 1] = v end
+    local u = c[1]
+    if u and u ~= "" and not done[u] then
+      local p = catalog:findPhotoByUuid(u)
+      if p then
+        photos[#photos + 1] = p
+        local lk = {}
+        if c[3] and c[3] ~= "" then
+          lk.CropLeft = tonumber(c[3]); lk.CropTop = tonumber(c[4]); lk.CropRight = tonumber(c[5]); lk.CropBottom = tonumber(c[6])
+          lk.CropAngle = tonumber(c[7]) or 0
+          lk.HasCrop = true
+        end
+        if c[8] and c[8] ~= "" then
+          for k, v in c[8]:gmatch("([%w_]+)=([^;]*)") do lk[k] = tonumber(v) or v end
+        end
+        if next(lk) then locks[tostring(p.localIdentifier)] = lk end
+        if #photos >= limit then break end
+      else
+        missing[#missing + 1] = u -- カタログに無い写真は済みにする
+      end
+    end
+  end
+  f:close()
+  if #missing > 0 then addDone(missing) end
+  return photos, locks
+end
+-- トリミング・ジオメトリを記録どおりに戻す（当てた後に読み返して、ずれていればログに残す）
+function M.applyLocks(catalog, photos, locks)
+  if not locks or not next(locks) then return end
+  catalog:withWriteAccessDo("NAOE トリミングを戻す", function()
+    for _, p in ipairs(photos) do
+      local lk = locks[tostring(p.localIdentifier)]
+      if lk then p:applyDevelopSettings(lk) end
+    end
+  end, { timeout = 120 })
+  for _, p in ipairs(photos) do
+    local lk = locks[tostring(p.localIdentifier)]
+    if lk and lk.CropLeft then
+      local s = p:getDevelopSettings()
+      local d = math.abs((tonumber(s.CropLeft) or 0) - lk.CropLeft) + math.abs((tonumber(s.CropTop) or 0) - lk.CropTop) + math.abs((tonumber(s.CropAngle) or 0) - (lk.CropAngle or 0))
+      if d > 0.002 then log("⚠ トリミングが戻っていない " .. tostring(p.localIdentifier) .. " 差 " .. tostring(d)) end
+    end
+  end
+end
+function M.runList(limit, progress)
+  local photos, locks = M.readList(limit or 8)
+  if #photos == 0 then return 0, "レタッチし直す写真はありません（一覧が空か、全部済み）" end
+  local n, msg = M.run(photos, progress, locks)
+  local uu = {}
+  for _, p in ipairs(photos) do uu[#uu + 1] = p:getRawMetadata("uuid") end
+  addDone(uu)
+  return n, msg
+end
 
 return M
