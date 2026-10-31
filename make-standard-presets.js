@@ -43,3 +43,24 @@ for (const [name, v] of Object.entries(P)) {
 // マスク入りのポートレート用プリセットもクラウド用フォルダへ
 for (const f of fs.readdirSync(DIR)) if (/^NAOE (ポートレート|スナップ)/.test(f)) fs.copyFileSync(path.join(DIR, f), path.join(CLOUD, f));
 console.log(`基準プリセット ${n}個を作成（Classic：${DIR}／iPhone用：${CLOUD}）`);
+
+// 元の「NAOE スナップ」「NAOE ポートレート」（プラグインが土台に使う）と、マスク入りの「NAOE ポートレート 人物+…」も、新しい基準の値に揃える（2026-11-01。前は本人の昔の平均）
+const setVals = (s, v) => {
+  for (const [k, val] of Object.entries(v)) {
+    const str = DEC.has(k) ? String(val) : sign(Math.round(val));
+    const re = new RegExp(`crs:${k}="[^"]*"`);
+    if (re.test(s)) s = s.replace(re, `crs:${k}="${str}"`);
+    else s = s.replace(/(crs:Version="[^"]*")/, `$1\n   crs:${k}="${str}"`);
+  }
+  return s;
+};
+let m = 0;
+for (const f of fs.readdirSync(DIR)) {
+  const v = f === "NAOE スナップ.xmp" ? P["NAOE 基準 昼の街"] : /^NAOE ポートレート( |\.xmp)/.test(f) ? P["NAOE 基準 ポートレート 昼"] : null;
+  if (!v) continue;
+  const s = setVals(fs.readFileSync(path.join(DIR, f), "utf8").split("\r\n").join("\n"), v);
+  fs.writeFileSync(path.join(DIR, f), s);
+  fs.writeFileSync(path.join(CLOUD, f), s);
+  m++;
+}
+console.log(`元のプリセット・マスク入りポートレート ${m}個を新しい基準の値に`);
