@@ -285,7 +285,20 @@ ${KEYS}
 const MODEL_PRO = cfg.retouchModel || cfg.aiModel || "claude-fable-5-1"; // 仕上げはポートレートもスナップもいちばん賢いモデル
 const MODEL_SNAP = cfg.retouchModelSnap || cfg.aiModel || "claude-fable-5-1"; // 最初の振り分けだけ速いモデル
 
-function ask(kind, files, info, model, portrait) {
+// Fable の利用上限に当たったら、上限が戻るまで代わりのモデル（config.fallbackModel・既定 Opus 5.5）で続ける
+const FALLBACK = cfg.fallbackModel || "claude-opus-5-5";
+async function ask(kind, files, info, model, portrait) {
+  try {
+    return await ask1(kind, files, info, model, portrait);
+  } catch (e) {
+    if (model !== FALLBACK && /limit|上限|rate/i.test(String(e.message))) {
+      fs.appendFileSync(path.join(dir, "..", "retouch.log"), `${new Date().toISOString()} ${model} が上限のため ${FALLBACK} で代わりに\n`);
+      return ask1(kind, files, info, FALLBACK, portrait);
+    }
+    throw e;
+  }
+}
+function ask1(kind, files, info, model, portrait) {
   return new Promise((resolve, reject) => {
     const p = spawn(fs.existsSync(CLAUDE) ? CLAUDE : "claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", model], { cwd: dir });
     let out = "";
@@ -297,7 +310,11 @@ function ask(kind, files, info, model, portrait) {
     p.on("close", (code) => {
       clearTimeout(timer);
       try {
-        if (code !== 0) throw new Error("AIレタッチに失敗: " + (err || out).slice(0, 300));
+        let res0 = "";
+        try {
+          res0 = String(JSON.parse(out).result || "");
+        } catch {}
+        if (code !== 0 || /reached your .* limit/i.test(res0)) throw new Error("AIレタッチに失敗: " + (res0 || err || out).slice(0, 300));
         const m = (JSON.parse(out).result || "").match(/\{[\s\S]*\}/);
         resolve(JSON.parse(m[0]).photos || []);
       } catch (e) {
