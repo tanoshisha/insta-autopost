@@ -482,6 +482,34 @@ function M.runSchool(progress)
   return #targets, msg
 end
 
+-- 同期が止まった写真をやり直す（classic-resync.txt の写真を、入っているコレクションから外して入れ直す）。済んだらファイル名を .done に
+function M.resync()
+  local path = M.ROOT .. "\\classic-resync.txt"
+  local f = io.open(path, "r")
+  if not f then return 0 end
+  local catalog = LrApplication.activeCatalog()
+  local items = {}
+  for line in f:lines() do
+    local u = line:match("^(%S+)")
+    if u then
+      local p = catalog:findPhotoByUuid(u)
+      if p then items[#items + 1] = { photo = p, cols = p:getContainedCollections() } end
+    end
+  end
+  f:close()
+  os.rename(path, path .. ".done")
+  if #items == 0 then return 0 end
+  catalog:withWriteAccessDo("同期のやり直し（外す）", function()
+    for _, it in ipairs(items) do for _, c in ipairs(it.cols) do c:removePhotos({ it.photo }) end end
+  end, { timeout = 60 })
+  LrTasks.sleep(30)
+  catalog:withWriteAccessDo("同期のやり直し（入れ直す）", function()
+    for _, it in ipairs(items) do for _, c in ipairs(it.cols) do c:addPhotos({ it.photo }) end end
+  end, { timeout = 60 })
+  log("同期のやり直し（自動）: " .. #items .. "枚")
+  return #items
+end
+
 M.AUTO_FLAG = M.WORK .. "\\auto.on"
 function M.autoOn() return LrFileUtils.exists(M.AUTO_FLAG) end
 
