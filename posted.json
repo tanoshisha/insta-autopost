@@ -984,5 +984,22 @@
     "slot": "newpost-story",
     "image": "specials/auto/newpost-2026-10-04_dd740045e53a.jpg",
     "of": "2026-10-04_dd740045e53a"
+  },
+  {
+    "id": "story-2026-11-14-14",
+    "kind": "story",
+    "eventDate": "2026-11-14",
+    "title": "神楽坂フォトウォーク（14日前）",
+    "postAt": "2026-10-31T21:30:00+09:00",
+    "caption": "",
+    "skipped": false,
+    "seat": "left9",
+    "threads": null,
+    "mediaId": "18639402514004920",
+    "permalink": "https://www.instagram.com/stories/hayato_naoe/4020071210290000873",
+    "mediaUrl": "https://scontent-iad3-1.cdninstagram.com/v/t51.82787-15/881397132_17951505771314997_2848346954040411064_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=104&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiU1RPUlkuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=lCPNGkYb8PMQ7kNvwGpI4mn&_nc_oc=AdrjJSS6ZivkR31iImjAK0blpyjZCXI-Xhd4j-qJYJPdqXDhuvjxuDPHI9kzcggLSe8&_nc_zt=23&_nc_ht=scontent-iad3-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=6ljU_dt6UNT0ZAMmoZy38w&oh=00_AQQdgP9ME66ysxqkBGRobigLW5-pNhjtINbkwBqrVLAVhA&oe=6AEBC3B7",
+    "postedAt": "2026-10-31T12:30:29.606Z",
+    "day": "2026-10-31",
+    "slot": "special"
   }
 ]
