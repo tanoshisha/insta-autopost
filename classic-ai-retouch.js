@@ -329,7 +329,14 @@ async function runAll(kind, files, info, model, portrait, size) {
   for (let i = 0; i < files.length; i += size) batches.push(files.slice(i, i + size));
   const all = [];
   for (let i = 0; i < batches.length; i += 3) {
-    const res = await Promise.all(batches.slice(i, i + 3).map((b) => ask(kind, b, info, model, portrait).catch(() => [])));
+    const res = await Promise.all(
+      batches.slice(i, i + 3).map((b) =>
+        ask(kind, b, info, model, portrait).catch((e) => {
+          fs.appendFileSync(path.join(dir, "..", "retouch.log"), `${new Date().toISOString()} ${kind} 失敗（${b.length}枚）: ${String(e.message).slice(0, 300)}\n`);
+          return [];
+        })
+      )
+    );
     for (const r of res) all.push(...r);
   }
   return all;
