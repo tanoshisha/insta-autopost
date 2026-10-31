@@ -512,6 +512,7 @@ function M.readList(limit)
   if not f then return {}, {} end
   local catalog = LrApplication.activeCatalog()
   local photos, locks, missing = {}, {}, {}
+  local toCloud = {}
   for line in f:lines() do
     local c = {}
     for v in (line .. "\t"):gmatch("([^\t]*)\t") do c[#c + 1] = v end
@@ -530,6 +531,7 @@ function M.readList(limit)
           for k, v in c[8]:gmatch("([%w_]+)=([^;]*)") do lk[k] = tonumber(v) or v end
         end
         if next(lk) then locks[tostring(p.localIdentifier)] = lk end
+        if c[9] == "1" then toCloud[#toCloud + 1] = p end
         if #photos >= limit then break end
       else
         missing[#missing + 1] = u -- カタログに無い写真は済みにする
@@ -538,7 +540,7 @@ function M.readList(limit)
   end
   f:close()
   if #missing > 0 then addDone(missing) end
-  return photos, locks
+  return photos, locks, toCloud
 end
 -- トリミング・ジオメトリを記録どおりに戻す（当てた後に読み返して、ずれていればログに残す）
 function M.applyLocks(catalog, photos, locks)
@@ -559,9 +561,19 @@ function M.applyLocks(catalog, photos, locks)
   end
 end
 function M.runList(limit, progress)
-  local photos, locks = M.readList(limit or 8)
+  local photos, locks, toCloud = M.readList(limit or 8)
   if #photos == 0 then return 0, "レタッチし直す写真はありません（一覧が空か、全部済み）" end
   local n, msg = M.run(photos, progress, locks)
+  -- 点数がとても高い写真は「インスタ投稿」コレクションへ（同期でクラウドの「インスタ投稿」に入り、投稿の候補になる）
+  if toCloud and #toCloud > 0 then
+    local catalog = LrApplication.activeCatalog()
+    local col = M.findCollection(catalog)
+    if col then
+      catalog:withWriteAccessDo("NAOE インスタ投稿に追加", function() col:addPhotos(toCloud) end, { timeout = 60 })
+      log("インスタ投稿に追加: " .. #toCloud .. "枚")
+      msg = msg .. "（うち " .. #toCloud .. "枚をインスタ投稿に追加）"
+    end
+  end
   local uu = {}
   for _, p in ipairs(photos) do uu[#uu + 1] = p:getRawMetadata("uuid") end
   addDone(uu)

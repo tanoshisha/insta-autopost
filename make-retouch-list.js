@@ -14,13 +14,15 @@ const lock = fs.existsSync(path.join(ROOT, "crop-lock.json")) ? JSON.parse(fs.re
 const done = new Set(fs.existsSync(path.join(ROOT, "classic-retouch-done.txt")) ? fs.readFileSync(path.join(ROOT, "classic-retouch-done.txt"), "utf8").split(/\r?\n/).filter(Boolean) : []);
 
 const rows = new Map(); // id_local → row
-const add = (id, pri, crop, geom) => {
+const posted = new Set(lock.filter((r) => r.lr?.id).map((r) => String(r.lr.id)));
+const add = (id, pri, crop, geom, toCloud) => {
   if (rows.has(id)) return;
   const u = uuidOf.get(Number(id))?.u;
   if (!u || done.has(u)) return;
   const c = crop ? [crop.left, crop.top, crop.right, crop.bottom, crop.angle].map((v) => (v == null ? "" : v)) : ["", "", "", "", ""];
   const g = geom ? Object.entries(geom).filter(([k]) => /^(PerspectiveUpright|PerspectiveVertical|PerspectiveHorizontal|PerspectiveRotate|PerspectiveScale|PerspectiveAspect|PerspectiveX|PerspectiveY|UprightTransform_\d|UprightVersion|UprightCenterMode|UprightCenterNormX|UprightCenterNormY|UprightFocalMode|UprightFocalLength35mm|UprightFourSegmentsCount|UprightPreview|UprightTransformCount|UprightDependent|LensProfileEnable|LensManualDistortionAmount|AutoLateralCA)$/.test(k)).map(([k, v]) => `${k}=${v}`).join(";") : "";
-  rows.set(id, [u, pri, ...c, g].join("\t"));
+  // 9列目：レタッチ後に Classic の「インスタ投稿」コレクションへ入れる（＝クラウドの「インスタ投稿」に投稿の候補として入る）。載せたことのある写真は入れない
+  rows.set(id, [u, pri, ...c, g, toCloud && !posted.has(String(id)) ? "1" : ""].join("\t"));
 };
 // ⓪ 投稿予定（queue）の写真：新しい基準で先にレタッチして、クラウド経由で予約の画像に反映する（本人の指示 2026-11-01）
 try {
@@ -39,7 +41,7 @@ try {
 try {
   const old = fs.existsSync(path.join(ROOT, ".work", "lrpick", "judged.sonnet.json")) ? Object.values(JSON.parse(fs.readFileSync(path.join(ROOT, ".work", "lrpick", "judged.sonnet.json"), "utf8"))) : [];
   const top = [...judged, ...old].filter((j) => j.score >= 9).sort((a, b) => b.score - a.score);
-  for (const x of top) add(x.id, 1, null, null);
+  for (const x of top) add(x.id, 1, null, null, true);
   console.log(`9点以上 ${new Set(top.map((x) => x.id)).size}枚を次に`);
 } catch {}
 // ① 載せた写真（トリミング固定）。人が写っていてもレタッチし直す（トリミングは変えない）
