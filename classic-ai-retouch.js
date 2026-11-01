@@ -287,13 +287,18 @@ const MODEL_SNAP = cfg.retouchModelSnap || cfg.aiModel || "claude-fable-5-1"; //
 
 // Fable の利用上限に当たったら、上限が戻るまで代わりのモデル（config.fallbackModel・既定 Opus 5.5）で続ける
 const FALLBACK = cfg.fallbackModel || "claude-opus-5-5";
-async function ask(kind, files, info, model, portrait) {
+async function ask(kind, files, info, model, portrait, retried = false) {
   try {
     return await ask1(kind, files, info, model, portrait);
   } catch (e) {
     if (model !== FALLBACK && /limit|上限|rate/i.test(String(e.message))) {
       fs.appendFileSync(path.join(dir, "..", "retouch.log"), `${new Date().toISOString()} ${model} が上限のため ${FALLBACK} で代わりに\n`);
-      return ask1(kind, files, info, FALLBACK, portrait);
+      return ask(kind, files, info, FALLBACK, portrait, retried);
+    }
+    // AIの返事の形が崩れていた時（JSONの読み取り失敗）は、1回だけ聞き直す
+    if ((e instanceof SyntaxError || e instanceof TypeError) && !retried) {
+      fs.appendFileSync(path.join(dir, "..", "retouch.log"), `${new Date().toISOString()} ${kind} 返事の形が崩れていたので聞き直す\n`);
+      return ask(kind, files, info, model, portrait, true);
     }
     throw e;
   }
