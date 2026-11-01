@@ -107,19 +107,20 @@ function writeClassicReels(specials) {
               name: `${x.id}_${path.basename(p)}`,
               oldNames: [`${kitName}_${String(i + 1).padStart(2, "0")}.jpg`],
               assetId: cloud[p] || null,
+              lrId: String(items[i].source || "").replace(/^lr:/, "") || null,
               captureDate: x.sourceDate ? `${x.sourceDate}T19:00:${String(i).padStart(2, "0")}` : undefined,
             }));
             // 予備の写真も（入れ替える時用。名前の最後が「予備」）
             for (const [j, e] of kit.extras.entries()) {
               const it = bySrc.get(e.src);
-              its.push({ file: e.src, name: `${x.id}_予備${j + 1}_${path.basename(it.rel)}`, assetId: cloud[it.rel] || null, captureDate: x.sourceDate ? `${x.sourceDate}T20:00:${String(j).padStart(2, "0")}` : undefined });
+              its.push({ file: e.src, name: `${x.id}_予備${j + 1}_${path.basename(it.rel)}`, assetId: cloud[it.rel] || null, lrId: String(it.source || "").replace(/^lr:/, "") || null, captureDate: x.sourceDate ? `${x.sourceDate}T20:00:${String(j).padStart(2, "0")}` : undefined });
             }
             // 選ばれなかった候補も全部（このPCの .work/lrpick にある写真。名前に「候補」）
             const inKit = new Set([...items, ...kit.extras.map((e) => bySrc.get(e.src))].map((it) => it.source).filter(Boolean));
             for (const id of x.candIds || []) {
               const file = path.join(ROOT, ".work", "lrpick", `${id}.jpg`);
               if (inKit.has(`lr:${id}`) || !fs.existsSync(file)) continue;
-              its.push({ file, name: `${x.id}_候補_${id}.jpg`, captureDate: x.sourceDate ? `${x.sourceDate}T21:00:00` : undefined });
+              its.push({ file, name: `${x.id}_候補_${id}.jpg`, lrId: id, captureDate: x.sourceDate ? `${x.sourceDate}T21:00:00` : undefined });
             }
             const albumName = kitName.replace("_", " ");
             const c = await require("./lib/lr-cloud").putIntoAlbum(cfgL.configPath, "リール", its);

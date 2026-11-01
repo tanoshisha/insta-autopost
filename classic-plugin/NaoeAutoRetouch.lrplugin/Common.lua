@@ -510,6 +510,59 @@ function M.resync()
   return #items
 end
 
+-- AIの点数を星にする（クラウド版でも見えるように。本人「星でいいよ」2026-11-01）
+--   9点=★5 / 8点=★4 / 7点=★3 / 6点=★2 / 5点=★1 / 4点以下=星なし
+--   本人が付けた星は上書きしない：星が無い写真と、前にこの仕組みで星を付けた写真（classic-stars-set.txt）だけ変える
+--   PC の make-score-captions.js で classic-scores.tsv を作り直してから読む
+M.STARS_SET = M.ROOT .. "\\classic-stars-set.txt"
+local function starOf(s)
+  s = math.floor(tonumber(s) + 0.5)
+  if s >= 9 then return 5 elseif s <= 4 then return nil end
+  return s - 4
+end
+function M.applyScores()
+  LrTasks.execute('""' .. M.NODE .. '" "' .. M.ROOT .. '\\make-score-captions.js""')
+  local f = io.open(M.ROOT .. "\\classic-scores.tsv", "r")
+  if not f then return 0 end
+  local mine = {}
+  local g = io.open(M.STARS_SET, "r")
+  if g then
+    for line in g:lines() do if line ~= "" then mine[line] = true end end
+    g:close()
+  end
+  local catalog = LrApplication.activeCatalog()
+  local todo = {}
+  for line in f:lines() do
+    local u, s = line:match("^(%S+)\t(%S+)")
+    if u then
+      local p = catalog:findPhotoByUuid(u)
+      if p then
+        local cur = p:getRawMetadata("rating")
+        if cur == 0 then cur = nil end
+        local want = starOf(s)
+        if (cur == nil or mine[u]) and cur ~= want and not (cur == nil and want == nil) then todo[#todo + 1] = { p, want, u } end
+      end
+    end
+  end
+  f:close()
+  local added = {}
+  for i = 1, #todo, 300 do
+    catalog:withWriteAccessDo("NAOE 点数を星に", function()
+      for k = i, math.min(i + 299, #todo) do
+        todo[k][1]:setRawMetadata("rating", todo[k][2])
+        if not mine[todo[k][3]] then mine[todo[k][3]] = true; added[#added + 1] = todo[k][3] end
+      end
+    end, { timeout = 120 })
+    LrTasks.yield()
+  end
+  if #added > 0 then
+    local h = io.open(M.STARS_SET, "a")
+    if h then for _, u in ipairs(added) do h:write(u, "\n") end h:close() end
+  end
+  if #todo > 0 then log("点数を星に: " .. #todo .. "枚") end
+  return #todo
+end
+
 M.AUTO_FLAG = M.WORK .. "\\auto.on"
 function M.autoOn() return LrFileUtils.exists(M.AUTO_FLAG) end
 

@@ -491,7 +491,7 @@ async function main() {
   try {
     const out = targets.filter((it) => it.ai.use === false && !absorbed.has(it.id) && !/^[0-9a-f]{32}$/.test(String(it.lrId)) && it.file && fs.existsSync(it.file));
     if (out.length && cfg.lightroom?.configPath) {
-      const its = out.map((it) => ({ file: it.file, name: `投稿候補_${it.id}.jpg`, captureDate: it.takenAt ? new Date(it.takenAt).toISOString().slice(0, 19) : undefined }));
+      const its = out.map((it) => ({ file: it.file, name: `投稿候補_${it.id}.jpg`, lrId: it.lrId, captureDate: it.takenAt ? new Date(it.takenAt).toISOString().slice(0, 19) : undefined }));
       const c = await require("./lib/lr-cloud").putIntoAlbum(cfg.lightroom.configPath, cfg.postCandAlbum || "インスタ投稿", its);
       for (const id of c.assets) if (!state.lrDone.includes(id)) state.lrDone.push(id);
       console.log(`  落選した写真をクラウド版 Lightroom「${cfg.postCandAlbum || "インスタ投稿"}」へ：${c.assets.length}枚（新しくアップロード${c.uploaded}枚）`);

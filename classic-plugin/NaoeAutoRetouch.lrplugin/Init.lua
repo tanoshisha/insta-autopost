@@ -21,6 +21,9 @@ LrTasks.startAsyncTask(function()
     if loops % 36 == 0 then -- コレクションの用意は6時間に1回で十分
       local okE, errE = LrTasks.pcall(Tpw.ensureCollections)
       if not okE then Common.log("TPWコレクション: " .. tostring(errE)) end
+      -- AIの点数を星に（採点が進んだ分も6時間ごとに反映）
+      local okC, errC = LrTasks.pcall(Common.applyScores)
+      if not okC then Common.log("点数を星に: " .. tostring(errC)) end
     end
     -- リールの回ごとのコレクションは、クラウドの「リール」アルバムに切り替えたのでやめた（2026-11-01。エラーが毎回出ていた）
     local okT, errT = LrTasks.pcall(Tpw.sync, false)
