@@ -1,4 +1,5 @@
-// enrich.js — 予約中の写真に、AIの一言・写真に合わせたハッシュタグ・説明文（alt）を付ける（まだ付いていない分だけ）
+// enrich.js — 予約中の写真に、タイトル（題名）・写真に合わせたハッシュタグ・説明文（alt）を付ける（タイトルがまだの分だけ）
+//   文章（感想など）はAIでは書かない（本人がアプリで書く）
 //   node enrich.js [--dry]
 //   ・キャプションを自分で書き換えた写真（いつものタグで終わっていないもの）は触らない
 const fs = require("fs");
@@ -24,7 +25,7 @@ ${files.map((f) => "- " + f).join("\n")}
 ${CAPTION_RULES}
 
 出力は次のJSONだけ（説明不要）:
-{"photos":[{"file":"p001.jpg","line":"…","tags":["#…"],"alt":"…"}]}`;
+{"photos":[{"file":"p001.jpg","title":"…","tags":["#…"],"alt":"…"}]}`;
   return new Promise((resolve, reject) => {
     const p = spawn(fs.existsSync(CLAUDE) ? CLAUDE : "claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.aiModel || "sonnet"], { cwd: WORK });
     let out = "";
@@ -33,7 +34,9 @@ ${CAPTION_RULES}
     p.on("close", (code) => {
       try {
         if (code !== 0) throw new Error("AIに失敗");
-        resolve(JSON.parse((JSON.parse(out).result || "").match(/\{[\s\S]*\}/)[0]).photos || []);
+        const j = JSON.parse(out);
+        if (j.is_error || /limit/i.test(j.result || "") && !/{/.test(j.result || "")) throw new Error("AIが使えません: " + String(j.result).slice(0, 120));
+        resolve(JSON.parse((j.result || "").match(/\{[\s\S]*\}/)[0]).photos || []);
       } catch (e) {
         reject(e);
       }
@@ -42,12 +45,18 @@ ${CAPTION_RULES}
   });
 }
 
-// いつものタグで終わるキャプションに、一言と追加のタグを差し込む
-function withLine(caption, line, tags) {
+// キャプションが「冒頭（フォトウォーク）＋いつものタグ（＋写真のタグ）」だけなら、タイトルを差し込む。
+//   自分で文章を書いた・タグを書き換えた写真は null（触らない）
+function withTitle(caption, title, tags) {
   for (const base of [cfg.hashtags.portrait, cfg.hashtags.default]) {
-    const i = caption.lastIndexOf(base);
-    if (i === -1 || caption.slice(i + base.length).trim()) continue;
-    return buildCaption({ head: caption.slice(0, i).trim(), line, base, extra: tags });
+    const i = caption.indexOf(base);
+    if (i === -1) continue;
+    const rest = caption.slice(i + base.length).trim();
+    if (rest && !/^(#\S+\s*)+$/.test(rest)) continue;
+    const head = caption.slice(0, i).trim();
+    if (head && !/^東京フォトウォークサークル/.test(head)) return null; // 文章あり
+    const have = rest ? rest.split(/s+/) : [];
+    return buildCaption({ head, title, base, extra: have.length ? have : tags });
   }
   return null;
 }
@@ -55,8 +64,8 @@ function withLine(caption, line, tags) {
 (async () => {
   git(["fetch", "-q", "origin", "main"]);
   const queue = JSON.parse(git(["show", "origin/main:queue.json"]));
-  const todo = queue.filter((x) => !x.line && x.thumb);
-  console.log(`一言を付ける写真: ${todo.length}枚`);
+  const todo = queue.filter((x) => !x.title && x.thumb && withTitle(x.caption || "", "仮の題名", []));
+  console.log(`タイトルを付ける写真: ${todo.length}枚`);
   if (!todo.length) return;
   fs.rmSync(WORK, { recursive: true, force: true });
   fs.mkdirSync(WORK, { recursive: true });
@@ -71,20 +80,21 @@ function withLine(caption, line, tags) {
   for (let i = 0; i < files.length; i += 20) batches.push(files.slice(i, i + 20));
   const res = {};
   for (let i = 0; i < batches.length; i += 3) {
-    const r = await Promise.all(batches.slice(i, i + 3).map((b) => ask(b).catch(() => [])));
+    const r = await Promise.all(batches.slice(i, i + 3).map((b) => ask(b).catch((e) => (console.error("  " + e.message), []))));
     for (const list of r) for (const p of list) if (nameOf.has(p.file)) res[nameOf.get(p.file)] = p;
     console.log(`  …${Math.min(i + 3, batches.length)}/${batches.length}`);
   }
-  for (const [id, p] of Object.entries(res).slice(0, 5)) console.log(`  ${id}: ${p.line}  ${(p.tags || []).join(" ")}`);
+  for (const [id, p] of Object.entries(res).slice(0, 5)) console.log(`  ${id}: ${p.title}  ${(p.tags || []).join(" ")}`);
   if (DRY) return console.log("[お試し] 保存していません");
   let n = 0;
-  makeSync(ROOT)(`予約中の写真に一言・タグ・説明文を追加`, [], (remote) => {
+  makeSync(ROOT)(`予約中の写真にタイトルを追加`, [], (remote) => {
     const q = remote("queue.json", []).map((x) => {
       const p = res[x.id];
-      if (!p || x.line) return x;
-      const cap = withLine(x.caption || "", p.line, p.tags);
+      if (!p || x.title || !p.title) return x;
+      const cap = withTitle(x.caption || "", p.title, p.tags);
+      if (!cap) return x; // その間にアプリで書き換えられた
       n++;
-      return { ...x, line: p.line || "", alt: p.alt || x.alt || "", ...(cap ? { caption: cap } : {}) };
+      return { ...x, title: p.title, alt: x.alt || p.alt || "", caption: cap };
     });
     return { "queue.json": q };
   });

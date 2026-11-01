@@ -144,7 +144,7 @@ use=true の写真だけ、投稿用に次も書く:
 ${CAPTION_RULES}
 
 出力は次のJSONだけ（説明文やコードブロック不要）:
-{"photos":[{"file":"t001.jpg","score":8,"perfect":90,"tone":"dark","use":true,"extra":false,"portrait":false,"crop":{"cx":0.5,"cy":0.5,"zoom":1},"remove":[],"hdr":false,"note":"…","tags":["#鎌倉"],"alt":"…"}]}`;
+{"photos":[{"file":"t001.jpg","score":8,"perfect":90,"tone":"dark","use":true,"extra":false,"portrait":false,"crop":{"cx":0.5,"cy":0.5,"zoom":1},"remove":[],"hdr":false,"note":"…","title":"…","tags":["#鎌倉"],"alt":"…"}]}`;
   return new Promise((resolve, reject) => {
     const p = spawn("claude", ["-p", "--allowedTools", "Read", "--output-format", "json", "--model", cfg.selectModel || cfg.aiModel || "claude-fable-5-1"], { cwd: WORK }); // 選定はいちばん賢いモデル（100点満点の写真だけ）
     let out = "";
@@ -171,7 +171,8 @@ ${CAPTION_RULES}
 function caption(it, portrait) {
   const base = portrait ? cfg.hashtags.portrait : cfg.hashtags.default;
   const head = it.event ? cfg.tpwHeader.replace("{vol}", it.event.vol).replace("{title}", it.event.title) : "";
-  return buildCaption({ head, base, extra: it.ai?.tags }); // 文章はAIでは書かない（アプリで自分で書く）
+  const title = cfg.captionTitle === false ? "" : it.ai?.title; // 題名だけAIが付ける（文章は書かない・アプリで自分で書く）
+  return buildCaption({ head, title, base, extra: it.ai?.tags });
 }
 
 // iPhoneアプリでもフォトウォークの回を判定できるよう、開催回の一覧を書き出す（公開情報のみ）
@@ -452,6 +453,7 @@ async function main() {
       hdr: it.ai.hdr || undefined,
       tone: it.ai.tone || null,
       alt: it.ai.alt || "",
+      title: it.ai.title || "",
     });
   }
   // 複数枚投稿：8点の写真を1枚目に、同じ日・近い時間（2時間以内）の6〜7点の写真を2枚目以降に添える（最大4枚）

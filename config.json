@@ -27,5 +27,6 @@
   "reelSource": "lr",
   "reelVideo": false,
   "minPerfect": 95,
-  "selectModel": "claude-fable-5-1"
+  "selectModel": "claude-fable-5-1",
+  "captionTitle": true
 }
