@@ -602,9 +602,12 @@ function M.runList(limit, progress)
       msg = msg .. "（うち " .. #toCloud .. "枚をインスタ投稿に追加）"
     end
   end
-  local uu = {}
-  for _, p in ipairs(photos) do uu[#uu + 1] = p:getRawMetadata("uuid") end
-  addDone(uu)
+  -- AIが失敗して1枚もレタッチできなかった時（利用上限など）は「済み」にしない（次の回でやり直す）
+  if type(n) == "number" and n > 0 then
+    local uu = {}
+    for _, p in ipairs(photos) do uu[#uu + 1] = p:getRawMetadata("uuid") end
+    addDone(uu)
+  end
   return n, msg
 end
 
