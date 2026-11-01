@@ -563,6 +563,36 @@ function M.applyScores()
   return #todo
 end
 
+-- 一度だけ：クラウドで作り直した「インスタ投稿」（Classic では「インスタ投稿 3」で入ってきた）に、元の「インスタ投稿」の写真を移して名前を揃える（2026-11-02）
+--   元のは「インスタ投稿（旧）」に、空の「インスタ投稿 2」は消す（写真は消えない）。済んだら印のファイルを作る
+function M.fixInstaCollection()
+  local mark = M.WORK .. "\\insta-col-fixed.txt"
+  if LrFileUtils.exists(mark) then return end
+  local catalog = LrApplication.activeCatalog()
+  local by = {}
+  local function walk(parent)
+    for _, c in ipairs(parent:getChildCollections()) do by[c:getName()] = by[c:getName()] or c end
+    for _, s in ipairs(parent:getChildCollectionSets()) do walk(s) end
+  end
+  walk(catalog)
+  local old, new, empty = by["インスタ投稿"], by["インスタ投稿 3"], by["インスタ投稿 2"]
+  if not new then return end
+  catalog:withWriteAccessDo("NAOE インスタ投稿をまとめる", function()
+    if old then
+      local ps = old:getPhotos()
+      if #ps > 0 then new:addPhotos(ps) end
+      old:setName("インスタ投稿（旧）")
+    end
+  end, { timeout = 120 })
+  catalog:withWriteAccessDo("NAOE インスタ投稿の名前", function()
+    new:setName(M.COLLECTION)
+    if empty and #empty:getPhotos() == 0 then empty:delete() end
+  end, { timeout = 60 })
+  local f = io.open(mark, "w")
+  if f then f:write("done\n") f:close() end
+  log("インスタ投稿をまとめました（クラウドの作り直したアルバムへ）")
+end
+
 M.AUTO_FLAG = M.WORK .. "\\auto.on"
 function M.autoOn() return LrFileUtils.exists(M.AUTO_FLAG) end
 

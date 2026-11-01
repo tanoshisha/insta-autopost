@@ -51,7 +51,7 @@ function M.sync()
       changed = changed + #add + #remove
     end
   end, { timeout = 60 })
-  if changed > 0 then Common.log("リールのコレクションを更新: " .. changed .. "枚") end
+  Common.log("リール: " .. #rows .. "回分・変更 " .. changed .. "枚")
   return changed
 end
 

@@ -14,6 +14,8 @@ LrTasks.startAsyncTask(function()
   -- 同期が止まった写真の一覧があれば、起動時に一度だけやり直す（classic-resync.txt。PC の find-stuck-sync.js が作る）
   local okRs, errRs = LrTasks.pcall(Common.resync)
   if not okRs then Common.log("同期のやり直し: " .. tostring(errRs)) end
+  local okFx, errFx = LrTasks.pcall(Common.fixInstaCollection)
+  if not okFx then Common.log("インスタ投稿をまとめる: " .. tostring(errFx)) end
   local fails, loops = 0, 0
   while true do
     local okMove, err = LrTasks.pcall(Common.moveProcessed)
