@@ -1001,5 +1001,16 @@
     "postedAt": "2026-10-31T12:30:29.606Z",
     "day": "2026-10-31",
     "slot": "special"
+  },
+  {
+    "id": "memory-1793532703455",
+    "kind": "story",
+    "title": "あの日の一枚",
+    "mediaId": "18102560588538967",
+    "postedAt": "2026-11-01T11:31:43.455Z",
+    "day": "2026-11-01",
+    "slot": "memory-story",
+    "image": "specials/auto/memory-2026-11-01.jpg",
+    "memoryOf": "18013596185749072"
   }
 ]
