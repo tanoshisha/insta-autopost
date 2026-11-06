@@ -1314,19 +1314,6 @@
     "cutSwaps": 1
   },
   {
-    "id": "story-2026-11-07-1",
-    "kind": "story",
-    "eventDate": "2026-11-07",
-    "title": "根津神社フォトウォーク（前日）",
-    "postAt": "2026-11-06T20:00:00+09:00",
-    "images": [
-      "specials/story-2026-11-07-1/story.jpg"
-    ],
-    "thumb": "specials/story-2026-11-07-1/thumb.jpg",
-    "caption": "",
-    "skipped": false
-  },
-  {
     "id": "reel-2026-11-07",
     "kind": "reel",
     "format": "dump",
