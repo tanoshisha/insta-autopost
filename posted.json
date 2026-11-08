@@ -1063,5 +1063,22 @@
     "postedAt": "2026-11-06T11:24:00.051Z",
     "day": "2026-11-06",
     "slot": "special"
+  },
+  {
+    "id": "story-2026-11-11-3",
+    "kind": "story",
+    "eventDate": "2026-11-11",
+    "title": "中野ナイトフォトウォーク（3日前）",
+    "postAt": "2026-11-08T20:00:00+09:00",
+    "caption": "",
+    "skipped": false,
+    "seat": "left4",
+    "threads": null,
+    "mediaId": "17944982202380092",
+    "permalink": "https://www.instagram.com/stories/hayato_naoe/4025824317682443183",
+    "mediaUrl": "https://scontent-iad6-1.cdninstagram.com/v/t51.82787-15/894403141_17952727845314997_6530030172498142618_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiU1RPUlkuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=tE9WWUBUkicQ7kNvwHyIc33&_nc_oc=Adp73d41IAnyoyOtFI1pl6rG1cfrvms-9U15NJyooSbGwOKhY71Ptbj4fQZVtexKO_4&_nc_zt=23&_nc_ht=scontent-iad6-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=WkKpcf8L9igHxNlHLZob_w&oh=00_AQTrpk3ozKELDZqTbLF-wBrEZMKLeECKZ_Wc-33TJbj9tg&oe=6AF6141E",
+    "postedAt": "2026-11-08T11:00:59.906Z",
+    "day": "2026-11-08",
+    "slot": "special"
   }
 ]

@@ -1683,19 +1683,6 @@
     ]
   },
   {
-    "id": "story-2026-11-11-3",
-    "kind": "story",
-    "eventDate": "2026-11-11",
-    "title": "中野ナイトフォトウォーク（3日前）",
-    "postAt": "2026-11-08T20:00:00+09:00",
-    "images": [
-      "specials/story-2026-11-11-3/story.jpg"
-    ],
-    "thumb": "specials/story-2026-11-11-3/thumb.jpg",
-    "caption": "",
-    "skipped": false
-  },
-  {
     "id": "flyer-2026-11-21",
     "kind": "flyer",
     "eventDate": "2026-11-21",
