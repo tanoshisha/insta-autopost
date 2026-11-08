@@ -2652,6 +2652,19 @@
     ]
   },
   {
+    "id": "story-2026-11-14-1",
+    "kind": "story",
+    "eventDate": "2026-11-14",
+    "title": "神楽坂フォトウォーク（前日）",
+    "postAt": "2026-11-13T20:00:00+09:00",
+    "images": [
+      "specials/story-2026-11-14-1/story.jpg"
+    ],
+    "thumb": "specials/story-2026-11-14-1/thumb.jpg",
+    "caption": "",
+    "skipped": false
+  },
+  {
     "id": "reel-2026-11-14",
     "kind": "reel",
     "format": "dump",
