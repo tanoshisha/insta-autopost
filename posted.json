@@ -1080,5 +1080,16 @@
     "postedAt": "2026-11-08T11:00:59.906Z",
     "day": "2026-11-08",
     "slot": "special"
+  },
+  {
+    "id": "memory-1794137456814",
+    "kind": "story",
+    "title": "あの日の一枚",
+    "mediaId": "18121606589065044",
+    "postedAt": "2026-11-08T11:30:56.814Z",
+    "day": "2026-11-08",
+    "slot": "memory-story",
+    "image": "specials/auto/memory-2026-11-08.jpg",
+    "memoryOf": "17923566831183906"
   }
 ]
