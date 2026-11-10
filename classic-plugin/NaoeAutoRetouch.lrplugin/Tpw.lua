@@ -53,7 +53,7 @@ local function loadPublished()
 end
 
 -- 1回分の書き出し → 記事づくり
-local function publish(date, photos)
+function M.publish(date, photos)
   local dir = WORK .. "\\" .. date
   LrFileUtils.createAllDirectories(dir)
   for p in LrFileUtils.recursiveFiles(dir) do LrFileUtils.delete(p) end
@@ -133,7 +133,7 @@ function M.sync(force)
       if not seen[date] or seen[date].n ~= #fresh then seen[date] = { n = #fresh, t = now } end
       local ready = force or (#fresh > 0 and now - seen[date].t >= 600)
       if #fresh > 0 and ready then
-        local n = publish(date, fresh)
+        local n = M.publish(date, fresh)
         Common.log("TPWブログ " .. date .. ": " .. n .. "枚")
         total = total + n
         msgs[#msgs + 1] = c:getName() .. "：" .. n .. "枚"

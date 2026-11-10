@@ -10,6 +10,7 @@ return {
     { title = "自動レタッチのオン／オフ", file = "ToggleAuto.lua" },
     { title = "取り込んだRAWを今すぐAIレタッチ", file = "RunImported.lua" },
     { title = "インスタ投稿を自動レタッチ", file = "RunRetouch.lua" },
+    { title = "指定した写真をAIレタッチ → TPW活動記録", file = "PickRetouch.lua" },
     { title = "TPWブログに今すぐ反映", file = "RunTpw.lua" },
     { title = "選択した写真をAIレタッチ（やり直し）", file = "RetouchSelected.lua" },
     { title = "過去の写真をレタッチし直す（一覧から次の12枚）", file = "RunList.lua" },
