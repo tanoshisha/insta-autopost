@@ -2293,19 +2293,6 @@
     ]
   },
   {
-    "id": "story-2026-11-14-3",
-    "kind": "story",
-    "eventDate": "2026-11-14",
-    "title": "神楽坂フォトウォーク（3日前）",
-    "postAt": "2026-11-11T20:00:00+09:00",
-    "images": [
-      "specials/story-2026-11-14-3/story.jpg"
-    ],
-    "thumb": "specials/story-2026-11-14-3/thumb.jpg",
-    "caption": "",
-    "skipped": false
-  },
-  {
     "id": "reel-2026-11-12",
     "kind": "reel",
     "format": "dump",

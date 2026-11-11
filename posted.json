@@ -1136,5 +1136,22 @@
     "postedAt": "2026-11-10T11:00:32.880Z",
     "day": "2026-11-10",
     "slot": "special"
+  },
+  {
+    "id": "story-2026-11-14-3",
+    "kind": "story",
+    "eventDate": "2026-11-14",
+    "title": "神楽坂フォトウォーク（3日前）",
+    "postAt": "2026-11-11T20:00:00+09:00",
+    "caption": "",
+    "skipped": false,
+    "seat": "extra",
+    "threads": null,
+    "mediaId": "17887321326622947",
+    "permalink": "https://www.instagram.com/stories/hayato_naoe/4027998633014541965",
+    "mediaUrl": "https://scontent-iad3-1.cdninstagram.com/v/t51.82787-15/898266899_17953168572314997_7712102992368047477_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiU1RPUlkuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=eTVBzKNNtGQQ7kNvwFttjmO&_nc_oc=AdoNde1xpfsCAM6SrCInCf-nVv4fl6CTvTBDUl8ifarfP28rT4C3GY76sTqQE5fK7tg&_nc_zt=23&_nc_ht=scontent-iad3-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=YQfFpaceMzd0CY1V4WEiTw&oh=00_AQRcaaUSm_O8ZG5rvC519fgENh_duiMLLmQLdkXCiixOSQ&oe=6AFA284A",
+    "postedAt": "2026-11-11T11:00:50.704Z",
+    "day": "2026-11-11",
+    "slot": "special"
   }
 ]
