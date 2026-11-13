@@ -2909,5 +2909,18 @@
       79217
     ],
     "cutSwaps": 1
+  },
+  {
+    "id": "story-2026-11-21-3",
+    "kind": "story",
+    "eventDate": "2026-11-21",
+    "title": "新宿御苑 紅葉フォトウォーク（3日前）",
+    "postAt": "2026-11-18T20:00:00+09:00",
+    "images": [
+      "specials/story-2026-11-21-3/story.jpg"
+    ],
+    "thumb": "specials/story-2026-11-21-3/thumb.jpg",
+    "caption": "",
+    "skipped": false
   }
 ]
