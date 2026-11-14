@@ -2726,19 +2726,6 @@
     ]
   },
   {
-    "id": "story-2026-11-28-14",
-    "kind": "story",
-    "eventDate": "2026-11-28",
-    "title": "神宮外苑いちょう並木フォトウォーク（14日前）",
-    "postAt": "2026-11-14T21:30:00+09:00",
-    "images": [
-      "specials/story-2026-11-28-14/story.jpg"
-    ],
-    "thumb": "specials/story-2026-11-28-14/thumb.jpg",
-    "caption": "",
-    "skipped": false
-  },
-  {
     "id": "reel-2026-11-15",
     "kind": "reel",
     "format": "dump",
