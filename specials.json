@@ -2852,6 +2852,391 @@
     "cutSwaps": 1
   },
   {
+    "id": "reel-2026-11-16",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（麻布十番 祭りの夜）",
+    "postAt": "2026-11-16T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-16/1.jpg",
+      "specials/reel-2026-11-16/2.jpg",
+      "specials/reel-2026-11-16/3.jpg",
+      "specials/reel-2026-11-16/4.jpg",
+      "specials/reel-2026-11-16/5.jpg",
+      "specials/reel-2026-11-16/6.jpg",
+      "specials/reel-2026-11-16/7.jpg",
+      "specials/reel-2026-11-16/8.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-16/thumb.jpg",
+    "layout": "frame",
+    "rhythm": "slow",
+    "sourceDate": "2026-08-23",
+    "cands": [
+      "specials/reel-2026-11-16/c1.jpg"
+    ],
+    "candIds": [
+      "1826728"
+    ],
+    "shots": [
+      "85mm／f1.8／1/100秒／ISO800",
+      "85mm／f1.8／1/125秒／ISO1250",
+      "85mm／f1.8／1/100秒／ISO2000",
+      "85mm／f1.8／1/125秒／ISO1600",
+      "85mm／f1.8／1/125秒／ISO320",
+      "85mm／f1.8／1/200秒／ISO100",
+      "85mm／f1.8／1/125秒／ISO160",
+      "85mm／f8／1/20秒／ISO12800"
+    ],
+    "places": [
+      "麻布十番",
+      "麻布十番",
+      "麻布十番",
+      null,
+      "六本木ヒルズ",
+      "麻布十番",
+      "六本木ヒルズ",
+      "六本木ヒルズ"
+    ],
+    "sources": [
+      "lr:1826861",
+      "lr:1826859",
+      "lr:1826687",
+      "lr:1826898",
+      "lr:1826777",
+      "lr:1826866",
+      "lr:1826839",
+      "lr:1826673"
+    ],
+    "hook": "麻布十番の夜、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "麻布十番 納涼まつり",
+      "fact": "8月、全部85mmで撮影",
+      "place": "麻布十番",
+      "tags": [
+        "#麻布十番",
+        "#麻布十番納涼まつり",
+        "#tokyonight",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "麻布十番 納涼まつり\n8月、全部85mmで撮影\n\n📍麻布十番\n\n#麻布十番 #麻布十番納涼まつり #tokyonight #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "麻布十番",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Just the Two of Us",
+        "a": "Grover Washington, Jr.",
+        "bpm": 96,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "マリブコーク",
+        "a": "踊ってばかりの国",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "LOVEずっきゅん",
+        "a": "相対性理論",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 96,
+    "rebuild": true,
+    "rebuildAt": "2026-11-14T22:11:39.677Z"
+  },
+  {
+    "id": "reel-2026-11-17",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（根津神社）",
+    "postAt": "2026-11-17T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-17/1.jpg",
+      "specials/reel-2026-11-17/2.jpg",
+      "specials/reel-2026-11-17/3.jpg",
+      "specials/reel-2026-11-17/4.jpg",
+      "specials/reel-2026-11-17/5.jpg",
+      "specials/reel-2026-11-17/6.jpg",
+      "specials/reel-2026-11-17/7.jpg",
+      "specials/reel-2026-11-17/8.jpg",
+      "specials/reel-2026-11-17/9.jpg",
+      "specials/reel-2026-11-17/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-17/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-11-07",
+    "cands": [
+      "specials/reel-2026-11-17/c1.jpg",
+      "specials/reel-2026-11-17/c2.jpg",
+      "specials/reel-2026-11-17/c3.jpg",
+      "specials/reel-2026-11-17/c4.jpg",
+      "specials/reel-2026-11-17/c5.jpg",
+      "specials/reel-2026-11-17/c6.jpg",
+      "specials/reel-2026-11-17/c7.jpg",
+      "specials/reel-2026-11-17/c8.jpg",
+      "specials/reel-2026-11-17/c9.jpg",
+      "specials/reel-2026-11-17/c10.jpg",
+      "specials/reel-2026-11-17/c11.jpg",
+      "specials/reel-2026-11-17/c12.jpg"
+    ],
+    "candIds": [
+      "3284876",
+      "3284877",
+      "3284880",
+      "3284883",
+      "3284896",
+      "3284905",
+      "3284909",
+      "3284915",
+      "3284925",
+      "3284928",
+      "3284932",
+      "3284936",
+      "3284948",
+      "3284949",
+      "3284977",
+      "3284978",
+      "3284982",
+      "3284991",
+      "3284995",
+      "3285002",
+      "3317918",
+      "3285013",
+      "3285014",
+      "3285017",
+      "3285023",
+      "3285035",
+      "3285036",
+      "3317945",
+      "3285049",
+      "3285085"
+    ],
+    "shots": [
+      "70mm／f4／1/80秒／ISO1000",
+      "121mm／f4／1/125秒／ISO320",
+      "155mm／f4／1/200秒／ISO12800",
+      "97mm／f4／1/125秒／ISO3200",
+      "200mm／f4／1/250秒／ISO5000",
+      "78mm／f4／1/100秒／ISO2000",
+      "106mm／f4／1/125秒／ISO8000",
+      "144mm／f4／1/160秒／ISO3200",
+      "200mm／f4／1/200秒／ISO2500",
+      "200mm／f4／1/250秒／ISO4000"
+    ],
+    "places": [
+      "根津神社",
+      "根津神社",
+      "根津神社",
+      "根津神社",
+      "根津神社",
+      "根津神社",
+      "根津神社",
+      "根津神社",
+      "根津神社",
+      "根津神社"
+    ],
+    "sources": [
+      "lr:3284891",
+      "lr:3284941",
+      "lr:3284922",
+      "lr:3284920",
+      "lr:3284900",
+      "lr:3284903",
+      "lr:3284913",
+      "lr:3284912",
+      "lr:3284926",
+      "lr:3284938"
+    ],
+    "hook": "根津神社、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "根津神社 鳥居さんぽ",
+      "fact": "",
+      "place": "根津神社",
+      "tags": [
+        "#根津神社",
+        "#tokyosnap",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "根津神社 鳥居さんぽ\n\n📍根津神社\n\n#根津神社 #tokyosnap #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "根津神社",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Just the Two of Us",
+        "a": "Grover Washington, Jr.",
+        "bpm": 96,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "マリブコーク",
+        "a": "踊ってばかりの国",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "LOVEずっきゅん",
+        "a": "相対性理論",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 96,
+    "rebuild": true,
+    "rebuildAt": "2026-11-14T22:11:41.937Z"
+  },
+  {
+    "id": "reel-2026-11-18",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（東京タワー 夜）",
+    "postAt": "2026-11-18T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-18/1.jpg",
+      "specials/reel-2026-11-18/2.jpg",
+      "specials/reel-2026-11-18/3.jpg",
+      "specials/reel-2026-11-18/4.jpg",
+      "specials/reel-2026-11-18/5.jpg",
+      "specials/reel-2026-11-18/6.jpg",
+      "specials/reel-2026-11-18/7.jpg",
+      "specials/reel-2026-11-18/8.jpg",
+      "specials/reel-2026-11-18/9.jpg",
+      "specials/reel-2026-11-18/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-18/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2024-07-20",
+    "cands": [
+      "specials/reel-2026-11-18/c1.jpg",
+      "specials/reel-2026-11-18/c2.jpg",
+      "specials/reel-2026-11-18/c3.jpg",
+      "specials/reel-2026-11-18/c4.jpg",
+      "specials/reel-2026-11-18/c5.jpg",
+      "specials/reel-2026-11-18/c6.jpg",
+      "specials/reel-2026-11-18/c7.jpg",
+      "specials/reel-2026-11-18/c8.jpg",
+      "specials/reel-2026-11-18/c9.jpg",
+      "specials/reel-2026-11-18/c10.jpg",
+      "specials/reel-2026-11-18/c11.jpg",
+      "specials/reel-2026-11-18/c12.jpg"
+    ],
+    "candIds": [
+      "2470",
+      "1400065",
+      "2473",
+      "1262690",
+      "1400071",
+      "2505",
+      "2507",
+      "2518",
+      "2519",
+      "2521",
+      "2531",
+      "2537",
+      "2539",
+      "1400075",
+      "2578",
+      "1400076",
+      "2586",
+      "1400078"
+    ],
+    "shots": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "places": [
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      "東京タワー",
+      null,
+      "東京タワー展望台"
+    ],
+    "sources": [
+      "lr:2524",
+      "lr:2508",
+      "lr:2511",
+      "lr:1301721",
+      "lr:1400074",
+      "lr:2538",
+      "lr:2542",
+      "lr:2541",
+      "lr:2590",
+      "lr:2558"
+    ],
+    "hook": "東京タワー、どの角度が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "東京タワー 夜さんぽ",
+      "fact": "2年前の夏に撮った写真",
+      "place": "東京タワー",
+      "tags": [
+        "#東京タワー",
+        "#tokyotower",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "東京タワー 夜さんぽ\n2年前の夏に撮った写真\n\n📍東京タワー\n\n#東京タワー #tokyotower #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "東京タワー",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "My Girl",
+        "a": "Kan Sano",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "お別れの歌",
+        "a": "never young beach",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-11-14T22:11:43.675Z"
+  },
+  {
     "id": "story-2026-11-21-3",
     "kind": "story",
     "eventDate": "2026-11-21",
