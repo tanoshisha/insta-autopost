@@ -3301,5 +3301,18 @@
     "thumb": "specials/story-2026-11-26-7/thumb.jpg",
     "caption": "",
     "skipped": false
+  },
+  {
+    "id": "story-2026-11-21-1",
+    "kind": "story",
+    "eventDate": "2026-11-21",
+    "title": "新宿御苑 紅葉フォトウォーク（前日）",
+    "postAt": "2026-11-20T20:00:00+09:00",
+    "images": [
+      "specials/story-2026-11-21-1/story.jpg"
+    ],
+    "thumb": "specials/story-2026-11-21-1/thumb.jpg",
+    "caption": "",
+    "skipped": false
   }
 ]
