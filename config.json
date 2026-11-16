@@ -18,7 +18,7 @@
   "retouchModelSnap": "claude-fable-5-1",
   "stories": {
     "newPost": true,
-    "memory": true
+    "memory": false
   },
   "threadsUserId": "28992079977112031",
   "threadsTokenSetAt": null,
