@@ -3323,6 +3323,132 @@
     "skipped": false
   },
   {
+    "id": "reel-2026-11-19",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（高円寺）",
+    "postAt": "2026-11-19T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-19/1.jpg",
+      "specials/reel-2026-11-19/2.jpg",
+      "specials/reel-2026-11-19/3.jpg",
+      "specials/reel-2026-11-19/4.jpg",
+      "specials/reel-2026-11-19/5.jpg",
+      "specials/reel-2026-11-19/6.jpg",
+      "specials/reel-2026-11-19/7.jpg",
+      "specials/reel-2026-11-19/8.jpg",
+      "specials/reel-2026-11-19/9.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-19/thumb.jpg",
+    "layout": "frame",
+    "rhythm": "slow",
+    "sourceDate": "2026-07-25",
+    "cands": [
+      "specials/reel-2026-11-19/c1.jpg",
+      "specials/reel-2026-11-19/c2.jpg",
+      "specials/reel-2026-11-19/c3.jpg",
+      "specials/reel-2026-11-19/c4.jpg",
+      "specials/reel-2026-11-19/c5.jpg",
+      "specials/reel-2026-11-19/c6.jpg",
+      "specials/reel-2026-11-19/c7.jpg",
+      "specials/reel-2026-11-19/c8.jpg",
+      "specials/reel-2026-11-19/c9.jpg",
+      "specials/reel-2026-11-19/c10.jpg",
+      "specials/reel-2026-11-19/c11.jpg",
+      "specials/reel-2026-11-19/c12.jpg"
+    ],
+    "candIds": [
+      "1532371",
+      "1532387",
+      "1532393",
+      "1532408",
+      "1532411",
+      "1554405",
+      "1532440",
+      "1655197",
+      "1532465",
+      "1532508",
+      "1532510",
+      "1532540"
+    ],
+    "shots": [
+      "200mm／f4／1/2000秒／ISO100",
+      "200mm／f4／1/800秒／ISO100",
+      "200mm／f4／1/800秒／ISO100",
+      "200mm／f4／1/500秒／ISO100",
+      "200mm／f4／1/400秒／ISO100",
+      "106mm／f4／1/1600秒／ISO100",
+      "111mm／f4／1/640秒／ISO100",
+      "200mm／f4／1/200秒／ISO8000",
+      "200mm／f4／1/250秒／ISO10000"
+    ],
+    "places": [
+      "高円寺",
+      "高円寺",
+      "高円寺",
+      "高円寺",
+      "高円寺",
+      "高円寺",
+      "高円寺",
+      "高円寺",
+      "高円寺"
+    ],
+    "sources": [
+      "lr:1532369",
+      "lr:1532511",
+      "lr:1532434",
+      "lr:1532527",
+      "lr:1532415",
+      "lr:1532416",
+      "lr:1532437",
+      "lr:1532458",
+      "lr:1532451"
+    ],
+    "hook": "高円寺、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "高円寺 商店街さんぽ",
+      "fact": "7月、ほぼ200mmで撮影",
+      "place": "高円寺",
+      "tags": [
+        "#高円寺",
+        "#koenji",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "高円寺 商店街さんぽ\n7月、ほぼ200mmで撮影\n\n📍高円寺\n\n#高円寺 #koenji #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "高円寺",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "冥想",
+        "a": "尾崎亜美",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "Say It Ain't So",
+        "a": "Weezer",
+        "bpm": 76,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-11-17T22:09:38.406Z"
+  },
+  {
     "id": "story-2026-11-26-7",
     "kind": "story",
     "eventDate": "2026-11-26",
@@ -3382,6 +3508,137 @@
     "skipped": false
   },
   {
+    "id": "reel-2026-11-20",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（多摩センター 雨）",
+    "postAt": "2026-11-20T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-20/1.jpg",
+      "specials/reel-2026-11-20/2.jpg",
+      "specials/reel-2026-11-20/3.jpg",
+      "specials/reel-2026-11-20/4.jpg",
+      "specials/reel-2026-11-20/5.jpg",
+      "specials/reel-2026-11-20/6.jpg",
+      "specials/reel-2026-11-20/7.jpg",
+      "specials/reel-2026-11-20/8.jpg",
+      "specials/reel-2026-11-20/9.jpg",
+      "specials/reel-2026-11-20/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-20/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-10-24",
+    "cands": [
+      "specials/reel-2026-11-20/c1.jpg",
+      "specials/reel-2026-11-20/c2.jpg",
+      "specials/reel-2026-11-20/c3.jpg",
+      "specials/reel-2026-11-20/c4.jpg",
+      "specials/reel-2026-11-20/c5.jpg",
+      "specials/reel-2026-11-20/c6.jpg",
+      "specials/reel-2026-11-20/c7.jpg",
+      "specials/reel-2026-11-20/c8.jpg",
+      "specials/reel-2026-11-20/c9.jpg",
+      "specials/reel-2026-11-20/c10.jpg",
+      "specials/reel-2026-11-20/c11.jpg",
+      "specials/reel-2026-11-20/c12.jpg"
+    ],
+    "candIds": [
+      "3030372",
+      "3030407",
+      "3030409",
+      "3030416",
+      "3030448",
+      "3030480",
+      "3030488",
+      "3030492",
+      "3030523",
+      "3030529",
+      "3030531",
+      "3030532",
+      "3030534"
+    ],
+    "shots": [
+      "85mm／f1.8／1/1000秒／ISO320",
+      "85mm／f2／1/1000秒／ISO100",
+      "85mm／f1.8／1/1000秒／ISO200",
+      "85mm／f1.8／1/1000秒／ISO250",
+      "35mm／f2／1/60秒／ISO800",
+      "35mm／f2／1/1000秒／ISO5000",
+      "35mm／f2／1/60秒／ISO2000",
+      "35mm／f2／1/80秒／ISO5000",
+      "35mm／f2／1/60秒／ISO200",
+      "35mm／f2／1/1000秒／ISO5000"
+    ],
+    "places": [
+      "多摩センター",
+      "パルテノン多摩",
+      "パルテノン多摩",
+      "多摩センター",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "sources": [
+      "lr:3038749",
+      "lr:3030419",
+      "lr:3030422",
+      "lr:3030404",
+      "lr:3030491",
+      "lr:3030469",
+      "lr:3030477",
+      "lr:3030481",
+      "lr:3030485",
+      "lr:3030494"
+    ],
+    "hook": "雨の多摩センター、どれが好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "多摩センター 雨の日",
+      "fact": "ほぼ35mmで撮影",
+      "place": "多摩センター",
+      "tags": [
+        "#多摩センター",
+        "#tokyosnap",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "多摩センター 雨の日\nほぼ35mmで撮影\n\n📍多摩センター\n\n#多摩センター #tokyosnap #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "多摩センター",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "冥想",
+        "a": "尾崎亜美",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "Englishman In New York",
+        "a": "Sting",
+        "bpm": 102,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-11-17T22:09:39.276Z"
+  },
+  {
     "id": "story-2026-11-21-1",
     "kind": "story",
     "eventDate": "2026-11-21",
@@ -3393,6 +3650,112 @@
     "thumb": "specials/story-2026-11-21-1/thumb.jpg",
     "caption": "",
     "skipped": false
+  },
+  {
+    "id": "reel-2026-11-21",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（新宿 ネオン・看板）",
+    "postAt": "2026-11-21T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-21/1.jpg",
+      "specials/reel-2026-11-21/2.jpg",
+      "specials/reel-2026-11-21/3.jpg",
+      "specials/reel-2026-11-21/4.jpg",
+      "specials/reel-2026-11-21/5.jpg",
+      "specials/reel-2026-11-21/6.jpg",
+      "specials/reel-2026-11-21/7.jpg",
+      "specials/reel-2026-11-21/8.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-21/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-08-15",
+    "cands": [
+      "specials/reel-2026-11-21/c1.jpg",
+      "specials/reel-2026-11-21/c2.jpg",
+      "specials/reel-2026-11-21/c3.jpg",
+      "specials/reel-2026-11-21/c4.jpg"
+    ],
+    "candIds": [
+      "1758815",
+      "1758695",
+      "1758644",
+      "1758710"
+    ],
+    "shots": [
+      "100mm／f4／1/125秒／ISO250",
+      "200mm／f4／1/250秒／ISO640",
+      "169mm／f4／1/250秒／ISO320",
+      "97mm／f4／1/100秒／ISO800",
+      "144mm／f4／1/200秒／ISO2000",
+      "70mm／f4／1/80秒／ISO3200",
+      "35mm／f2／1/80秒／ISO320",
+      "35mm／f2／1/400秒／ISO100"
+    ],
+    "places": [
+      "歌舞伎町",
+      null,
+      "新宿",
+      null,
+      "歌舞伎町",
+      null,
+      null,
+      null
+    ],
+    "sources": [
+      "lr:1790029",
+      "lr:1758648",
+      "lr:1758739",
+      "lr:1758604",
+      "lr:1758705",
+      "lr:1758656",
+      "lr:1758694",
+      "lr:1758928"
+    ],
+    "hook": "新宿の夜、どの看板が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "新宿 ネオンさんぽ",
+      "fact": "8月に撮った写真",
+      "place": "歌舞伎町",
+      "tags": [
+        "#歌舞伎町",
+        "#tokyonight",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "新宿 ネオンさんぽ\n8月に撮った写真\n\n📍歌舞伎町\n\n#歌舞伎町 #tokyonight #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "歌舞伎町",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "冥想",
+        "a": "尾崎亜美",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "Say It Ain't So",
+        "a": "Weezer",
+        "bpm": 76,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-11-17T22:09:39.819Z"
   },
   {
     "id": "story-2026-11-28-7",
