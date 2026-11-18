@@ -3806,5 +3806,18 @@
     "thumb": "specials/story-2026-12-05-14/thumb.jpg",
     "caption": "",
     "skipped": false
+  },
+  {
+    "id": "story-2026-11-26-3",
+    "kind": "story",
+    "eventDate": "2026-11-26",
+    "title": "有楽町〜新橋ナイトフォトウォーク（3日前）",
+    "postAt": "2026-11-23T20:00:00+09:00",
+    "images": [
+      "specials/story-2026-11-26-3/story.jpg"
+    ],
+    "thumb": "specials/story-2026-11-26-3/thumb.jpg",
+    "caption": "",
+    "skipped": false
   }
 ]
