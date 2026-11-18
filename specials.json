@@ -3808,6 +3808,245 @@
     "skipped": false
   },
   {
+    "id": "reel-2026-11-22",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（神楽坂 路地裏）",
+    "postAt": "2026-11-22T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-22/1.jpg",
+      "specials/reel-2026-11-22/2.jpg",
+      "specials/reel-2026-11-22/3.jpg",
+      "specials/reel-2026-11-22/4.jpg",
+      "specials/reel-2026-11-22/5.jpg",
+      "specials/reel-2026-11-22/6.jpg",
+      "specials/reel-2026-11-22/7.jpg",
+      "specials/reel-2026-11-22/8.jpg",
+      "specials/reel-2026-11-22/9.jpg",
+      "specials/reel-2026-11-22/10.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-22/thumb.jpg",
+    "layout": "frame",
+    "rhythm": "slow",
+    "sourceDate": "2026-11-14",
+    "cands": [
+      "specials/reel-2026-11-22/c1.jpg",
+      "specials/reel-2026-11-22/c2.jpg",
+      "specials/reel-2026-11-22/c3.jpg",
+      "specials/reel-2026-11-22/c4.jpg",
+      "specials/reel-2026-11-22/c5.jpg",
+      "specials/reel-2026-11-22/c6.jpg",
+      "specials/reel-2026-11-22/c7.jpg",
+      "specials/reel-2026-11-22/c8.jpg",
+      "specials/reel-2026-11-22/c9.jpg",
+      "specials/reel-2026-11-22/c10.jpg",
+      "specials/reel-2026-11-22/c11.jpg"
+    ],
+    "candIds": [
+      "3428856",
+      "3428874",
+      "3428875",
+      "3428887",
+      "3428912",
+      "3428916",
+      "3428939",
+      "3428941",
+      "3428943",
+      "3428950",
+      "3429033",
+      "3429035",
+      "3429037",
+      "3429045"
+    ],
+    "shots": [
+      "144mm／f4／1/200秒／ISO1250",
+      "176mm／f4／1/250秒／ISO800",
+      "200mm／f4／1/250秒／ISO4000",
+      "144mm／f4／1/200秒／ISO320",
+      "150mm／f4／1/200秒／ISO800",
+      "200mm／f4／1/200秒／ISO3200",
+      "100mm／f4／1/100秒／ISO800",
+      "97mm／f4／1/125秒／ISO1000",
+      "200mm／f4／1/250秒／ISO800",
+      "180mm／f4／1/200秒／ISO160"
+    ],
+    "places": [
+      null,
+      "神楽坂",
+      "神楽坂",
+      "神楽坂",
+      "神楽坂",
+      null,
+      "神楽坂",
+      "神楽坂",
+      null,
+      "神楽坂"
+    ],
+    "sources": [
+      "lr:3428999",
+      "lr:3428893",
+      "lr:3428895",
+      "lr:3428905",
+      "lr:3428878",
+      "lr:3428998",
+      "lr:3428926",
+      "lr:3428970",
+      "lr:3428973",
+      "lr:3428860"
+    ],
+    "hook": "神楽坂の路地裏、何枚目が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "神楽坂 路地さんぽ",
+      "fact": "ほぼ望遠で撮影",
+      "place": "神楽坂",
+      "tags": [
+        "#神楽坂",
+        "#tokyosnap",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "神楽坂 路地さんぽ\nほぼ望遠で撮影\n\n📍神楽坂\n\n#神楽坂 #tokyosnap #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "神楽坂",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Just the Two of Us",
+        "a": "Grover Washington, Jr.",
+        "bpm": 96,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "マリブコーク",
+        "a": "踊ってばかりの国",
+        "bpm": null,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "MELODY",
+        "a": "Fishmans（アルバム『ORANGE』）",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 96,
+    "rebuild": true,
+    "rebuildAt": "2026-11-18T22:08:13.910Z"
+  },
+  {
+    "id": "reel-2026-11-23",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（西新宿 高層ビル）",
+    "postAt": "2026-11-23T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-23/1.jpg",
+      "specials/reel-2026-11-23/2.jpg",
+      "specials/reel-2026-11-23/3.jpg",
+      "specials/reel-2026-11-23/4.jpg",
+      "specials/reel-2026-11-23/5.jpg",
+      "specials/reel-2026-11-23/6.jpg",
+      "specials/reel-2026-11-23/7.jpg",
+      "specials/reel-2026-11-23/8.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-23/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2026-08-08",
+    "cands": [
+      "specials/reel-2026-11-23/c1.jpg",
+      "specials/reel-2026-11-23/c2.jpg",
+      "specials/reel-2026-11-23/c3.jpg",
+      "specials/reel-2026-11-23/c4.jpg",
+      "specials/reel-2026-11-23/c5.jpg"
+    ],
+    "candIds": [
+      "1575596",
+      "1575566",
+      "1575368",
+      "1575483",
+      "1575278"
+    ],
+    "shots": [
+      "35mm／f2.8／1/4000秒／ISO100",
+      "200mm／f4／1/500秒／ISO100",
+      "16mm／f2.8／1/2000秒／ISO100",
+      "35mm／f2.8／1/1000秒／ISO100",
+      "35mm／f2.8／1/800秒／ISO100",
+      "16mm／f2.8／1/1600秒／ISO100",
+      "16mm／f2.8／1/1250秒／ISO100",
+      "16mm／f2.8／1/2000秒／ISO100"
+    ],
+    "places": [
+      "西新宿",
+      "西新宿",
+      "西新宿",
+      "西新宿",
+      "西新宿",
+      "都庁",
+      "都庁展望室",
+      "都庁展望室"
+    ],
+    "sources": [
+      "lr:1575437",
+      "lr:1575631",
+      "lr:1575618",
+      "lr:1575559",
+      "lr:1575594",
+      "lr:1575491",
+      "lr:1575544",
+      "lr:1575484"
+    ],
+    "hook": "西新宿、見上げる派？見下ろす派？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "西新宿 ビルさんぽ",
+      "fact": "8月に撮った写真",
+      "place": "西新宿",
+      "tags": [
+        "#西新宿",
+        "#shinjuku",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "西新宿 ビルさんぽ\n8月に撮った写真\n\n📍西新宿\n\n#西新宿 #shinjuku #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "西新宿",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "Isn't She Lovely",
+        "a": "Stevie Wonder",
+        "bpm": 119,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Buddy Holly",
+        "a": "Weezer",
+        "bpm": 121,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "SUMMER SUSPICION",
+        "a": "杉山清貴&オメガトライブ",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 119,
+    "rebuild": true,
+    "rebuildAt": "2026-11-18T22:08:14.658Z"
+  },
+  {
     "id": "story-2026-11-26-3",
     "kind": "story",
     "eventDate": "2026-11-26",
