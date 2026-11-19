@@ -3416,19 +3416,6 @@
     ]
   },
   {
-    "id": "story-2026-12-03-14",
-    "kind": "story",
-    "eventDate": "2026-12-03",
-    "title": "下北沢ナイトフォトウォーク（14日前）",
-    "postAt": "2026-11-19T21:30:00+09:00",
-    "images": [
-      "specials/story-2026-12-03-14/story.jpg"
-    ],
-    "thumb": "specials/story-2026-12-03-14/thumb.jpg",
-    "caption": "",
-    "skipped": false
-  },
-  {
     "id": "reel-2026-11-20",
     "kind": "reel",
     "format": "dump",
