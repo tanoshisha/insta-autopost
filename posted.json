@@ -1394,5 +1394,22 @@
     "postedAt": "2026-11-19T12:30:03.699Z",
     "day": "2026-11-19",
     "slot": "special"
+  },
+  {
+    "id": "story-2026-11-21-1",
+    "kind": "story",
+    "eventDate": "2026-11-21",
+    "title": "新宿御苑 紅葉フォトウォーク（前日）",
+    "postAt": "2026-11-20T20:00:00+09:00",
+    "caption": "",
+    "skipped": false,
+    "seat": "extra",
+    "threads": null,
+    "mediaId": "18136234036822924",
+    "permalink": "https://www.instagram.com/stories/hayato_naoe/4034521449112890221",
+    "mediaUrl": "https://scontent-dfw6-1.cdninstagram.com/v/t51.82787-15/914505654_17954490276314997_2394215403338600498_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiU1RPUlkuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=EkA6hLwirQAQ7kNvwFAsu34&_nc_oc=AdpTT2dzHzEvdZyRXWmG8eGUm4w9Tn3aV0RB5nkN9rSRllUZ1TvLTBhqlq0eiuezw1w&_nc_zt=23&_nc_ht=scontent-dfw6-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=i1Xdea6W3wxTsbadaHojag&_nc_ct=RQosPBUKFQIAAAA&oh=00_AQR7YKw25FaMCl53Jrhh_0o3teO36ccGapIiDm1Z-BNtvw&oe=6B05FB76",
+    "postedAt": "2026-11-20T11:00:28.010Z",
+    "day": "2026-11-20",
+    "slot": "special"
   }
 ]
