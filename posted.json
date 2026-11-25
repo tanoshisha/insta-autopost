@@ -1490,5 +1490,22 @@
     "postedAt": "2026-11-23T14:18:10.199Z",
     "day": "2026-11-23",
     "slot": "special"
+  },
+  {
+    "id": "story-2026-11-26-1",
+    "kind": "story",
+    "eventDate": "2026-11-26",
+    "title": "有楽町〜新橋ナイトフォトウォーク（前日）",
+    "postAt": "2026-11-25T20:00:00+09:00",
+    "caption": "",
+    "skipped": false,
+    "seat": "left2",
+    "threads": null,
+    "mediaId": "18642824281032150",
+    "permalink": "https://www.instagram.com/stories/hayato_naoe/4038145404072989570",
+    "mediaUrl": "https://scontent-ord5-1.cdninstagram.com/v/t51.82787-15/927508062_17955118374314997_7686775258098396121_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=104&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiU1RPUlkuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=5ODqzx9lsioQ7kNvwF96qWO&_nc_oc=Adr6X5dJTOcuadTDj_6DlT2_1y8RwSx3jHWHqgYGinz7kEuyA6Fa7jAIlXtydqBteLk&_nc_zt=23&_nc_ht=scontent-ord5-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=_Rf-HBXGu3POyBgQlJtkfA&_nc_ct=RQosPBUKFQIAAAA&oh=00_AQSUu0syGVTTV-bQOYSHPNrudCCL47ver3W8Ust3ilcxOw&oe=6B0CA743",
+    "postedAt": "2026-11-25T11:00:36.675Z",
+    "day": "2026-11-25",
+    "slot": "special"
   }
 ]
