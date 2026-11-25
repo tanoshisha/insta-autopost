@@ -26,17 +26,26 @@ LrTasks.startAsyncTask(function()
 
   local catalog = LrApplication.activeCatalog()
   local photos = {}
+  -- RAW と JPEG が同じ名前で並んでいる日がある（RAW+JPEG 撮影）。同じ名前なら RAW を使う
+  local found, names = {}, {}
   local function walk(folder)
     if folder:getName() == date then
       for _, p in ipairs(folder:getPhotos(false)) do
-        local name = (p:getFormattedMetadata("fileName") or ""):gsub("%.[^%.]+$", ""):upper()
-        if want[name] then photos[#photos + 1] = p want[name] = nil end
+        local file = p:getFormattedMetadata("fileName") or ""
+        local name = file:gsub("%.[^%.]+$", ""):upper()
+        local ext = (file:match("%.([^%.]+)$") or ""):upper()
+        local isJpeg = ext == "JPG" or ext == "JPEG"
+        if want[name] then
+          if not found[name] then names[#names + 1] = name found[name] = { p = p, jpeg = isJpeg }
+          elseif found[name].jpeg and not isJpeg then found[name] = { p = p, jpeg = false } end
+        end
       end
       return
     end
     for _, c in ipairs(folder:getChildren()) do walk(c) end
   end
   for _, fo in ipairs(catalog:getFolders()) do walk(fo) end
+  for _, name in ipairs(names) do photos[#photos + 1] = found[name].p want[name] = nil end
   if #photos == 0 then return LrDialogs.message(date .. " の指定の写真が見つかりません") end
   local missing = {}
   for k in pairs(want) do missing[#missing + 1] = k end
