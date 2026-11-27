@@ -4174,5 +4174,18 @@
     "thumb": "specials/story-2026-12-12-14/thumb.jpg",
     "caption": "",
     "skipped": false
+  },
+  {
+    "id": "story-2026-12-05-3",
+    "kind": "story",
+    "eventDate": "2026-12-05",
+    "title": "横浜ヨルノヨフォトウォーク（3日前）",
+    "postAt": "2026-12-02T20:00:00+09:00",
+    "images": [
+      "specials/story-2026-12-05-3/story.jpg"
+    ],
+    "thumb": "specials/story-2026-12-05-3/thumb.jpg",
+    "caption": "",
+    "skipped": false
   }
 ]
