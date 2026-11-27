@@ -4176,6 +4176,111 @@
     "skipped": false
   },
   {
+    "id": "reel-2026-11-29",
+    "kind": "reel",
+    "format": "dump",
+    "style": "oto",
+    "title": "リール（歌舞伎町ネオン）",
+    "postAt": "2026-11-29T19:00:00+09:00",
+    "images": [
+      "specials/reel-2026-11-29/1.jpg",
+      "specials/reel-2026-11-29/2.jpg",
+      "specials/reel-2026-11-29/3.jpg",
+      "specials/reel-2026-11-29/4.jpg",
+      "specials/reel-2026-11-29/5.jpg",
+      "specials/reel-2026-11-29/6.jpg",
+      "specials/reel-2026-11-29/7.jpg"
+    ],
+    "thumb": "specials/reel-2026-11-29/thumb.jpg",
+    "layout": null,
+    "rhythm": "slow",
+    "sourceDate": "2024-12-16",
+    "cands": [
+      "specials/reel-2026-11-29/c1.jpg",
+      "specials/reel-2026-11-29/c2.jpg",
+      "specials/reel-2026-11-29/c3.jpg",
+      "specials/reel-2026-11-29/c4.jpg",
+      "specials/reel-2026-11-29/c5.jpg"
+    ],
+    "candIds": [
+      "107621",
+      "116769",
+      "109937",
+      "113247",
+      "84011"
+    ],
+    "shots": [
+      "70mm／f4／1/160秒／ISO400",
+      "200mm／f4／1/400秒／ISO2500",
+      "200mm／f4／1/400秒／ISO1000",
+      "200mm／f4／1/400秒／ISO640",
+      "116mm／f4／1/250秒／ISO800",
+      "81mm／f4／1/160秒／ISO200",
+      "200mm／f4／1/400秒／ISO6400"
+    ],
+    "places": [
+      "新宿 西口",
+      "新宿",
+      "新宿 歌舞伎町",
+      "新宿 歌舞伎町",
+      "新宿 歌舞伎町",
+      "新宿 歌舞伎町",
+      "高円寺"
+    ],
+    "sources": [
+      "lr:90581",
+      "lr:120117",
+      "lr:112583",
+      "lr:108611",
+      "lr:105611",
+      "lr:82259",
+      "lr:96527"
+    ],
+    "hook": "歌舞伎町、どの看板が好き？",
+    "reelSub": "HAYATO NAOE",
+    "answer": null,
+    "cap": {
+      "title": "歌舞伎町 看板さんぽ",
+      "fact": "2年前の冬に撮った写真",
+      "place": "新宿 西口",
+      "tags": [
+        "#新宿西口",
+        "#歌舞伎町",
+        "#shinjuku",
+        "#東京カメラ部"
+      ]
+    },
+    "caption": "歌舞伎町 看板さんぽ\n2年前の冬に撮った写真\n\n📍新宿 西口\n\n#新宿西口 #歌舞伎町 #shinjuku #東京カメラ部",
+    "head": "",
+    "portrait": false,
+    "locationName": "新宿 西口",
+    "skipped": false,
+    "manual": true,
+    "songs": [
+      {
+        "t": "i like the way you kiss me",
+        "a": "Artemas",
+        "bpm": 151,
+        "why": "流行っている曲"
+      },
+      {
+        "t": "Just the Two of Us",
+        "a": "Grover Washington, Jr.",
+        "bpm": 96,
+        "why": "お気に入り・雰囲気に合う"
+      },
+      {
+        "t": "都会",
+        "a": "大貫妙子",
+        "bpm": null,
+        "why": "お気に入り"
+      }
+    ],
+    "bpm": 151,
+    "rebuild": true,
+    "rebuildAt": "2026-11-27T22:09:55.578Z"
+  },
+  {
     "id": "story-2026-12-05-3",
     "kind": "story",
     "eventDate": "2026-12-05",
