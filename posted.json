@@ -1586,5 +1586,22 @@
     "postedAt": "2026-11-28T12:00:31.142Z",
     "day": "2026-11-28",
     "slot": "special"
+  },
+  {
+    "id": "story-2026-12-12-14",
+    "kind": "story",
+    "eventDate": "2026-12-12",
+    "title": "吉祥寺フォトウォーク（14日前）",
+    "postAt": "2026-11-28T21:30:00+09:00",
+    "caption": "",
+    "skipped": false,
+    "seat": "extra",
+    "threads": null,
+    "mediaId": "18127545002473403",
+    "permalink": "https://www.instagram.com/stories/hayato_naoe/4040364998576720638",
+    "mediaUrl": "https://scontent-sjc3-1.cdninstagram.com/v/t51.82787-15/903005779_17955484347314997_4932360350348929227_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=101&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiU1RPUlkuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=5Vx32g1A2T0Q7kNvwFWZe0l&_nc_oc=AdpAo9o_T97rO0-20dMqkIPbSNdfDbD3vFAZ9OaEyc-UwbWpNQOPbBAmdka6hkjw2C8&_nc_zt=23&_nc_ht=scontent-sjc3-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=9JE-nN_a7mtg_KGqQILGcA&_nc_ct=RQosPBUKFQIAAAA&oh=00_AQUWoGSMk85Xq24Xtxcab9Jc14y1zlQsrjKYFrlmU66o5A&oe=6B10B696",
+    "postedAt": "2026-11-28T12:30:45.896Z",
+    "day": "2026-11-28",
+    "slot": "special"
   }
 ]

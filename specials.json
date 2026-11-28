@@ -4117,19 +4117,6 @@
     ]
   },
   {
-    "id": "story-2026-12-12-14",
-    "kind": "story",
-    "eventDate": "2026-12-12",
-    "title": "吉祥寺フォトウォーク（14日前）",
-    "postAt": "2026-11-28T21:30:00+09:00",
-    "images": [
-      "specials/story-2026-12-12-14/story.jpg"
-    ],
-    "thumb": "specials/story-2026-12-12-14/thumb.jpg",
-    "caption": "",
-    "skipped": false
-  },
-  {
     "id": "reel-2026-11-29",
     "kind": "reel",
     "format": "dump",
