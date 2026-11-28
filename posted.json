@@ -1541,5 +1541,22 @@
     "postedAt": "2026-11-27T11:00:08.275Z",
     "day": "2026-11-27",
     "slot": "special"
+  },
+  {
+    "id": "story-2026-12-05-7",
+    "kind": "story",
+    "eventDate": "2026-12-05",
+    "title": "横浜ヨルノヨフォトウォーク（7日前）",
+    "postAt": "2026-11-28T20:00:00+09:00",
+    "caption": "",
+    "skipped": false,
+    "seat": "left3",
+    "threads": null,
+    "mediaId": "18108325169158970",
+    "permalink": "https://www.instagram.com/stories/hayato_naoe/4040319576872745376",
+    "mediaUrl": "https://scontent-sjc6-1.cdninstagram.com/v/t51.82787-15/930413418_17955475668314997_2846078361731631460_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=105&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiU1RPUlkuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=3ist55Nt2N8Q7kNvwHa8ylG&_nc_oc=Adqk6ptPiVjhDHg2iVrRpDeXw3nxkp_D1F9PvtfRNC18ibpAhmd9nF5TUXuiBR0Aw2E&_nc_zt=23&_nc_ht=scontent-sjc6-1.cdninstagram.com&edm=AIZKd-4EAAAA&_nc_gid=FC7l9RSZr6HDC-bKK_hufQ&_nc_ct=RQosPBUKFQIAAAA&oh=00_AQVrZAsZIX5dJSCztKrtps1lIdt6Q73lcB3yJp-pHqhQvg&oe=6B1087FB",
+    "postedAt": "2026-11-28T11:00:27.334Z",
+    "day": "2026-11-28",
+    "slot": "special"
   }
 ]
